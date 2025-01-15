@@ -27,7 +27,9 @@ Temporary Items
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
+__pycache__
 *.py[cod]
+*.pyc
 
 # C extensions
 *.so
@@ -86,8 +88,6 @@ __pycache__/
 local_settings.py
 media
 
-
-.env
 db.sqlite3
 
 # Backup files # 
@@ -185,7 +185,8 @@ celerybeat-schedule.*
 .env 
 .venv 
 env/ 
-venv/ 
+venv/
+.venv/  
 ENV/ 
 env.bak/ 
 venv.bak/ 
