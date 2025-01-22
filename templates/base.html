@@ -52,19 +52,19 @@
                         </ul>
                     </nav>
                 </div>
-
+                <p>{{ request.path }} </p>
                 <div class="flex items-center gap-4">
                     <div class="sm:flex sm:gap-4">
                         <a
                             href="{% url 'login' %}"
-                            class="rounded-md px-5 py-2.5 text-sm font-medium shadow text-teal-600 {% if request.path == 'login' %} bg-teal-600 text-white bg-teal-600 {% endif %}"
+                            class="rounded-md px-5 py-2.5 text-sm font-medium shadow {% if request.path == '/usuarios/login/' %}bg-teal-600 text-white{% else %}text-teal-600{% endif %}"
                         >
                             Login
                         </a>
                 
                         <a
                             href="{% url 'register' %}"
-                            class="rounded-md px-5 py-2.5 text-sm font-medium shadow text-teal-600 {% if request.path == 'register' %} bg-teal-600 text-white bg-teal-600 {% endif %}"
+                            class="rounded-md px-5 py-2.5 text-sm font-medium shadow {% if request.path == '/usuarios/register/' %}bg-teal-600 text-white{% else %}text-teal-600{% endif %}"
                         >
                             Register
                         </a>
