@@ -10,4 +10,10 @@ urlpatterns = [
         name='login'
     ),
     
+    path(
+        'register/', 
+        LoginView.as_view(template_name='users/register.html'), 
+        name='register'
+    ),
+    
 ]
