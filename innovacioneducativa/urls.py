@@ -14,13 +14,12 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.urls import include
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from django.views.generic import RedirectView
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("usuarios/", include("users.urls")),
-   
-    
+    path('admin/', admin.site.urls),
+    path('usuarios/', include('users.urls')),
+    path('', RedirectView.as_view(url='/usuarios/login/', permanent=False)),  # Redirige la raíz al login
 ]

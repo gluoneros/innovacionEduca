@@ -1,7 +1,6 @@
 from django.shortcuts import render
+from django.contrib.auth.views import LoginView
 
-def login_view(request):
-    return render(request, 'users/login.html')
+class CustomLoginView(LoginView):
+    template_name = 'users/login.html'
 
-def register_view(request):
-    return render(request, 'users/register.html')
