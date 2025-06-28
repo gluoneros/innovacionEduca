@@ -13,11 +13,30 @@
         <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
             <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
                 <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                    Crea an account
+                    Crea una cuenta
                 </h1>
                 <form method="post" class="space-y-4 md:space-y-6">
                     {% csrf_token %}
-                    {{ form|crispy }}
+                    <div>
+                        <label for="id_username" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nombre de usuario</label>
+                        {{ form.username }}
+                    </div>
+                    <div>
+                        <label for="id_email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Correo electrónico</label>
+                        {{ form.email }}
+                    </div>
+                    <div>
+                        <label for="id_password1" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Contraseña</label>
+                        {{ form.password1 }}
+                    </div>
+                    <div>
+                        <label for="id_password2" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirmar contraseña</label>
+                        {{ form.password2 }}
+                    </div>
+                    <div>
+                        <label for="id_tipo_usuario" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tipo de usuario</label>
+                        {{ form.tipo_usuario }}
+                    </div>
                     <button type="submit" class="block w-full rounded-lg bg-indigo-600 px-5 py-3 text-sm font-medium text-white">Crear cuenta</button>
                     <p class="text-sm font-light text-gray-500 dark:text-gray-400">
                         ¿Ya tienes una cuenta? <a href="{% url 'login' %}" class="font-medium text-primary-600 hover:underline dark:text-primary-500">Entrar</a>
