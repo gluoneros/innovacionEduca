@@ -1,9 +1,20 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+
 class CustomUser(AbstractUser):
     # Añade campos personalizados aquí si es necesario
     pass
+
+class directivo(models.Model):
+    docu_directivo = models.IntegerField()
+    dire_nombre = models.CharField(max_length=45, blank=True, null=True)
+    dire_apellido = models.CharField(max_length=45, blank=True, null=True)
+    dire_email = models.CharField(max_length=45, blank=True, null=True)
+    dire_tel = models.IntegerField()
+
+    def __str__(self):
+        return f"Directivo: {self.dire_nombre} {self.dire_apellido}"
 
 class Profesor(models.Model):
     docu_profesor = models.IntegerField()
@@ -31,7 +42,7 @@ class Estudiante(models.Model):
     def __str__(self):
         return f"Estudiante: {self.estu_nombre} {self.estu_apellido}"
 
-from django.db import models
+
 
 class Acudiente(models.Model):
     docu_acudiente = models.IntegerField()
