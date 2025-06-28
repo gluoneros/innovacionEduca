@@ -3,8 +3,13 @@ from django.db import models
 
 
 class CustomUser(AbstractUser):
-    # Añade campos personalizados aquí si es necesario
-    pass
+    TIPO_USUARIO_CHOICES = [
+        ('estudiante', 'Estudiante'),
+        ('profesor', 'Profesor'),
+        ('directivo', 'Directivo'),
+        ('acudiente', 'Acudiente'),
+    ]
+    tipo_usuario = models.CharField(max_length=20, choices=TIPO_USUARIO_CHOICES, default='estudiante')
 
 class directivo(models.Model):
     docu_directivo = models.IntegerField()
