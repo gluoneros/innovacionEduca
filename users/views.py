@@ -1,24 +1,60 @@
-from django.shortcuts import render
-from django.contrib.auth.views import LoginView
-from django.contrib.auth.forms import UserCreationForm
-from django.views import generic
-from django.urls import reverse_lazy
-from .forms import CustomUserCreationForm
+# users/views.py
+from django.shortcuts import render, redirect
+from .forms import RegistroGeneralForm
+from .models import Estudiante, Profesor, Acudiente, directivo
+import random
 
-class CustomLoginView(LoginView):
-    template_name = 'users/login.html'
+def generar_id():
+    """Genera un ID aleatorio de 6 dígitos (esto lo puedes cambiar por lógica real si quieres)."""
+    return random.randint(100000, 999999)
 
-class RegisterView(generic.CreateView):
-    form_class = CustomUserCreationForm  # Usa el formulario personalizado
-    template_name = "users/register.html"
-    success_url = reverse_lazy("login")
-
-def register(request):
-    if request.method == "POST":
-        form = CustomUserCreationForm(request.POST)
+def registro_usuario_general(request):
+    if request.method == 'POST':
+        form = RegistroGeneralForm(request.POST)
         if form.is_valid():
-            form.save()
-            # Redirige o muestra mensaje de éxito
+            nombre = form.cleaned_data['nombre']
+            apellido = form.cleaned_data['apellido']
+            email = form.cleaned_data['email']
+            telefono = form.cleaned_data['telefono']
+            tipo = form.cleaned_data['tipo_usuario']
+
+            if tipo == 'estudiante':
+                Estudiante.objects.create(
+                    docu_estudiante=generar_id(),
+                    estu_nombre=nombre,
+                    estu_apellido=apellido,
+                    estu_email=email,
+                    estu_tel=telefono,
+                    profesor_docu_profesor_id=1,  # dummy
+                    acudiente_docu_acudiente_id=1  # dummy
+                )
+            elif tipo == 'profesor':
+                Profesor.objects.create(
+                    docu_profesor=generar_id(),
+                    profe_nombre=nombre,
+                    profe_apellido=apellido,
+                    profe_email=email,
+                    profe_tel=telefono
+                )
+            elif tipo == 'acudiente':
+                Acudiente.objects.create(
+                    docu_acudiente=generar_id(),
+                    acu_nombre=nombre,
+                    acu_apellido=apellido,
+                    acu_email=email,
+                    acu_tel=telefono
+                )
+            elif tipo == 'directivo':
+                directivo.objects.create(
+                    docu_directivo=generar_id(),
+                    dire_nombre=nombre,
+                    dire_apellido=apellido,
+                    dire_email=email,
+                    dire_tel=telefono
+                )
+
+            return redirect('registro_exitoso')  # asegúrate de tener esta URL
     else:
-        form = CustomUserCreationForm()
+        form = RegistroGeneralForm()
+
     return render(request, 'users/register.html', {'form': form})
