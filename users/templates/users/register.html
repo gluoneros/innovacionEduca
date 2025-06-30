@@ -33,11 +33,19 @@
                         {{ form.telefono }}
                     </div>
                     <div>
+                        <label for="id_password1" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Contraseña</label>
+                        {{ form.password1 }}
+                    </div>
+                    <div>
                         <label for="id_tipo_usuario" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tipo de usuario</label>
                         {{ form.tipo_usuario }}
                     </div>
                     <button type="submit" class="w-full rounded-lg bg-indigo-600 px-5 py-3 text-sm font-medium text-white">Crear cuenta</button>
                 </form>
+                <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
+                    ¿Ya tienes una cuenta?
+                    <a href="{% url 'login' %}" class="text-indigo-600 hover:underline dark:text-indigo-500">Inicia sesión</a>
+                </div>
             </div>
         </div>
     </div>

@@ -7,21 +7,20 @@ class CustomUserCreationForm(UserCreationForm):
         model = CustomUser
         fields = ('username', 'email', 'tipo_usuario', 'password1', 'password2')
 '''
+# forms.py
 from django import forms
-from .models import Estudiante, Profesor, Acudiente, directivo
-# users/forms.py
 
+TIPOS_USUARIO = [
+    ('estudiante', 'Estudiante'),
+    ('profesor', 'Profesor'),
+    ('acudiente', 'Acudiente'),
+    ('directivo', 'Directivo'),
+]
 
 class RegistroGeneralForm(forms.Form):
-    TIPO_CHOICES = [
-        ('estudiante', 'Estudiante'),
-        ('profesor', 'Profesor'),
-        ('acudiente', 'Acudiente'),
-        ('directivo', 'Directivo'),
-    ]
-
-    nombre = forms.CharField(max_length=45)
-    apellido = forms.CharField(max_length=45)
-    email = forms.EmailField()
-    telefono = forms.IntegerField()
-    tipo_usuario = forms.ChoiceField(choices=TIPO_CHOICES)
+    nombre = forms.CharField(label='Nombre')
+    apellido = forms.CharField(label='Apellido')
+    email = forms.EmailField(label='Correo electrónico')
+    telefono = forms.IntegerField(label='Teléfono')
+    tipo_usuario = forms.ChoiceField(choices=TIPOS_USUARIO, label='Tipo de usuario')
+    password1 = forms.CharField(label='Contraseña', widget=forms.PasswordInput)

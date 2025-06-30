@@ -5,7 +5,6 @@ from .models import Estudiante, Profesor, Acudiente, directivo
 import random
 
 def generar_id():
-    """Genera un ID aleatorio de 6 dígitos (esto lo puedes cambiar por lógica real si quieres)."""
     return random.randint(100000, 999999)
 
 def registro_usuario_general(request):
