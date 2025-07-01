@@ -24,3 +24,4 @@ class RegistroGeneralForm(forms.Form):
     telefono = forms.IntegerField(label='Teléfono')
     tipo_usuario = forms.ChoiceField(choices=TIPOS_USUARIO, label='Tipo de usuario')
     password1 = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
+
