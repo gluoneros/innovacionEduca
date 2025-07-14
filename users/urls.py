@@ -1,7 +1,9 @@
 # users/urls.py
 from django.urls import path
+from django.shortcuts import render
 from django.contrib.auth.views import LoginView, LogoutView
 from .views import registro_usuario_general
+
 
 urlpatterns = [
     path('registro/', registro_usuario_general, name='registro'),

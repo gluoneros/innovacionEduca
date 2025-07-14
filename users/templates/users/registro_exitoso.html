@@ -2,6 +2,8 @@
 {% block content %}
 <div class="text-center mt-10">
     <h1 class="text-2xl font-bold text-green-600">¡Registro exitoso!</h1>
-    <a href="{% url 'registro' %}" class="text-blue-500 underline">Registrar otro usuario</a>
+    <a href="{% url 'registro' %}" class="text-indigo-600 hover:underline dark:text-indigo-500">Registrar otro usuario</a>
+    <p class="mt-4">O puedes volver a la página de inicio.</p>
+    <a href="{% url 'login' %}" class="text-indigo-600 hover:underline dark:text-indigo-500">Inicia sesión</a>
 </div>
 {% endblock %}
