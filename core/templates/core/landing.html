@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-teal-100 to-blue-200">
+    <h1 class="text-5xl font-bold text-teal-700 mb-4">Bienvenido a Innovación Educativa</h1>
+    <p class="text-lg text-gray-700 mb-8">Transformando la educación con tecnología y creatividad.</p>
+    <a href="{% url 'login' %}" class="px-6 py-3 bg-teal-600 text-white rounded-lg shadow hover:bg-teal-700 transition">Iniciar sesión</a>
+</div>
+{% endblock %}

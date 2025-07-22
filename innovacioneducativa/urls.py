@@ -20,6 +20,7 @@ from django.views.generic import RedirectView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', include('core.urls')),  # Incluye las URLs de la aplicación core
     path('usuarios/', include('users.urls')),
     path('', RedirectView.as_view(url='/usuarios/login/', permanent=False)),  # Redirige la raíz al login
 ]
