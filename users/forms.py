@@ -25,3 +25,8 @@ class RegistroGeneralForm(forms.Form):
     tipo_usuario = forms.ChoiceField(choices=TIPOS_USUARIO, label='Tipo de usuario')
     password1 = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['nombre'].widget.attrs.update({
+            'class': 'w-full rounded border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
+        })
