@@ -1,54 +1,191 @@
-<!-- users/templates/users/register.html -->
 {% extends "base.html" %}
+{% load tailwind_filters %}
+{% load crispy_forms_tags %}
+
+{% block title %}Regístrate - Innovación Educativa{% endblock %}
+{% block description %}Registra tu cuenta en Innovación Educativa para acceder a todos nuestros servicios educativos.{% endblock %}
+
 {% block content %}
+<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <!-- Logo y título -->
+        <div class="text-center fade-in">
+            <div class="flex justify-center mb-6">
+                <div class="relative">
+                    <div class="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center shadow-2xl">
+                        <i class="fas fa-graduation-cap text-3xl text-white"></i>
+                    </div>
+                    <div class="absolute inset-0 bg-indigo-400 rounded-full blur-xl opacity-30 animate-pulse"></div>
+                </div>
+            </div>
+            <h1 class="text-4xl font-bold text-gray-900 mb-2">¡Bienvenido!</h1>
+            <p class="text-gray-600 text-lg">Crea tu cuenta para continuar</p>
+        </div>
 
-<section class="bg-gray-50 dark:bg-gray-900">
-    <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-        <a href="#" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
-            <img class="w-8 h-8 mr-2" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg" alt="logo">
-            Innovación Educativa
-        </a>
+       <!-- Formulario de registro -->
+        <div class="form-container slide-up">
+            <form method="post" class="space-y-6" novalidate>
+                {% csrf_token %}
 
-        <div class="w-full bg-white rounded-lg shadow dark:border sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-            <div class="p-6 space-y-4 sm:p-8">
-                <h1 class="text-xl font-bold leading-tight text-gray-900 md:text-2xl dark:text-white">
-                    Crea una cuenta
-                </h1>
-                <form method="post" class="space-y-4">
-                    {% csrf_token %}
-                    <div>
-                        <label for="id_nombre" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nombre</label>
-                        {{ form.nombre }}
+                <!-- Mensajes de error generales -->
+                {% if form.non_field_errors %}
+                    <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-lg">
+                        <div class="flex items-center">
+                            <i class="fas fa-exclamation-circle text-red-400 mr-3"></i>
+                            <div class="text-red-700">
+                                {% for error in form.non_field_errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <label for="id_apellido" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Apellido</label>
-                        {{ form.apellido }}
+                {% endif %}
+
+                <!-- Campo de Nombre -->
+                <div class="space-y-2">
+                    <label for="{{ form.nombre.id_for_label }}" class="form-label flex items-center gap-2">
+                        <i class="fas fa-user text-indigo-500"></i>
+                        Nombre
+                    </label>
+                    <div class="relative">
+                        <input type="text" name="{{ form.nombre.name }}" id="{{ form.nombre.id_for_label }}"
+                               class="form-input w-full pl-12 {% if form.nombre.errors %}border-red-500 focus:border-red-500{% endif %}"
+                               placeholder="Ingresa tu nombre" value="{{ form.nombre.value|default:'' }}" required>
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-user text-gray-400"></i>
+                        </div>
                     </div>
-                    <div>
-                        <label for="id_email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Correo electrónico</label>
-                        {{ form.email }}
+                    {% if form.nombre.errors %}
+                        <div class="text-red-500 text-sm flex items-center gap-1 mt-1">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            {{ form.nombre.errors.0 }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Campo de Apellido -->
+                <div class="space-y-2">
+                    <label for="{{ form.apellido.id_for_label }}" class="form-label flex items-center gap-2">
+                        <i class="fas fa-user-friends text-indigo-500"></i>
+                        Apellido
+                    </label>
+                    <div class="relative">
+                        <input type="text" name="{{ form.apellido.name }}" id="{{ form.apellido.id_for_label }}"
+                               class="form-input w-full pl-12 {% if form.apellido.errors %}border-red-500 focus:border-red-500{% endif %}"
+                               placeholder="Ingresa tu apellido" value="{{ form.apellido.value|default:'' }}" required>
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-user-friends text-gray-400"></i>
+                        </div>
                     </div>
-                    <div>
-                        <label for="id_telefono" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Teléfono</label>
-                        {{ form.telefono }}
+                    {% if form.apellido.errors %}
+                        <div class="text-red-500 text-sm flex items-center gap-1 mt-1">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            {{ form.apellido.errors.0 }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Campo de Email -->
+                <div class="space-y-2">
+                    <label for="{{ form.email.id_for_label }}" class="form-label flex items-center gap-2">
+                        <i class="fas fa-envelope text-indigo-500"></i>
+                        Correo Electrónico
+                    </label>
+                    <div class="relative">
+                        <input type="email" name="{{ form.email.name }}" id="{{ form.email.id_for_label }}"
+                               class="form-input w-full pl-12 {% if form.email.errors %}border-red-500 focus:border-red-500{% endif %}"
+                               placeholder="ejemplo@correo.com" value="{{ form.email.value|default:'' }}" required>
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-envelope text-gray-400"></i>
+                        </div>
                     </div>
-                    <div>
-                        <label for="id_password1" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Contraseña</label>
-                        {{ form.password1 }}
+                    {% if form.email.errors %}
+                        <div class="text-red-500 text-sm flex items-center gap-1 mt-1">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            {{ form.email.errors.0 }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Campo de Teléfono -->
+                <div class="space-y-2">
+                    <label for="{{ form.telefono.id_for_label }}" class="form-label flex items-center gap-2">
+                        <i class="fas fa-phone text-indigo-500"></i>
+                        Teléfono
+                    </label>
+                    <div class="relative">
+                        <input type="tel" name="{{ form.telefono.name }}" id="{{ form.telefono.id_for_label }}"
+                               class="form-input w-full pl-12 {% if form.telefono.errors %}border-red-500 focus:border-red-500{% endif %}"
+                               placeholder="Ingresa tu número de teléfono" value="{{ form.telefono.value|default:'' }}" required>
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-phone text-gray-400"></i>
+                        </div>
                     </div>
-                    <div>
-                        <label for="id_tipo_usuario" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tipo de usuario</label>
-                        {{ form.tipo_usuario }}
+                    {% if form.telefono.errors %}
+                        <div class="text-red-500 text-sm flex items-center gap-1 mt-1">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            {{ form.telefono.errors.0 }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Campo de Contraseña -->
+                <div class="space-y-2">
+                    <label for="{{ form.password1.id_for_label }}" class="form-label flex items-center gap-2">
+                        <i class="fas fa-lock text-indigo-500"></i>
+                        Contraseña
+                    </label>
+                    <div class="relative">
+                        <input type="password" name="{{ form.password1.name }}" id="{{ form.password1.id_for_label }}"
+                               class="form-input w-full pl-12 pr-12 {% if form.password1.errors %}border-red-500 focus:border-red-500{% endif %}"
+                               placeholder="Crea una contraseña segura" required>
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-lock text-gray-400"></i>
+                        </div>
+                        <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center"
+                                onclick="togglePassword('{{ form.password1.id_for_label }}', this)">
+                            <i class="fas fa-eye text-gray-400 hover:text-gray-600 cursor-pointer"></i>
+                        </button>
                     </div>
+                    {% if form.password1.errors %}
+                        <div class="text-red-500 text-sm flex items-center gap-1 mt-1">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            {{ form.password1.errors.0 }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Campo de Tipo de usuario -->
+                <div class="space-y-2">
+                    <label for="{{ form.tipo_usuario.id_for_label }}" class="form-label flex items-center gap-2">
+                        <i class="fas fa-users text-indigo-500"></i>
+                        Tipo de usuario
+                    </label>
+                    <select name="{{ form.tipo_usuario.name }}" id="{{ form.tipo_usuario.id_for_label }}"
+                        class="form-select w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none {% if form.tipo_usuario.errors %}border-red-500{% endif %}">
+                        {% for option in form.tipo_usuario.field.choices %}
+                            <option value="{{ option.0 }}" {% if form.tipo_usuario.value == option.0 %}selected{% endif %}>
+                                {{ option.1 }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    {% if form.tipo_usuario.errors %}
+                        <div class="text-red-500 text-sm flex items-center gap-1 mt-1">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            {{ form.tipo_usuario.errors.0 }}
+                        </div>
+                    {% endif %}
+                </div>
+
                     <button type="submit" class="w-full rounded-lg bg-indigo-600 px-5 py-3 text-sm font-medium text-white">Crear cuenta</button>
-                </form>
+            </form>
                 <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
                     ¿Ya tienes una cuenta?
                     <a href="{% url 'login' %}" class="text-indigo-600 hover:underline dark:text-indigo-500">Inicia sesión</a>
                 </div>
-            </div>
+
         </div>
     </div>
-</section>
+</div>
 
 {% endblock %}

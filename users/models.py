@@ -9,38 +9,33 @@ class CustomUser(AbstractUser):
         ('directivo', 'Directivo'),
         ('acudiente', 'Acudiente'),
     ]
-    tipo_usuario = models.CharField(max_length=20, choices=TIPO_USUARIO_CHOICES, default='estudiante')
+    role = models.CharField(max_length=10, choices=TIPO_USUARIO_CHOICES)
+    documento = models.CharField(max_length=100, blank=True)
+    tel = models.CharField(max_length=20, blank=True)
+    nombre = models.CharField(max_length=100, blank=True)
+    apellido = models.CharField(max_length=100, blank=True)
+    email = models.EmailField(blank=True)
+    username = models.CharField(max_length=150, unique=True)
+    password = models.CharField(max_length=128)
+    last_login = models.DateTimeField(blank=True, null=True)
 
-class directivo(models.Model):
-    docu_directivo = models.BigIntegerField()
-    dire_nombre = models.CharField(max_length=45, blank=True, null=True)
-    dire_apellido = models.CharField(max_length=45, blank=True, null=True)
-    dire_email = models.CharField(max_length=45, blank=True, null=True)
-    dire_tel = models.BigIntegerField()
+class Directivo(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='Directivo')
+    escuela = models.CharField(max_length=100)
 
     def __str__(self):
-        return f"Directivo: {self.dire_nombre} {self.dire_apellido}"
+        return f"Directivo: {self.user.nombre} {self.user.apellido}"
 
 class Profesor(models.Model):
-    docu_profesor = models.BigIntegerField()
-    profe_especialidad = models.CharField(max_length=45, blank=True, null=True)
-    profe_email = models.CharField(max_length=45, blank=True, null=True)
-    profe_nombre = models.CharField(max_length=45, blank=True, null=True)
-    profe_apellido = models.CharField(max_length=45, blank=True, null=True)
-    profe_escalafon = models.CharField(max_length=45, blank=True, null=True)
-    profe_area = models.CharField(max_length=45, blank=True, null=True)
-    profe_tel = models.BigIntegerField()
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='Profesor')
 
     def __str__(self):
-        return f"Profesor: {self.profe_nombre} {self.profe_apellido}"
+        return f"Profesor: {self.user.nombre} {self.user.apellido}"
 
 
 class Estudiante(models.Model):
-    docu_estudiante = models.BigIntegerField()
-    estu_nombre = models.CharField(max_length=45, blank=True, null=True)
-    estu_apellido = models.CharField(max_length=45, blank=True, null=True)
-    estu_email = models.CharField(max_length=45, blank=True, null=True)
-    estu_tel = models.BigIntegerField()
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='Estudiante')
+
     profesor_docu_profesor = models.ForeignKey(Profesor, on_delete=models.CASCADE) # Foreign key to Profesor
     acudiente_docu_acudiente = models.ForeignKey('Acudiente', on_delete=models.CASCADE)  # Foreign key to Acudiente
 
@@ -48,18 +43,12 @@ class Estudiante(models.Model):
     profesor_docu_profesor = models.ForeignKey('Profesor', on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
-        return f"Estudiante: {self.estu_nombre} {self.estu_apellido}"
+        return f"Estudiante: {self.user.nombre} {self.user.apellido}"
 
 
 
 class Acudiente(models.Model):
-    docu_acudiente = models.BigIntegerField()
-    acu_nombre = models.CharField(max_length=45, blank=True, null=True)
-    acu_apellido = models.CharField(max_length=45, blank=True, null=True)
-    acu_email = models.CharField(max_length=45, blank=True, null=True)
-    acu_tel = models.BigIntegerField()
-
-
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='Acudiente')
 
     def __str__(self):
         return f"Acudiente: {self.acu_nombre} {self.acu_apellido}"

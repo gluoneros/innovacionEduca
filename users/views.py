@@ -1,7 +1,7 @@
 # users/views.py
 from django.shortcuts import render, redirect
 from .forms import RegistroGeneralForm
-from .models import Estudiante, Profesor, Acudiente, directivo
+from .models import Estudiante, Profesor, Acudiente, Directivo, CustomUser
 import random
 
 def generar_id():
@@ -17,42 +17,29 @@ def registro_usuario_general(request):
             telefono = form.cleaned_data['telefono']
             tipo = form.cleaned_data['tipo_usuario']
 
+            # Crear usuario base
+            user = CustomUser.objects.create(
+                username=f"{nombre.lower()}.{apellido.lower()}{generar_id()}",
+                nombre=nombre,
+                apellido=apellido,
+                email=email,
+                tel=telefono,
+                role=tipo
+            )
+
             if tipo == 'estudiante':
                 Estudiante.objects.create(
-                    docu_estudiante=generar_id(),
-                    estu_nombre=nombre,
-                    estu_apellido=apellido,
-                    estu_email=email,
-                    estu_tel=telefono,
-                    profesor_docu_profesor_id=1,  # dummy
-                    acudiente_docu_acudiente_id=1  # dummy
+                    user=user,
+                    # Asigna profesor y acudiente válidos aquí
                 )
             elif tipo == 'profesor':
-                Profesor.objects.create(
-                    docu_profesor=generar_id(),
-                    profe_nombre=nombre,
-                    profe_apellido=apellido,
-                    profe_email=email,
-                    profe_tel=telefono
-                )
+                Profesor.objects.create(user=user)
             elif tipo == 'acudiente':
-                Acudiente.objects.create(
-                    docu_acudiente=generar_id(),
-                    acu_nombre=nombre,
-                    acu_apellido=apellido,
-                    acu_email=email,
-                    acu_tel=telefono
-                )
+                Acudiente.objects.create(user=user)
             elif tipo == 'directivo':
-                directivo.objects.create(
-                    docu_directivo=generar_id(),
-                    dire_nombre=nombre,
-                    dire_apellido=apellido,
-                    dire_email=email,
-                    dire_tel=telefono
-                )
+                Directivo.objects.create(user=user, escuela="")  # Ajusta escuela según el formulario
 
-            return redirect('registro_exitoso')  # asegúrate de tener esta URL
+            return redirect('registro_exitoso')
     else:
         form = RegistroGeneralForm()
 

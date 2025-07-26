@@ -32,18 +32,23 @@
 
 <body >
 <header class="sticky inset-0 z-50 border-b border-slate-100 bg-white/80 backdrop-blur-lg">
-    <nav class="mx-auto flex max-w-6xl gap-8 px-6 transition-all duration-200 ease-in-out lg:px-12 py-4">
-        <div class="relative flex items-center">
+    <nav class="mx-auto flex max-w-6xl gap-2 px-6 transition-all duration-200 ease-in-out lg:px-12 py-4">
+        <div class="relative flex items-center gap-2 ">
             <a href="/">
-                <img src="{% static 'global/img/logo.png' %}" alt="Logo Innovación Educativa" class="h-10 w-auto"></a>
+                <img src="{% static 'global/img/logo.png' %}" alt="Logo Innovación Educativa" class="h-10 w-auto">
+            </a>
         </div>
-        <div class="flex flex-col">
-            <span class="text-1xl font-bold tracking-tight">Innovación Educativa</span>
-            <span class="text-xs text-blue-200 font-medium">Transformando el futuro</span>
+        <div class="flex flex-col gap-0.5 ">
+            <span class="text-1xl font-bold tracking-tight"><a href="/">Innovación Educativa</a></span>
+            <span class="text-xs text-blue-500 font-medium"><a href="/">Transformando el futuro</a></span>
         </div>
+        <div class="flex-grow"></div>
         <ul class="hidden items-center justify-center gap-6 md:flex ">
             <li class="pt-1.5 font-dm text-sm font-medium text-slate-700">
-                <a href="#">Pricing</a>
+                <a href="#">Nosotros</a>
+            </li>
+            <li class="pt-1.5 font-dm text-sm font-medium text-slate-700">
+                <a href="#">Servicios</a>
             </li>
             <li class="pt-1.5 font-dm text-sm font-medium text-slate-700">
                 <a href="#">Blog</a>
@@ -51,13 +56,16 @@
             <li class="pt-1.5 font-dm text-sm font-medium text-slate-700">
                 <a href="#">Docs</a>
             </li>
+            <li class="pt-1.5 font-dm text-sm font-medium text-slate-700">
+                <a href="#">Contacto</a>
+            </li>
         </ul>
         <div class="flex-grow"></div>
         <div class="hidden items-center justify-center gap-6 md:flex">
-            <a href="#" class="font-dm text-sm font-medium text-slate-700">Sign in</a>
-            <a href="#"
-                class="rounded-md bg-gradient-to-br from-green-600 to-emerald-400 px-3 py-1.5 font-dm text-sm font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03]">Sign
-                up for free
+            <a href="{% url 'login' %}"  class="font-dm text-sm font-medium text-slate-700">Iniciar sesión</a>
+            <a href="{% url 'registro' %}"
+                class="rounded-md bg-gradient-to-br from-green-600 to-emerald-400 px-3 py-1.5 font-dm text-sm font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03]">
+                Regístrate gratis
             </a>
         </div>
         <div class="relative flex items-center justify-center md:hidden">
@@ -73,20 +81,20 @@
     {% block content %}{% endblock content %}
 </div>
 
-<footer class="footer-enhanced text-white mt-16">
+<footer class="footer-enhanced text-bl-50 mt-16">
   <div class="container mx-auto px-4 pt-16 pb-8">
     <!-- Sección principal del footer -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
       <!-- Información de la empresa -->
       <div class="space-y-4">
         <div class="flex items-center gap-3">
-          <img src="{% static 'global/img/logo.png' %}" alt="Logo" class="h-10 w-auto">
-          <span class="text-xl font-bold">Innovación Educativa</span>
+          <img src="{% static 'global/img/logo.png' %}" alt="Logo" class="h-10 w-auto bg-blue-100 rounded-full">
+          <span class="text-xl font-bold text-blue">Innovación Educativa</span>
         </div>
-        <p class="text-gray-300 leading-relaxed">
+        <p class="text-blue-400 leading-relaxed">
           Transformando la educación a través de la innovación y la tecnología para crear un futuro mejor.
         </p>
-        <div class="flex items-center gap-2 text-gray-300">
+        <div class="flex items-center gap-2 text-red-300">
           <i class="fas fa-map-marker-alt"></i>
           <span>Guarne, Antioquia, Colombia</span>
         </div>
@@ -94,19 +102,20 @@
 
       <!-- Enlaces rápidos -->
       <div class="space-y-4">
-        <h3 class="text-lg font-semibold text-white">Enlaces Rápidos</h3>
+        <h3 class="text-lg font-semibold text-blue">Enlaces Rápidos</h3>
         <ul class="space-y-2">
-          <li><a href="#nosotros" class="text-gray-300 hover:text-white transition-colors duration-300">Nosotros</a></li>
-          <li><a href="#proyectos" class="text-gray-300 hover:text-white transition-colors duration-300">Proyectos</a></li>
-          <li><a href="#servicios" class="text-gray-300 hover:text-white transition-colors duration-300">Servicios</a></li>
-          <li><a href="#contacto" class="text-gray-300 hover:text-white transition-colors duration-300">Contacto</a></li>
+          <li><a href="#nosotros" class="text-gray-500 hover:text-blue-400 transition-colors duration-300">Nosotros</a></li>
+          <li><a href="#servicios" class="text-gray-500 hover:text-blue-400 transition-colors duration-300">Servicios</a></li>
+          <li><a href="#blog" class="text-gray-500 hover:text-blue-400 transition-colors duration-300">Blog</a></li>
+          <li><a href="#blog" class="text-gray-500 hover:text-blue-400 transition-colors duration-300">Docs</a></li>
+          <li><a href="#contacto" class="text-gray-500 hover:text-blue-400 transition-colors duration-300">Contacto</a></li>
         </ul>
       </div>
 
       <!-- Contacto -->
       <div class="space-y-4">
-        <h3 class="text-lg font-semibold text-white">Contacto</h3>
-        <ul class="space-y-2 text-gray-300">
+        <h3 class="text-lg font-semibold text-blue">Contacto</h3>
+        <ul class="space-y-2 text-gray-500">
           <li class="flex items-center gap-2">
             <i class="fas fa-phone"></i>
             <span>+57 (4) 123-4567</span>
@@ -124,8 +133,8 @@
 
       <!-- Newsletter -->
       <div class="space-y-4">
-        <h3 class="text-lg font-semibold text-white">Newsletter</h3>
-        <p class="text-gray-300 text-sm">
+        <h3 class="text-lg font-semibold text-blue">Newsletter</h3>
+        <p class="text-blue-400 text-sm">
           Suscríbete para recibir las últimas novedades y actualizaciones.
         </p>
         <form class="space-y-3">
@@ -144,22 +153,22 @@
       <div class="flex flex-col md:flex-row justify-between items-center gap-6">
         <!-- Iconos sociales -->
         <div class="flex justify-center space-x-4">
-          <a href="#" class="social-icon p-3 bg-gray-700 rounded-full text-gray-300 hover:text-white transition-all duration-300">
+        <a href="#" class="social-icon w-10 h-10 flex items-center justify-center bg-gray-700 rounded-full text-blue-400 hover:text-red-300 transition-all duration-300">
             <i class="fab fa-facebook-f"></i>
-          </a>
-          <a href="#" class="social-icon p-3 bg-gray-700 rounded-full text-gray-300 hover:text-white transition-all duration-300">
+        </a>
+          <a href="#" class="social-icon w-10 h-10 flex items-center justify-center bg-gray-700 rounded-full text-blue-400 hover:text-red-300 transition-all duration-300">
             <i class="fab fa-twitter"></i>
           </a>
-          <a href="#" class="social-icon p-3 bg-gray-700 rounded-full text-gray-300 hover:text-white transition-all duration-300">
+          <a href="#" class="social-icon w-10 h-10 flex items-center justify-center bg-gray-700 rounded-full text-blue-400 hover:text-red-300 transition-all duration-300">
             <i class="fab fa-instagram"></i>
           </a>
-          <a href="#" class="social-icon p-3 bg-gray-700 rounded-full text-gray-300 hover:text-white transition-all duration-300">
+          <a href="#" class="social-icon w-10 h-10 flex items-center justify-center bg-gray-700 rounded-full text-blue-400 hover:text-red-300 transition-all duration-300">
             <i class="fab fa-linkedin-in"></i>
           </a>
-          <a href="#" class="social-icon p-3 bg-gray-700 rounded-full text-gray-300 hover:text-white transition-all duration-300">
+          <a href="#" class="social-icon w-10 h-10 flex items-center justify-center bg-gray-700 rounded-full text-blue-400 hover:text-red-300 transition-all duration-300">
             <i class="fab fa-youtube"></i>
           </a>
-          <a href="#" class="social-icon p-3 bg-gray-700 rounded-full text-gray-300 hover:text-white transition-all duration-300">
+          <a href="#" class="social-icon w-10 h-10 flex items-center justify-center bg-gray-700 rounded-full text-blue-400 hover:text-red-300 transition-all duration-300">
             <i class="fab fa-github"></i>
           </a>
         </div>
