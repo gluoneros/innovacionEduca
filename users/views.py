@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 from .forms import RegistroGeneralForm
 from django.contrib.auth import login
 import random
@@ -18,3 +19,22 @@ def registro_view(request):
         form = RegistroGeneralForm()
 
     return render(request, 'users/register.html', {'form': form})
+
+@login_required # Este decorador protege la vista, solo usuarios logueados pueden entrar.
+def dashboard_view(request):
+    """
+    Muestra el panel de control del usuario que ha iniciado sesión.
+    """
+    # El objeto 'request.user' contiene toda la información del usuario logueado.
+    # Lo pasamos a la plantilla a través del diccionario de contexto.
+    context = {
+        'user': request.user
+    }
+    return render(request, 'users/dashboard.html', context)
+
+
+def registro_exitoso_view(request):
+    context = {
+        'user': request.user
+    }
+    return render(request, 'users/registro_exitoso.html', context)
