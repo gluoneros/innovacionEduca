@@ -142,7 +142,7 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "tailwind"
 
 CRISPY_TEMPLATE_PACK = "tailwind"
 
-LOGIN_URL = 'login'
-
 handler404 = 'core.views.error_404'
 
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'dashboard'

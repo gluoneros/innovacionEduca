@@ -1,5 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
-    /* Paleta más equilibrada y profesional */
+    /* Paleta de colores */
     --primary-color: #4361EE;     /* Azul vibrante pero profesional */
     --primary-light: #4CC9F0;     /* Azul cielo para acentos */
     --primary-dark: #3A0CA3;      /* Morado oscuro elegante */
@@ -31,7 +35,6 @@ body {
 /* Header más profesional */
 .header-enhanced {
     background: var(--primary-gradient);
-    box-shadow: var(--shadow-md);
     transition: all 0.3s ease;
 }
 
@@ -133,7 +136,6 @@ body {
 
 /* Tarjetas de estadísticas mejoradas */
 .stats-card {
-    background: var(--secondary-gradient);
     border: 1px solid rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(10px);
 }
@@ -303,6 +305,7 @@ body {
     display: block;
     font-size: 0.9rem;
     letter-spacing: 0.025em;
+}
 
 /* Contenedor de formulario */
 .form-container {
@@ -337,7 +340,16 @@ body {
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Footer mejorado */
+.header-enhanced .logo-container{
+    transition: transform 0.3s ease;
+}
+
+.header-enhanced .logo-container:hover {
+    transform: scale(1.03);
+
+}
+
+/* Footer mejorado
 .footer-enhanced {
     background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
     position: relative;
@@ -351,7 +363,7 @@ body {
     right: 0;
     height: 1px;
     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-}
+} */
 
 /* Iconos sociales mejorados */
 .social-icon {

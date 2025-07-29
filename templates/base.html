@@ -1,5 +1,4 @@
-{% load static %}
-<!DOCTYPE html>
+{% load static %}<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -15,9 +14,13 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'global/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'global/css/dashboard.css' %}">
+
+    <!-- Custom javascript -->
+    <script src="{% static 'global/js/script.js' %}"></script>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="{% static 'global/img/favicon.png' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'global/img/favicon.ico' %}">
 
     <!-- Font Awesome para iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -35,7 +38,7 @@
     <nav class="mx-auto flex max-w-6xl gap-2 px-6 transition-all duration-200 ease-in-out lg:px-12 py-4">
         <div class="relative flex items-center gap-2 ">
             <a href="/">
-                <img src="{% static 'global/img/logo.png' %}" alt="Logo Innovación Educativa" class="h-10 w-auto">
+                <img src="{% static 'global/img/logo-r.png' %}" alt="Logo Innovación Educativa" class="h-10 w-auto">
             </a>
         </div>
         <div class="flex flex-col gap-0.5 ">
@@ -88,7 +91,7 @@
       <!-- Información de la empresa -->
       <div class="space-y-4">
         <div class="flex items-center gap-3">
-          <img src="{% static 'global/img/logo.png' %}" alt="Logo" class="h-10 w-auto bg-blue-100 rounded-full">
+          <img src="{% static 'global/img/logo-r.png' %}" alt="Logo" class="h-10 w-auto bg-blue-100 rounded-full">
           <span class="text-xl font-bold text-blue">Innovación Educativa</span>
         </div>
         <p class="text-blue-400 leading-relaxed">
@@ -179,7 +182,7 @@
             © 2025 Innovación Educativa. Todos los derechos reservados.
           </p>
           <p class="text-gray-500 text-xs mt-1">
-            Desarrollado con ❤️ por <a href="https://gluoneros.com/" class="text-blue-400 hover:text-blue-300">Gluoneros</a>
+            Desarrollado con ❤️ por <a href="https://www.gluoneros.com/" class="text-blue-400 hover:text-blue-300">Gluoneros</a>
           </p>
         </div>
       </div>
