@@ -1,53 +1,52 @@
 {% extends "base.html" %}
-{% block content %}
+{% load static %}
 
-<div class="dashboard">
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="sidebar-header">
-                <h2>Adiman</h2>
-            </div>
-        <div class="sidebar-menu">
-            <div class="menu-item active">
-                <i class="fas fa-home"></i>
-                <span>Dashboard</span>
-            </div>
-            <div class="menu-item">
-                <i class="fas fa-chart-line"></i>
-                <span>Analytics</span>
-            </div>
-            <div class="menu-item">
-                <i class="fas fa-users"></i>
-                <span>User Management</span>
-            </div>
-            <div class="menu-item">
-                <i class="fas fa-file-alt"></i>
-                <span>Content</span>
-            </div>
-            <div class="menu-item">
-                <i class="fas fa-cog"></i>
-                <span>Settings</span>
-            </div>
-            <div class="menu-item">
-                <i class="fas fa-question-circle"></i>
-                <span>Help</span>
-            </div>
-        </div>
-    </div>
+{% block head %}
 
-        <!-- Main Content -->
-    <div class="main-content">
-            <!-- Header -->
-        <div class="header">
-            <div class="search-bar">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="Search...">
-            </div>
-            <div class="user-actions">
-                <div class="notification">
-                    <i class="fas fa-bell"></i>
-                    <span class="notification-badge">3</span>
+<!-- Navegación Superior -->
+<nav class="gradient-bg text-white shadow-lg relative z-50">
+    <div class="px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-14 sm:h-16">
+            <!-- Logo y título -->
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <!-- Botón menú móvil -->
+                <button id="mobileMenuBtn" class="lg:hidden p-2 -ml-2 rounded-md hover:bg-white/10 transition-colors">
+                    <i class="fas fa-bars text-lg"></i>
+                </button>
+
+                <!-- Logo -->
+                <div class="flex items-center space-x-2">
+                    <svg width="32" height="32" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-8 sm:h-8">
+                        <defs>
+                            <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#4facfe;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#00f2fe;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <circle cx="25" cy="25" r="22" fill="white" opacity="0.2"/>
+                        <rect x="12" y="18" width="26" height="16" rx="2" fill="white" opacity="0.95"/>
+                        <rect x="14" y="20" width="22" height="2" rx="1" fill="url(#logoGrad)" opacity="0.8"/>
+                        <circle cx="32" cy="12" r="3" fill="url(#logoGrad)"/>
+                        <circle cx="32" cy="12" r="1.5" fill="white"/>
+                    </svg>
+                    <div class="hidden sm:block">
+                        <span>{{ user.nombre_colegio|default:"Mi Institución" }}</span>
+                    </div>
+                    <span class="sm:hidden text-base font-bold">IE</span>
                 </div>
+            </div>
+
+            <!-- Acciones usuario -->
+            <div class="flex items-center space-x-2 sm:space-x-4">
+                <!-- Notificaciones -->
+                <div class="relative">
+                    <button class="p-2 rounded-full hover:bg-white/10 transition-colors">
+                        <i class="fas fa-bell text-base sm:text-lg"></i>
+                        <span class="absolute -top-1 -right-1 bg-red-500 text-xs rounded-full h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center text-[10px] sm:text-xs">3</span>
+                    </button>
+                </div>
+
+                <!-- Usuario -->
                 <div class="user-profile">
                     <div class="user-avatar">
                         {# Mostramos las iniciales del nombre y apellido. Si no existen, las del username. #}
@@ -63,177 +62,540 @@
                 </div>
             </div>
         </div>
+    </div>
+</nav>
 
-            <!-- Stats Cards -->
-        <div class="stats-container">
-            <div class="stat-card">
-                <div class="stat-card-header">
-                    <div>
-                        <div class="stat-value">1,248</div>
-                        <div class="stat-label">Total Users</div>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="flex">
+    <!-- Menú Lateral -->
+    <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-40 w-64 bg-white shadow-lg transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
+        <div class="h-full flex flex-col">
+            <!-- Header del sidebar -->
+            <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user-tie text-white text-sm"></i>
                     </div>
-                    <div class="stat-icon users">
-                        <i class="fas fa-users"></i>
+                    <div>
+                        <select id="userRole" class="text-sm font-medium text-gray-700 bg-transparent border-none focus:outline-none cursor-pointer">
+                            <option value="administrativo">Administrativo</option>
+                            <option value="profesor">Profesor</option>
+                            <option value="estudiante">Estudiante</option>
+                        </select>
+                        <p class="text-xs text-gray-500">Cambiar rol</p>
                     </div>
                 </div>
+
+                <!-- Botón cerrar móvil -->
+                <button id="closeMobileMenu" class="lg:hidden p-2 rounded-md hover:bg-gray-100">
+                    <i class="fas fa-times text-gray-500"></i>
+                </button>
             </div>
-            <div class="stat-card">
-                <div class="stat-card-header">
-                    <div>
-                        <div class="stat-value">342</div>
-                        <div class="stat-label">Active Sessions</div>
+
+            <!-- Contenido del menú -->
+            <div class="flex-1 overflow-y-auto">
+                <!-- Menú Administrativo -->
+                <div id="menu-administrativo" class="menu-section">
+                    <div class="p-4 bg-gray-50 border-b">
+                        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Panel Administrativo</h3>
                     </div>
-                    <div class="stat-icon sessions">
-                        <i class="fas fa-signal"></i>
-                    </div>
+                    <nav class="mt-2">
+                        <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-purple-500">
+                            <i class="fas fa-tachometer-alt mr-3 text-purple-500 w-5"></i>
+                            <span class="text-sm sm:text-base">Dashboard Principal</span>
+                        </a>
+                        <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-blue-500">
+                            <i class="fas fa-users mr-3 text-blue-500 w-5"></i>
+                            <span class="text-sm sm:text-base">Gestión de Usuarios</span>
+                        </a>
+                        <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-green-500">
+                            <i class="fas fa-book mr-3 text-green-500 w-5"></i>
+                            <span class="text-sm sm:text-base">Gestión de Cursos</span>
+                        </a>
+                        <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-orange-500">
+                            <i class="fas fa-calendar-alt mr-3 text-orange-500 w-5"></i>
+                            <span class="text-sm sm:text-base">Horarios</span>
+                        </a>
+                        <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-red-500">
+                            <i class="fas fa-chart-bar mr-3 text-red-500 w-5"></i>
+                            <span class="text-sm sm:text-base">Reportes Académicos</span>
+                        </a>
+                        <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-gray-500">
+                            <i class="fas fa-cog mr-3 text-gray-500 w-5"></i>
+                            <span class="text-sm sm:text-base">Configuración</span>
+                        </a>
+                    </nav>
                 </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-card-header">
-                    <div>
-                        <div class="stat-value">98%</div>
-                        <div class="stat-label">System Health</div>
+
+                <!-- Menú Profesor -->
+                <div id="menu-profesor" class="menu-section hidden">
+                    <div class="p-4 bg-gray-50 border-b">
+                        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Panel Profesor</h3>
                     </div>
-                    <div class="stat-icon health">
-                        <i class="fas fa-heartbeat"></i>
-                    </div>
+                    <nav class="mt-2">
+                        <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-purple-500">
+                            <i class="fas fa-home mr-3 text-purple-500 w-5"></i>
+                            <span class="text-sm sm:text-base">Mi Dashboard</span>
+                        </a>
+                        <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-blue-500">
+                            <i class="fas fa-chalkboard-teacher mr-3 text-blue-500 w-5"></i>
+                            <span class="text-sm sm:text-base">Mis Cursos</span>
+                        </a>
+                        <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-green-500">
+                            <i class="fas fa-clipboard-list mr-3 text-green-500 w-5"></i>
+                            <span class="text-sm sm:text-base">Calificaciones</span>
+                        </a>
+                        <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-orange-500">
+                            <i class="fas fa-users mr-3 text-orange-500 w-5"></i>
+                            <span class="text-sm sm:text-base">Mis Estudiantes</span>
+                        </a>
+                        <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-red-500">
+                            <i class="fas fa-tasks mr-3 text-red-500 w-5"></i>
+                            <span class="text-sm sm:text-base">Tareas y Exámenes</span>
+                        </a>
+                        <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-pink-500">
+                            <i class="fas fa-comments mr-3 text-pink-500 w-5"></i>
+                            <span class="text-sm sm:text-base">Comunicaciones</span>
+                        </a>
+                    </nav>
                 </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-card-header">
-                    <div>
-                        <div class="stat-value">5</div>
-                        <div class="stat-label">Recent Alerts</div>
+
+                <!-- Menú Estudiante -->
+                <div id="menu-estudiante" class="menu-section hidden">
+                    <div class="p-4 bg-gray-50 border-b">
+                        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Panel Estudiante</h3>
                     </div>
-                    <div class="stat-icon alerts">
-                        <i class="fas fa-exclamation-triangle"></i>
-                    </div>
+                    <nav class="mt-2">
+                        <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-purple-500">
+                            <i class="fas fa-home mr-3 text-purple-500 w-5"></i>
+                            <span class="text-sm sm:text-base">Mi Dashboard</span>
+                        </a>
+                        <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-blue-500">
+                            <i class="fas fa-book-open mr-3 text-blue-500 w-5"></i>
+                            <span class="text-sm sm:text-base">Mis Cursos</span>
+                        </a>
+                        <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-yellow-500">
+                            <i class="fas fa-star mr-3 text-yellow-500 w-5"></i>
+                            <span class="text-sm sm:text-base">Mis Notas</span>
+                        </a>
+                        <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-green-500">
+                            <i class="fas fa-calendar mr-3 text-green-500 w-5"></i>
+                            <span class="text-sm sm:text-base">Horario de Clases</span>
+                        </a>
+                        <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-orange-500">
+                            <i class="fas fa-clipboard-check mr-3 text-orange-500 w-5"></i>
+                            <span class="text-sm sm:text-base">Tareas Pendientes</span>
+                        </a>
+                        <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-red-500">
+                            <i class="fas fa-user mr-3 text-red-500 w-5"></i>
+                            <span class="text-sm sm:text-base">Mi Perfil</span>
+                        </a>
+                    </nav>
                 </div>
             </div>
         </div>
+    </aside>
 
-        <!-- Main Content Grid -->
-        <div class="content-grid">
-            <div class="left-column">
-                    <!-- Activity Chart -->
-                <div class="chart-container">
-                    <div class="section-header">
-                        <h3 class="section-title">Activity Overview</h3>
-                        <label>
-                            <select style="padding: 5px; border-radius: 5px; border: 1px solid #ddd;">
-                                <option>Last 7 Days</option>
-                                <option>Last 30 Days</option>
-                                <option>Last 90 Days</option>
-                            </select>
-                        </label>
+    <!-- Contenido Principal -->
+    <main class="flex-1 lg:ml-0 transition-all duration-300">
+        <div class="p-4 sm:p-6 lg:p-8">
+            <div class="max-w-7xl mx-auto">
+                <!-- Header del dashboard -->
+                <div class="mb-6 sm:mb-8">
+                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Dashboard Administrativo</h1>
+                    <p class="text-sm sm:text-base text-gray-600">Bienvenido al panel de administración del colegio</p>
+                </div>
+
+                <!-- Estadísticas -->
+                <div class="stats-grid grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8">
+                    <div class="stats-card rounded-xl p-4 sm:p-6 text-white card-shadow">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-white/80 text-xs sm:text-sm">Total Estudiantes</p>
+                                <p class="text-xl sm:text-2xl font-bold">1,245</p>
+                            </div>
+                            <i class="fas fa-users text-2xl sm:text-3xl text-white/70"></i>
+                        </div>
                     </div>
-                    <div class="chart-placeholder">
-                        [Activity Chart Will Appear Here]
+                    <div class="stats-card-2 rounded-xl p-4 sm:p-6 text-white card-shadow">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-white/80 text-xs sm:text-sm">Total Profesores</p>
+                                <p class="text-xl sm:text-2xl font-bold">87</p>
+                            </div>
+                            <i class="fas fa-chalkboard-teacher text-2xl sm:text-3xl text-white/70"></i>
+                        </div>
+                    </div>
+                    <div class="stats-card-3 rounded-xl p-4 sm:p-6 text-white card-shadow">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-white/80 text-xs sm:text-sm">Cursos Activos</p>
+                                <p class="text-xl sm:text-2xl font-bold">42</p>
+                            </div>
+                            <i class="fas fa-book text-2xl sm:text-3xl text-white/70"></i>
+                        </div>
+                    </div>
+                    <div class="stats-card-4 rounded-xl p-4 sm:p-6 text-white card-shadow">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-white/80 text-xs sm:text-sm">Promedio General</p>
+                                <p class="text-xl sm:text-2xl font-bold">8.5</p>
+                            </div>
+                            <i class="fas fa-chart-line text-2xl sm:text-3xl text-white/70"></i>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Recent Actions -->
-                <div class="recent-actions">
-                    <div class="section-header">
-                        <h3 class="section-title">Recent Actions</h3>
-                        <button style="background: none; border: none; color: var(--primary); cursor: pointer;">
-                            View All
+                <!-- Contenido Principal -->
+                <div class="content-grid grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                    <!-- Cursos Recientes -->
+                    <div class="bg-white rounded-xl shadow-lg p-4 sm:p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-lg sm:text-xl font-semibold text-gray-900">Cursos Recientes</h2>
+                            <button class="text-purple-600 hover:text-purple-800 text-xs sm:text-sm font-medium">Ver todos</button>
+                        </div>
+                        <div class="space-y-3 sm:space-y-4">
+                            <div class="flex items-center justify-between p-3 sm:p-4 bg-gray-50 rounded-lg">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-calculator text-white text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-medium text-gray-900 text-sm sm:text-base">Matemáticas 11°</h3>
+                                        <p class="text-xs sm:text-sm text-gray-500">Prof. Carlos Martínez</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs sm:text-sm text-green-600 font-medium">35 estudiantes</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 sm:p-4 bg-gray-50 rounded-lg">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-green-500 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-flask text-white text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-medium text-gray-900 text-sm sm:text-base">Química 10°</h3>
+                                        <p class="text-xs sm:text-sm text-gray-500">Prof. Ana López</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs sm:text-sm text-green-600 font-medium">28 estudiantes</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 sm:p-4 bg-gray-50 rounded-lg">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-red-500 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-book-open text-white text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-medium text-gray-900 text-sm sm:text-base">Literatura 9°</h3>
+                                        <p class="text-xs sm:text-sm text-gray-500">Prof. Isabel García</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs sm:text-sm text-green-600 font-medium">32 estudiantes</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actividad Reciente -->
+                    <div class="bg-white rounded-xl shadow-lg p-4 sm:p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-lg sm:text-xl font-semibold text-gray-900">Actividad Reciente</h2>
+                            <button class="text-purple-600 hover:text-purple-800 text-xs sm:text-sm font-medium">Ver todas</button>
+                        </div>
+                        <div class="space-y-3 sm:space-y-4">
+                            <div class="flex items-start space-x-3">
+                                <div class="w-6 h-6 sm:w-8 sm:h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-user-plus text-blue-600 text-xs"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm text-gray-900">Nuevo estudiante registrado</p>
+                                    <p class="text-xs text-gray-500">Juan Pérez - Grado 10°</p>
+                                    <p class="text-xs text-gray-400">Hace 2 horas</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <div class="w-6 h-6 sm:w-8 sm:h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-clipboard-check text-green-600 text-xs"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm text-gray-900">Calificaciones actualizadas</p>
+                                    <p class="text-xs text-gray-500">Matemáticas 11° - 35 notas</p>
+                                    <p class="text-xs text-gray-400">Hace 4 horas</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <div class="w-6 h-6 sm:w-8 sm:h-8 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-calendar text-yellow-600 text-xs"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm text-gray-900">Nuevo horario programado</p>
+                                    <p class="text-xs text-gray-500">Física 9° - Laboratorio</p>
+                                    <p class="text-xs text-gray-400">Hace 6 horas</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabla de Notas Recientes -->
+                <div class="mt-6 bg-white rounded-xl shadow-lg p-4 sm:p-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 space-y-2 sm:space-y-0">
+                        <h2 class="text-lg sm:text-xl font-semibold text-gray-900">Notas Recientes</h2>
+                        <button class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors w-full sm:w-auto">
+                            Agregar Nota
                         </button>
                     </div>
-                    <div class="actions-list">
-                        <div class="action-item">
-                            <div class="action-icon">
-                                <i class="fas fa-user-plus"></i>
-                            </div>
-                            <div class="action-details">
-                                <div class="action-title">New user registered</div>
-                                <div class="action-time">2 minutes ago</div>
-                            </div>
-                        </div>
-                        <div class="action-item">
-                            <div class="action-icon">
-                                <i class="fas fa-file-upload"></i>
-                            </div>
-                            <div class="action-details">
-                                <div class="action-title">Document uploaded</div>
-                                <div class="action-time">15 minutes ago</div>
-                            </div>
-                        </div>
-                        <div class="action-item">
-                            <div class="action-icon">
-                                <i class="fas fa-cog"></i>
-                            </div>
-                            <div class="action-details">
-                                <div class="action-title">System settings updated</div>
-                                <div class="action-time">1 hour ago</div>
-                            </div>
-                        </div>
-                        <div class="action-item">
-                            <div class="action-icon">
-                                <i class="fas fa-shield-alt"></i>
-                            </div>
-                            <div class="action-details">
-                                <div class="action-title">Security patch applied</div>
-                                <div class="action-time">3 hours ago</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <div class="right-column">
-                <!-- System Status -->
-                <div class="system-status">
-                    <div class="section-header">
-                        <h3 class="section-title">System Status</h3>
-                        <i class="fas fa-sync-alt" style="color: var(--gray); cursor: pointer;"></i>
+                    <!-- Tabla responsive -->
+                    <div class="overflow-x-auto -mx-4 sm:mx-0">
+                        <div class="inline-block min-w-full align-middle">
+                            <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+                                <table class="min-w-full divide-y divide-gray-300">
+                                    <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estudiante</th>
+                                        <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Curso</th>
+                                        <th class="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Evaluación</th>
+                                        <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nota</th>
+                                        <th class="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
+                                        <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-3 sm:px-6 py-4">
+                                            <div class="flex items-center">
+                                                <img class="h-6 w-6 sm:h-8 sm:w-8 rounded-full" src="https://images.unsplash.com/photo-1494790108755-2616c4b9de2b?w=40&h=40&fit=crop&crop=face&auto=format" alt="">
+                                                <div class="ml-2 sm:ml-3">
+                                                    <div class="text-xs sm:text-sm font-medium text-gray-900">María Rodríguez</div>
+                                                    <div class="text-xs text-gray-500 sm:hidden">10°A</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-3 sm:px-6 py-4">
+                                            <div class="text-xs sm:text-sm text-gray-900">Matemáticas</div>
+                                            <div class="text-xs text-gray-500 sm:hidden">10°A</div>
+                                        </td>
+                                        <td class="hidden sm:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-900">Parcial 1</td>
+                                        <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">9.2</td>
+                                        <td class="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">2024-07-10</td>
+                                        <td class="px-3 sm:px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">Aprobado</span>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-3 sm:px-6 py-4">
+                                            <div class="flex items-center">
+                                                <img class="h-6 w-6 sm:h-8 sm:w-8 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face&auto=format" alt="">
+                                                <div class="ml-2 sm:ml-3">
+                                                    <div class="text-xs sm:text-sm font-medium text-gray-900">Carlos Mendoza</div>
+                                                    <div class="text-xs text-gray-500 sm:hidden">11°B</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-3 sm:px-6 py-4">
+                                            <div class="text-xs sm:text-sm text-gray-900">Química</div>
+                                            <div class="text-xs text-gray-500 sm:hidden">11°B</div>
+                                        </td>
+                                        <td class="hidden sm:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-900">Quiz 3</td>
+                                        <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-yellow-600">7.8</td>
+                                        <td class="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">2024-07-09</td>
+                                        <td class="px-3 sm:px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full">Regular</span>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-3 sm:px-6 py-4">
+                                            <div class="flex items-center">
+                                                <img class="h-6 w-6 sm:h-8 sm:w-8 rounded-full" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face&auto=format" alt="">
+                                                <div class="ml-2 sm:ml-3">
+                                                    <div class="text-xs sm:text-sm font-medium text-gray-900">Ana Torres</div>
+                                                    <div class="text-xs text-gray-500 sm:hidden">9°C</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-3 sm:px-6 py-4">
+                                            <div class="text-xs sm:text-sm text-gray-900">Literatura</div>
+                                            <div class="text-xs text-gray-500 sm:hidden">9°C</div>
+                                        </td>
+                                        <td class="hidden sm:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-900">Ensayo</td>
+                                        <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">8.9</td>
+                                        <td class="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">2024-07-08</td>
+                                        <td class="px-3 sm:px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">Aprobado</span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
-                    <div class="status-list">
-                        <div class="status-item">
-                            <span class="status-label">Server Uptime</span>
-                            <span class="status-value good">99.9%</span>
-                        </div>
-                        <div class="status-item">
-                            <span class="status-label">CPU Usage</span>
-                            <span class="status-value">32%</span>
-                        </div>
-                        <div class="status-item">
-                            <span class="status-label">Memory Usage</span>
-                            <span class="status-value">45%</span>
-                        </div>
-                        <div class="status-item">
-                            <span class="status-label">Database</span>
-                            <span class="status-value good">Normal</span>
-                        </div>
-                        <div class="status-item">
-                            <span class="status-label">Last Backup</span>
-                            <span class="status-value warning">12 hours ago</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quick Actions -->
-                <div class="quick-actions">
-                    <button class="action-btn">
-                        <i class="fas fa-user-plus"></i>
-                        <span>Add User</span>
-                    </button>
-                    <button class="action-btn">
-                        <i class="fas fa-file-export"></i>
-                        <span>Export Data</span>
-                    </button>
-                    <button class="action-btn">
-                        <i class="fas fa-cog"></i>
-                        <span>Settings</span>
-                    </button>
-                    <button class="action-btn">
-                        <i class="fas fa-question-circle"></i>
-                        <span>Help</span>
-                    </button>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 </div>
+
+<script>
+    // Variables globales
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const closeMobileMenu = document.getElementById('closeMobileMenu');
+    const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+    const sidebar = document.getElementById('sidebar');
+    const userRoleSelect = document.getElementById('userRole');
+    const menuSections = document.querySelectorAll('.menu-section');
+
+    // Función para abrir menú móvil
+    function openMobileMenu() {
+        sidebar.classList.remove('-translate-x-full');
+        sidebar.classList.add('translate-x-0');
+        mobileMenuOverlay.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden', 'lg:overflow-auto');
+    }
+
+    // Función para cerrar menú móvil
+    function closeMobileMenuFunc() {
+        sidebar.classList.add('-translate-x-full');
+        sidebar.classList.remove('translate-x-0');
+        mobileMenuOverlay.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+    }
+
+    // Event listeners para menú móvil
+    mobileMenuBtn.addEventListener('click', openMobileMenu);
+    closeMobileMenu.addEventListener('click', closeMobileMenuFunc);
+    mobileMenuOverlay.addEventListener('click', closeMobileMenuFunc);
+
+    // Cerrar menú móvil cuando se hace clic en un enlace (solo en móvil)
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', () => {
+            if (window.innerWidth < 1024) {
+                closeMobileMenuFunc();
+            }
+        });
+    });
+
+    // Cambio de rol de usuario
+    userRoleSelect.addEventListener('change', function() {
+        const selectedRole = this.value;
+
+        // Ocultar todos los menús
+        menuSections.forEach(section => {
+            section.classList.add('hidden');
+        });
+
+        // Mostrar el menú correspondiente
+        const targetMenu = document.getElementById(`menu-${selectedRole}`);
+        if (targetMenu) {
+            targetMenu.classList.remove('hidden');
+        }
+
+        // Cambiar el título del dashboard según el rol
+        const dashboardTitle = document.querySelector('main h1');
+        const dashboardSubtitle = document.querySelector('main p');
+
+        switch(selectedRole) {
+            case 'administrativo':
+                dashboardTitle.textContent = 'Dashboard Administrativo';
+                dashboardSubtitle.textContent = 'Bienvenido al panel de administración del colegio';
+                break;
+            case 'profesor':
+                dashboardTitle.textContent = 'Dashboard Profesor';
+                dashboardSubtitle.textContent = 'Gestiona tus cursos y estudiantes';
+                break;
+            case 'estudiante':
+                dashboardTitle.textContent = 'Dashboard Estudiante';
+                dashboardSubtitle.textContent = 'Consulta tus notas y horarios';
+                break;
+        }
+    });
+
+    // Animaciones y efectos interactivos
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            if (window.innerWidth >= 1024) {
+                this.style.transform = 'translateX(5px)';
+                this.style.transition = 'transform 0.3s ease';
+            }
+        });
+
+        item.addEventListener('mouseleave', function() {
+            if (window.innerWidth >= 1024) {
+                this.style.transform = 'translateX(0)';
+            }
+        });
+    });
+
+    // Efecto de hover en las tarjetas de estadísticas
+    document.querySelectorAll('[class*="stats-card"]').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px) scale(1.02)';
+            this.style.transition = 'transform 0.3s ease';
+        });
+
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+    });
+
+    // Manejo del redimensionamiento de ventana
+    window.addEventListener('resize', function() {
+        if (window.innerWidth >= 1024) {
+            // En desktop, asegurar que el sidebar esté visible
+            sidebar.classList.remove('-translate-x-full');
+            sidebar.classList.add('translate-x-0');
+            mobileMenuOverlay.classList.add('hidden');
+            document.body.classList.remove('overflow-hidden');
+        } else {
+            // En móvil, asegurar que el sidebar esté oculto inicialmente
+            if (!mobileMenuOverlay.classList.contains('hidden')) {
+                // Solo ocultar si no está abierto intencionalmente
+                return;
+            }
+            sidebar.classList.add('-translate-x-full');
+            sidebar.classList.remove('translate-x-0');
+        }
+    });
+
+    // Mejorar accesibilidad - navegación por teclado
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeMobileMenuFunc();
+        }
+    });
+
+    // Touch/swipe gestures para cerrar menú en móvil
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    sidebar.addEventListener('touchstart', function(e) {
+        touchStartX = e.changedTouches[0].screenX;
+    });
+
+    sidebar.addEventListener('touchend', function(e) {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    });
+
+    function handleSwipe() {
+        if (touchEndX < touchStartX - 50) {
+            // Swipe left to close
+            if (window.innerWidth < 1024) {
+                closeMobileMenuFunc();
+            }
+        }
+    }
+
+    // Inicialización
+    document.addEventListener('DOMContentLoaded', function() {
+        // Configurar estado inicial basado en el tamaño de pantalla
+        if (window.innerWidth < 1024) {
+            sidebar.classList.add('-translate-x-full');
+            sidebar.classList.remove('translate-x-0');
+        }
+    });
+</script>
 
 {% endblock %}
