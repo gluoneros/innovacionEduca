@@ -38,3 +38,7 @@ def registro_exitoso_view(request):
         'user': request.user
     }
     return render(request, 'users/registro_exitoso.html', context)
+
+@login_required
+def dashboard(request):
+    return render(request, 'users/dashboard.html', {'user': request.user})
