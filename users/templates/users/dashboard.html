@@ -5,6 +5,7 @@
 
 {% block head %}
 
+
 <!-- Navegación Superior -->
 <nav class="gradient-bg text-white shadow-lg relative z-50">
     <div class="px-4 sm:px-6 lg:px-8">
@@ -49,19 +50,36 @@
                 </div>
 
                 <!-- Usuario -->
-                <div class="user-profile">
-                    <div class="user-avatar">
-                        {# Mostramos las iniciales del nombre y apellido. Si no existen, las del username. #}
-                        {% if user.first_name and user.last_name %}
-                            {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
-                        {% else %}
-                            {{ user.username|first|upper }}
-                        {% endif %}
+                <el-dropdown class="inline-block">
+                    <div class="user-profile">
+                        <button  class="flex items-center gap-3">
+                            <div class="user-avatar">
+                                {# Mostramos las iniciales del nombre y apellido. Si no existen, las del username. #}
+                                {% if user.first_name and user.last_name %}
+                                    {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+                                {% else %}
+                                    {{ user.username|first|upper }}
+                                {% endif %}
+                            </div>
+                            {# Mostramos el nombre completo. Si no existe, mostramos el username. #}
+                            <span>{{ user.get_full_name|default:user.username }}</span>
+                            <i class="fas fa-chevron-down" style="margin-left: 10px;"></i>
+                        </button>
                     </div>
-                    {# Mostramos el nombre completo. Si no existe, mostramos el username. #}
-                    <span>{{ user.get_full_name|default:user.username }}</span>
-                    <i class="fas fa-chevron-down" style="margin-left: 10px;"></i>
-                </div>
+                    <!-- Menú Desplegable del Perfil -->
+                    <el-menu anchor="bottom end" popover class="w-56 origin-top-right rounded-md bg-white shadow-lg outline-1 outline-black/5 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in">
+                        <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">Mi Perfil</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">Configuración</a>
+                        <div class="border-t border-slate-200"></div>
+                        <form action="{% url 'logout' %}" method="post" class="w-full">
+                            {% csrf_token %}
+                             <button type="submit" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors text-left">
+                                 <i class="fas fa-sign-out-alt fa-fw"></i>
+                                 <span>Cerrar Sesión</span>
+                             </button>
+                        </form>
+                    </el-menu>
+                </el-dropdown>
             </div>
         </div>
     </div>
@@ -198,6 +216,15 @@
                     </div>
                 {% endif %}
             </div>
+             <div class="p-4 border-t border-slate-200">
+                 <form action="{% url 'logout' %}" method="post" class="w-full">
+                     {% csrf_token %}
+                     <button type="submit" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors text-left">
+                         <i class="fas fa-sign-out-alt fa-fw"></i>
+                         <span>Cerrar Sesión</span>
+                     </button>
+                 </form>
+             </div>
         </div>
     </aside>
 
@@ -438,165 +465,6 @@
         </div>
     </main>
 </div>
-
-<script>
-    // Variables globales
-    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-    const closeMobileMenu = document.getElementById('closeMobileMenu');
-    const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
-    const sidebar = document.getElementById('sidebar');
-    const userRoleSelect = document.getElementById('userRole');
-    const menuSections = document.querySelectorAll('.menu-section');
-
-    // Función para abrir menú móvil
-    function openMobileMenu() {
-        sidebar.classList.remove('-translate-x-full');
-        sidebar.classList.add('translate-x-0');
-        mobileMenuOverlay.classList.remove('hidden');
-        document.body.classList.add('overflow-hidden', 'lg:overflow-auto');
-    }
-
-    // Función para cerrar menú móvil
-    function closeMobileMenuFunc() {
-        sidebar.classList.add('-translate-x-full');
-        sidebar.classList.remove('translate-x-0');
-        mobileMenuOverlay.classList.add('hidden');
-        document.body.classList.remove('overflow-hidden');
-    }
-
-    // Event listeners para menú móvil
-    mobileMenuBtn.addEventListener('click', openMobileMenu);
-    closeMobileMenu.addEventListener('click', closeMobileMenuFunc);
-    mobileMenuOverlay.addEventListener('click', closeMobileMenuFunc);
-
-    // Cerrar menú móvil cuando se hace clic en un enlace (solo en móvil)
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.addEventListener('click', () => {
-            if (window.innerWidth < 1024) {
-                closeMobileMenuFunc();
-            }
-        });
-    });
-
-    // Cambio de rol de usuario
-    userRoleSelect.addEventListener('change', function() {
-        const selectedRole = this.value;
-
-        // Ocultar todos los menús
-        menuSections.forEach(section => {
-            section.classList.add('hidden');
-        });
-
-        // Mostrar el menú correspondiente
-        const targetMenu = document.getElementById(`menu-${selectedRole}`);
-        if (targetMenu) {
-            targetMenu.classList.remove('hidden');
-        }
-
-        // Cambiar el título del dashboard según el rol
-        const dashboardTitle = document.querySelector('main h1');
-        const dashboardSubtitle = document.querySelector('main p');
-
-        switch(selectedRole) {
-            case 'administrativo':
-                dashboardTitle.textContent = 'Dashboard Administrativo';
-                dashboardSubtitle.textContent = 'Bienvenido al panel de administración del colegio';
-                break;
-            case 'profesor':
-                dashboardTitle.textContent = 'Dashboard Profesor';
-                dashboardSubtitle.textContent = 'Gestiona tus cursos y estudiantes';
-                break;
-            case 'estudiante':
-                dashboardTitle.textContent = 'Dashboard Estudiante';
-                dashboardSubtitle.textContent = 'Consulta tus notas y horarios';
-                break;
-        }
-    });
-
-    // Animaciones y efectos interactivos
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.addEventListener('mouseenter', function() {
-            if (window.innerWidth >= 1024) {
-                this.style.transform = 'translateX(5px)';
-                this.style.transition = 'transform 0.3s ease';
-            }
-        });
-
-        item.addEventListener('mouseleave', function() {
-            if (window.innerWidth >= 1024) {
-                this.style.transform = 'translateX(0)';
-            }
-        });
-    });
-
-    // Efecto de hover en las tarjetas de estadísticas
-    document.querySelectorAll('[class*="stats-card"]').forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-2px) scale(1.02)';
-            this.style.transition = 'transform 0.3s ease';
-        });
-
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0) scale(1)';
-        });
-    });
-
-    // Manejo del redimensionamiento de ventana
-    window.addEventListener('resize', function() {
-        if (window.innerWidth >= 1024) {
-            // En desktop, asegurar que el sidebar esté visible
-            sidebar.classList.remove('-translate-x-full');
-            sidebar.classList.add('translate-x-0');
-            mobileMenuOverlay.classList.add('hidden');
-            document.body.classList.remove('overflow-hidden');
-        } else {
-            // En móvil, asegurar que el sidebar esté oculto inicialmente
-            if (!mobileMenuOverlay.classList.contains('hidden')) {
-                // Solo ocultar si no está abierto intencionalmente
-                return;
-            }
-            sidebar.classList.add('-translate-x-full');
-            sidebar.classList.remove('translate-x-0');
-        }
-    });
-
-    // Mejorar accesibilidad - navegación por teclado
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            closeMobileMenuFunc();
-        }
-    });
-
-    // Touch/swipe gestures para cerrar menú en móvil
-    let touchStartX = 0;
-    let touchEndX = 0;
-
-    sidebar.addEventListener('touchstart', function(e) {
-        touchStartX = e.changedTouches[0].screenX;
-    });
-
-    sidebar.addEventListener('touchend', function(e) {
-        touchEndX = e.changedTouches[0].screenX;
-        handleSwipe();
-    });
-
-    function handleSwipe() {
-        if (touchEndX < touchStartX - 50) {
-            // Swipe left to close
-            if (window.innerWidth < 1024) {
-                closeMobileMenuFunc();
-            }
-        }
-    }
-
-    // Inicialización
-    document.addEventListener('DOMContentLoaded', function() {
-        // Configurar estado inicial basado en el tamaño de pantalla
-        if (window.innerWidth < 1024) {
-            sidebar.classList.add('-translate-x-full');
-            sidebar.classList.remove('translate-x-0');
-        }
-    });
-</script>
-
+<!--menu desègable tailwind-->
+<script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
 {% endblock %}

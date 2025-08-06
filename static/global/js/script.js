@@ -57,7 +57,8 @@
      });
  });
 
- // dashbiard
+ // dashboard
+ src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1"//@tailwindplus/elements"
   // Variables globales
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');
     const closeMobileMenu = document.getElementById('closeMobileMenu');
