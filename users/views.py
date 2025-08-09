@@ -20,6 +20,12 @@ def registro_view(request):
 
     return render(request, 'users/register.html', {'form': form})
 
+def registro_exitoso_view(request):
+    context = {
+        'user': request.user
+    }
+    return render(request, 'users/registro_exitoso.html', context)
+
 @login_required # Este decorador protege la vista, solo usuarios logueados pueden entrar.
 def dashboard_view(request):
     """
@@ -30,15 +36,11 @@ def dashboard_view(request):
     context = {
         'user': request.user
     }
-    return render(request, 'users/dashboard.html', context)
+    return render(request, 'users/dashboard_base.html', context)
 
 
-def registro_exitoso_view(request):
-    context = {
-        'user': request.user
-    }
-    return render(request, 'users/registro_exitoso.html', context)
+
 
 @login_required
 def dashboard(request):
-    return render(request, 'users/dashboard.html', {'user': request.user})
+    return render(request, 'users/dashboard_base.html', {'user': request.user})
