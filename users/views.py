@@ -26,17 +26,20 @@ def registro_exitoso_view(request):
     }
     return render(request, 'users/registro_exitoso.html', context)
 
-@login_required # Este decorador protege la vista, solo usuarios logueados pueden entrar.
+@login_required
 def dashboard_view(request):
-    """
-    Muestra el panel de control del usuario que ha iniciado sesión.
-    """
-    # El objeto 'request.user' contiene toda la información del usuario logueado.
-    # Lo pasamos a la plantilla a través del diccionario de contexto.
-    context = {
-        'user': request.user
+    tipo = request.user.tipo_usuario # selecciona el contenido segun el tipo de usuario
+
+    template_map = {
+        'estudiante': 'users/dashboard_estudiante.html',
+        'profesor': 'users/dashboard_profesor.html',
+        'directivo': 'users/dashboard_directivo.html',
+        'acudiente': 'users/dashboard_acudiente.html',
     }
-    return render(request, 'users/dashboard_base.html', context)
+
+    return render(request, template_map.get(tipo, 'users/dashboard_estudiante.html'), {
+        'user': request.user
+    })
 
 
 
