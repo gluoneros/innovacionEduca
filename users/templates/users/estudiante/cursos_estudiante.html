@@ -1,431 +1,75 @@
 {% extends "users/estudiante/dashboard_estudiante.html" %}
 
 {% block estudiante_content %}
-
-    <!-- Sección de Mis Materias (inicialmente oculta) -->
-    <div id="mis-materias-section" class="hidden mb-8">
-            <div class="bg-white rounded-xl shadow-lg p-6">
-              <div class="flex items-center justify-between mb-6">
-                <h2 class="text-xl font-semibold text-gray-900">Mis Materias</h2>
-                <button
-                  id="cerrar-materias"
-                  class="text-gray-500 hover:text-gray-700"
-                >
-                  <i class="fas fa-times text-lg"></i>
-                </button>
-              </div>
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <!-- Materia 1 -->
-                <div
-                  class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-                >
-                  <div class="flex items-center space-x-3 mb-3">
-                    <div
-                      class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center"
-                    >
-                      <i class="fas fa-calculator text-white"></i>
-                    </div>
-                    <div>
-                      <h3 class="font-semibold text-gray-900">Matemáticas</h3>
-                      <p class="text-sm text-gray-500">11° Grado</p>
-                    </div>
-                  </div>
-                  <div class="space-y-2 text-sm">
-                    <p>
-                      <span class="font-medium">Profesor:</span> Carlos Martínez
-                    </p>
-                    <p>
-                      <span class="font-medium">Horario:</span> Lun, Mié, Vie
-                      8:00-9:00
-                    </p>
-                    <p>
-                      <span class="font-medium">Promedio:</span>
-                      <span class="text-green-600 font-semibold">8.5</span>
-                    </p>
-                  </div>
-                </div>
-
-                <!-- Materia 2 -->
-                <div
-                  class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-                >
-                  <div class="flex items-center space-x-3 mb-3">
-                    <div
-                      class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center"
-                    >
-                      <i class="fas fa-flask text-white"></i>
-                    </div>
-                    <div>
-                      <h3 class="font-semibold text-gray-900">Química</h3>
-                      <p class="text-sm text-gray-500">11° Grado</p>
-                    </div>
-                  </div>
-                  <div class="space-y-2 text-sm">
-                    <p><span class="font-medium">Profesor:</span> Ana López</p>
-                    <p>
-                      <span class="font-medium">Horario:</span> Mar, Jue 10:00-11:00
-                    </p>
-                    <p>
-                      <span class="font-medium">Promedio:</span>
-                      <span class="text-green-600 font-semibold">9.1</span>
-                    </p>
-                  </div>
-                </div>
-
-                <!-- Materia 3 -->
-                <div
-                  class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-                >
-                  <div class="flex items-center space-x-3 mb-3">
-                    <div
-                      class="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center"
-                    >
-                      <i class="fas fa-book-open text-white"></i>
-                    </div>
-                    <div>
-                      <h3 class="font-semibold text-gray-900">Literatura</h3>
-                      <p class="text-sm text-gray-500">11° Grado</p>
-                    </div>
-                  </div>
-                  <div class="space-y-2 text-sm">
-                    <p><span class="font-medium">Profesor:</span> Isabel García</p>
-                    <p>
-                      <span class="font-medium">Horario:</span> Lun, Mié 2:00-3:00
-                    </p>
-                    <p>
-                      <span class="font-medium">Promedio:</span>
-                      <span class="text-yellow-600 font-semibold">7.8</span>
-                    </p>
-                  </div>
-                </div>
-
-                <!-- Materia 4 -->
-                <div
-                  class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-                >
-                  <div class="flex items-center space-x-3 mb-3">
-                    <div
-                      class="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center"
-                    >
-                      <i class="fas fa-atom text-white"></i>
-                    </div>
-                    <div>
-                      <h3 class="font-semibold text-gray-900">Física</h3>
-                      <p class="text-sm text-gray-500">11° Grado</p>
-                    </div>
-                  </div>
-                  <div class="space-y-2 text-sm">
-                    <p><span class="font-medium">Profesor:</span> Roberto Silva</p>
-                    <p>
-                      <span class="font-medium">Horario:</span> Mar, Vie 9:00-10:00
-                    </p>
-                    <p>
-                      <span class="font-medium">Promedio:</span>
-                      <span class="text-green-600 font-semibold">8.9</span>
-                    </p>
-                  </div>
-                </div>
-
-                <!-- Materia 5 -->
-                <div
-                  class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-                >
-                  <div class="flex items-center space-x-3 mb-3">
-                    <div
-                      class="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center"
-                    >
-                      <i class="fas fa-globe text-white"></i>
-                    </div>
-                    <div>
-                      <h3 class="font-semibold text-gray-900">Historia</h3>
-                      <p class="text-sm text-gray-500">11° Grado</p>
-                    </div>
-                  </div>
-                  <div class="space-y-2 text-sm">
-                    <p>
-                      <span class="font-medium">Profesor:</span> María Fernández
-                    </p>
-                    <p><span class="font-medium">Horario:</span> Jue 11:00-12:00</p>
-                    <p>
-                      <span class="font-medium">Promedio:</span>
-                      <span class="text-green-600 font-semibold">8.2</span>
-                    </p>
-                  </div>
-                </div>
-
-                <!-- Materia 6 -->
-                <div
-                  class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-                >
-                  <div class="flex items-center space-x-3 mb-3">
-                    <div
-                      class="w-10 h-10 bg-indigo-500 rounded-full flex items-center justify-center"
-                    >
-                      <i class="fas fa-language text-white"></i>
-                    </div>
-                    <div>
-                      <h3 class="font-semibold text-gray-900">Inglés</h3>
-                      <p class="text-sm text-gray-500">11° Grado</p>
-                    </div>
-                  </div>
-                  <div class="space-y-2 text-sm">
-                    <p><span class="font-medium">Profesor:</span> John Smith</p>
-                    <p>
-                      <span class="font-medium">Horario:</span> Lun, Vie 1:00-2:00
-                    </p>
-                    <p>
-                      <span class="font-medium">Promedio:</span>
-                      <span class="text-green-600 font-semibold">9.3</span>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-    <!-- Contenido Principal -->
-    <div class="content-grid grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-
-
-
-    <!-- Tabla de Notas Recientes -->
-    <div class="mt-6 bg-white rounded-xl shadow-lg p-4 sm:p-6">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 space-y-2 sm:space-y-0">
-              <h2 class="text-lg sm:text-xl font-semibold text-gray-900">
-                Notas Recientes
-              </h2>
-              <button
-                class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors w-full sm:w-auto"
-              >
-                Agregar Nota
-              </button>
-            </div>
-
-            <!-- Tabla de cursos -->
-            <div class="bg-white p-6 rounded-xl shadow-lg">
-              <h3 class="text-xl font-semibold text-gray-800 mb-4">Últimos Cursos</h3>
-              <table class="w-full text-left">
-                <thead>
-                  <tr class="text-gray-600 border-b">
-                    <th class="py-3">Curso</th>
-                    <th class="py-3">Profesor</th>
-                    <th class="py-3">Estudiantes</th>
-                    <th class="py-3">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="hover:bg-gray-50">
-                    <td class="py-3">Matemáticas</td>
-                    <td class="py-3">Prof. Ana López</td>
-                    <td class="py-3">30</td>
-                    <td class="py-3">
-                      <button class="text-blue-600 hover:underline">Ver</button>
-                      <button class="text-green-600 hover:underline ml-2">Editar</button>
-                    </td>
-                  </tr>
-                  <tr class="hover:bg-gray-50">
-                    <td class="py-3">Literatura</td>
-                    <td class="py-3">Prof. Juan Pérez</td>
-                    <td class="py-3">28</td>
-                    <td class="py-3">
-                      <button class="text-blue-600 hover:underline">Ver</button>
-                      <button class="text-green-600 hover:underline ml-2">Editar</button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <!-- Tabla responsive -->
-            <div class="overflow-x-auto -mx-4 sm:mx-0">
-              <div class="inline-block min-w-full align-middle">
-                <div
-                  class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg"
-                >
-                  <table class="min-w-full divide-y divide-gray-300">
-                    <thead class="bg-gray-50">
-                      <tr>
-                        <th
-                          class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                        >
-                          Estudiante
-                        </th>
-                        <th
-                          class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                        >
-                          Curso
-                        </th>
-                        <th
-                          class="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                        >
-                          Evaluación
-                        </th>
-                        <th
-                          class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                        >
-                          Nota
-                        </th>
-                        <th
-                          class="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                        >
-                          Fecha
-                        </th>
-                        <th
-                          class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                        >
-                          Estado
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                      <tr class="hover:bg-gray-50">
-                        <td class="px-3 sm:px-6 py-4">
-                          <div class="flex items-center">
-                            <img
-                              class="h-6 w-6 sm:h-8 sm:w-8 rounded-full"
-                              src="https://images.unsplash.com/photo-1494790108755-2616c4b9de2b?w=40&h=40&fit=crop&crop=face&auto=format"
-                              alt=""
-                            />
-                            <div class="ml-2 sm:ml-3">
-                              <div
-                                class="text-xs sm:text-sm font-medium text-gray-900"
-                              >
-                                María Rodríguez
-                              </div>
-                              <div class="text-xs text-gray-500 sm:hidden">
-                                10°A
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td class="px-3 sm:px-6 py-4">
-                          <div class="text-xs sm:text-sm text-gray-900">
-                            Matemáticas
-                          </div>
-                          <div class="text-xs text-gray-500 sm:hidden">10°A</div>
-                        </td>
-                        <td
-                          class="hidden sm:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-900"
-                        >
-                          Parcial 1
-                        </td>
-                        <td
-                          class="px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600"
-                        >
-                          9.2
-                        </td>
-                        <td
-                          class="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500"
-                        >
-                          2024-07-10
-                        </td>
-                        <td class="px-3 sm:px-6 py-4 whitespace-nowrap">
-                          <span
-                            class="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full"
-                            >Aprobado</span
-                          >
-                        </td>
-                      </tr>
-                      <tr class="hover:bg-gray-50">
-                        <td class="px-3 sm:px-6 py-4">
-                          <div class="flex items-center">
-                            <img
-                              class="h-6 w-6 sm:h-8 sm:w-8 rounded-full"
-                              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face&auto=format"
-                              alt=""
-                            />
-                            <div class="ml-2 sm:ml-3">
-                              <div
-                                class="text-xs sm:text-sm font-medium text-gray-900"
-                              >
-                                Carlos Mendoza
-                              </div>
-                              <div class="text-xs text-gray-500 sm:hidden">
-                                11°B
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td class="px-3 sm:px-6 py-4">
-                          <div class="text-xs sm:text-sm text-gray-900">
-                            Química
-                          </div>
-                          <div class="text-xs text-gray-500 sm:hidden">11°B</div>
-                        </td>
-                        <td
-                          class="hidden sm:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-900"
-                        >
-                          Quiz 3
-                        </td>
-                        <td
-                          class="px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-yellow-600"
-                        >
-                          7.8
-                        </td>
-                        <td
-                          class="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500"
-                        >
-                          2024-07-09
-                        </td>
-                        <td class="px-3 sm:px-6 py-4 whitespace-nowrap">
-                          <span
-                            class="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full"
-                            >Regular</span
-                          >
-                        </td>
-                      </tr>
-                      <tr class="hover:bg-gray-50">
-                        <td class="px-3 sm:px-6 py-4">
-                          <div class="flex items-center">
-                            <img
-                              class="h-6 w-6 sm:h-8 sm:w-8 rounded-full"
-                              src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face&auto=format"
-                              alt=""
-                            />
-                            <div class="ml-2 sm:ml-3">
-                              <div
-                                class="text-xs sm:text-sm font-medium text-gray-900"
-                              >
-                                Ana Torres
-                              </div>
-                              <div class="text-xs text-gray-500 sm:hidden">9°C</div>
-                            </div>
-                          </div>
-                        </td>
-                        <td class="px-3 sm:px-6 py-4">
-                          <div class="text-xs sm:text-sm text-gray-900">
-                            Literatura
-                          </div>
-                          <div class="text-xs text-gray-500 sm:hidden">9°C</div>
-                        </td>
-                        <td
-                          class="hidden sm:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-900"
-                        >
-                          Ensayo
-                        </td>
-                        <td
-                          class="px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600"
-                        >
-                          8.9
-                        </td>
-                        <td
-                          class="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500"
-                        >
-                          2024-07-08
-                        </td>
-                        <td class="px-3 sm:px-6 py-4 whitespace-nowrap">
-                          <span
-                            class="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full"
-                            >Aprobado</span
-                          >
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
+<div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+    <!-- Encabezado de la sección -->
+    <div class="mb-6 border-b pb-4">
+        <h2 class="text-2xl font-bold text-gray-900">Mis Cursos</h2>
+        <p class="mt-1 text-sm text-gray-600">Aquí puedes ver todos los cursos en los que estás inscrito.</p>
     </div>
 
-{% endblock %}
+    <!-- Contenedor de la tabla para overflow en móviles -->
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Curso
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Profesor
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Compañeros
+                    </th>
+                    <th scope="col" class="relative px-6 py-3">
+                        <span class="sr-only">Acciones</span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                <!-- Fila de ejemplo 1 -->
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">Matemáticas</div>
+                        <div class="text-sm text-gray-500">Grado 11°</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">Prof. Ana López</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        30
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <a href="#" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                            Ir al Curso
+                        </a>
+                    </td>
+                </tr>
 
+                <!-- Fila de ejemplo 2 -->
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">Literatura</div>
+                        <div class="text-sm text-gray-500">Grado 11°</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">Prof. Juan Pérez</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        28
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <a href="#" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                            Ir al Curso
+                        </a>
+                    </td>
+                </tr>
+
+                <!-- Puedes agregar más filas dinámicamente con un bucle de Django aquí -->
+
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
