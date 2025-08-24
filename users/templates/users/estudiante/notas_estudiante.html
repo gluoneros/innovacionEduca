@@ -1,10 +1,211 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<h1>Notas</h1>
-</body>
-</html>
+{% extends "users/estudiante/dashboard_estudiante.html" %}
+
+{% block estudiante_content %}
+    <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+        <!-- Encabezado de la sección -->
+        <div class="mb-6 border-b pb-4">
+            <h2 class="text-2xl font-bold text-gray-900">Mis Notas Por Cursos</h2>
+            <p class="mt-1 text-sm text-gray-600">Aquí puedes ver todas las notas de tus cursos.</p>
+        </div>
+
+    <div class="max-w-3xl mx-auto space-y-4">
+        <!-- Accordion 1 -->
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <input type="checkbox" id="accordion1" class="peer hidden">
+            <label for="accordion1" class="flex items-center justify-between p-4 bg-blue-600 text-white cursor-pointer hover:bg-blue-700 transition-colors">
+                <span class="text-lg font-semibold">Professional Profile</span>
+                <svg class="w-6 h-6 transition-transform peer-checked:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </label>
+            <div class="max-h-0 overflow-hidden transition-all duration-300 peer-checked:max-h-screen">
+                <div class="p-4">
+                    <a href="https://abhirajk.vercel.app/" target="_blank" class="block">
+                        <img src="https://res.cloudinary.com/djv4xa6wu/image/upload/v1735722165/AbhirajK/Abhirajk.webp" alt="Abhiraj K Professional" class="w-full h-64 object-cover rounded-lg mb-4">
+                    </a>
+                    <p class="text-gray-700 leading-relaxed">Full-stack developer with expertise in modern web technologies and a passion for creating innovative solutions.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Accordion 2 -->
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <input type="checkbox" id="accordion2" class="peer hidden">
+            <label for="accordion2" class="flex items-center justify-between p-4 bg-purple-600 text-white cursor-pointer hover:bg-purple-700 transition-colors">
+                <span class="text-lg font-semibold">MyKare Experience</span>
+                <svg class="w-6 h-6 transition-transform peer-checked:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </label>
+            <div class="max-h-0 overflow-hidden transition-all duration-300 peer-checked:max-h-screen">
+                <div class="p-4">
+                    <a href="https://abhirajk.vercel.app/" target="_blank" class="block">
+                        <img src="https://res.cloudinary.com/djv4xa6wu/image/upload/v1735722163/AbhirajK/Abhirajk%20mykare.webp" alt="MyKare Experience" class="w-full h-64 object-cover rounded-lg mb-4">
+                    </a>
+                    <p class="text-gray-700 leading-relaxed">Contributing to healthcare innovation through advanced web development and system architecture.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Accordion 3 -->
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <input type="checkbox" id="accordion3" class="peer hidden">
+            <label for="accordion3" class="flex items-center justify-between p-4 bg-green-600 text-white cursor-pointer hover:bg-green-700 transition-colors">
+                <span class="text-lg font-semibold">Project Showcase</span>
+                <svg class="w-6 h-6 transition-transform peer-checked:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </label>
+            <div class="max-h-0 overflow-hidden transition-all duration-300 peer-checked:max-h-screen">
+                <div class="p-4">
+                    <a href="https://abhirajk.vercel.app/" target="_blank" class="block">
+                        <img src="https://res.cloudinary.com/djv4xa6wu/image/upload/v1735722161/AbhirajK/Abhirajk2.webp" alt="Project Showcase" class="w-full h-64 object-cover rounded-lg mb-4">
+                    </a>
+                    <p class="text-gray-700 leading-relaxed">Building cutting-edge applications using Next.js, React, and modern web technologies.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Accordion 4 -->
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <input type="checkbox" id="accordion4" class="peer hidden">
+            <label for="accordion4" class="flex items-center justify-between p-4 bg-red-600 text-white cursor-pointer hover:bg-red-700 transition-colors">
+                <span class="text-lg font-semibold">Technical Skills</span>
+                <svg class="w-6 h-6 transition-transform peer-checked:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </label>
+            <div class="max-h-0 overflow-hidden transition-all duration-300 peer-checked:max-h-screen">
+                <div class="p-4">
+                    <a href="https://abhirajk.vercel.app/" target="_blank" class="block">
+                        <img src="https://res.cloudinary.com/djv4xa6wu/image/upload/v1735722161/AbhirajK/Abhirajk3.webp" alt="Technical Skills" class="w-full h-64 object-cover rounded-lg mb-4">
+                    </a>
+                    <p class="text-gray-700 leading-relaxed">Expertise in full-stack development, cloud technologies, and modern frameworks.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Accordion 5 -->
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <input type="checkbox" id="accordion5" class="peer hidden">
+            <label for="accordion5" class="flex items-center justify-between p-4 bg-indigo-600 text-white cursor-pointer hover:bg-indigo-700 transition-colors">
+                <span class="text-lg font-semibold">Development Process</span>
+                <svg class="w-6 h-6 transition-transform peer-checked:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </label>
+            <div class="max-h-0 overflow-hidden transition-all duration-300 peer-checked:max-h-screen">
+                <div class="p-4">
+                    <a href="https://abhirajk.vercel.app/" target="_blank" class="block">
+                        <img src="https://res.cloudinary.com/djv4xa6wu/image/upload/v1735722160/AbhirajK/Abhirajk4.webp" alt="Development Process" class="w-full h-64 object-cover rounded-lg mb-4">
+                    </a>
+                    <p class="text-gray-700 leading-relaxed">Following industry best practices and agile methodologies for efficient development.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Accordion 6 -->
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <input type="checkbox" id="accordion6" class="peer hidden">
+            <label for="accordion6" class="flex items-center justify-between p-4 bg-pink-600 text-white cursor-pointer hover:bg-pink-700 transition-colors">
+                <span class="text-lg font-semibold">Creative Vision</span>
+                <svg class="w-6 h-6 transition-transform peer-checked:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </label>
+            <div class="max-h-0 overflow-hidden transition-all duration-300 peer-checked:max-h-screen">
+                <div class="p-4">
+                    <a href="https://abhirajk.vercel.app/" target="_blank" class="block">
+                        <img src="https://res.cloudinary.com/djv4xa6wu/image/upload/v1735722159/AbhirajK/Abhirajk5.webp" alt="Creative Vision" class="w-full h-64 object-cover rounded-lg mb-4">
+                    </a>
+                    <p class="text-gray-700 leading-relaxed">Combining technical expertise with creative design to deliver outstanding user experiences.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table notas -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden mb-8">
+      <header class="bg-blue-600 text-white p-4 flex justify-between items-center">
+        <h3 class="text-xl font-bold">Notas por Curso</h3>
+        <button class="bg-blue-700 hover:bg-blue-800 px-3 py-1 rounded-md transition">
+          <i class="fa fa-filter"></i> Filtrar
+        </button>
+      </header>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Curso</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estudiante</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nota 1</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nota 2</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nota 3</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Promedio</th>
+          </tr>
+          </thead>
+
+          <tbody class="bg-white divide-y divide-gray-200">
+          <tr>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-700">Matemáticas</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">Estudiante A</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-green-700">9.2</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-green-700">8.5</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-green-700">9.0</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-700">8.9</td>
+          </tr>
+          <tr>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-700">Ciencias</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">Estudiante B</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-yellow-700">7.5</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-yellow-700">8.2</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-yellow-700">7.8</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-700">7.8</td>
+          </tr>
+          <tr>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-700">Literatura</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">Estudiante C</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-red-700">6.5</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-red-700">7.0</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-red-700">6.8</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-700">6.7</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Estatisticas -->
+    <div class="bg-white rounded-lg shadow-md p-4 mb-8">
+      <h3 class="text-lg font-bold text-gray-800 mb-4">Estadísticas de Notas</h3>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="flex items-center space-x-2 p-2 bg-blue-50 rounded-md">
+          <i class="fa fa-chart-bar text-blue-700"></i>
+          <span class="font-medium">Promedio de Curso</span>
+          <span class="text-xl font-bold ml-auto text-blue-700">8.2</span>
+        </div>
+
+        <div class="flex items-center space-x-2 p-2 bg-green-50 rounded-md">
+          <i class="fa fa-chart-line text-green-700"></i>
+          <span class="font-medium">Nota más Alta</span>
+          <span class="text-xl font-bold ml-auto text-green-700">9.8</span>
+        </div>
+
+        <div class="flex items-center space-x-2 p-2 bg-yellow-50 rounded-md">
+          <i class="fa fa-chart-area text-yellow-700"></i>
+          <span class="font-medium">Nota más Baja</span>
+          <span class="text-xl font-bold ml-auto text-yellow-700">6.3</span>
+        </div>
+
+        <div class="flex items-center space-x-2 p-2 bg-red-50 rounded-md">
+          <i class="fa fa-chart-pie text-red-700"></i>
+          <span class="font-medium">Desaprobados</span>
+          <span class="text-xl font-bold ml-auto text-red-700">3</span>
+        </div>
+      </div>
+    </div>
+
+    </div>
+{% endblock %}

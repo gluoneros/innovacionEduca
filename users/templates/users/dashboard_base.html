@@ -19,19 +19,7 @@
 
                 <!-- Logo -->
                 <div class="flex items-center space-x-2">
-                    <svg width="32" height="32" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-8 sm:h-8">
-                        <defs>
-                            <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#4facfe;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#00f2fe;stop-opacity:1" />
-                            </linearGradient>
-                        </defs>
-                        <circle cx="25" cy="25" r="22" fill="white" opacity="0.2"/>
-                        <rect x="12" y="18" width="26" height="16" rx="2" fill="white" opacity="0.95"/>
-                        <rect x="14" y="20" width="22" height="2" rx="1" fill="url(#logoGrad)" opacity="0.8"/>
-                        <circle cx="32" cy="12" r="3" fill="url(#logoGrad)"/>
-                        <circle cx="32" cy="12" r="1.5" fill="white"/>
-                    </svg>
+                    <i class="fas fa-school text-2xl"></i>
                     <div class="hidden sm:block">
                         <span>{{ user.nombre_colegio|default:"Mi Institución" }}</span>
                     </div>
@@ -73,10 +61,10 @@
                         <div class="border-t border-slate-200"></div>
                         <form action="{% url 'logout' %}" method="post" class="w-full">
                             {% csrf_token %}
-                             <button type="submit" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors text-left">
-                                 <i class="fas fa-sign-out-alt fa-fw"></i>
-                                 <span>Cerrar Sesión</span>
-                             </button>
+                            <button type="submit" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors text-left">
+                                <i class="fas fa-sign-out-alt fa-fw"></i>
+                                <span>Cerrar Sesión</span>
+                            </button>
                         </form>
                     </el-menu>
                 </el-dropdown>
@@ -93,73 +81,142 @@
 <!-- Menú Lateral -->
 <div class="flex">
     <!-- Menú Lateral -->
-    <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-40 w-64 bg-white shadow-lg transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
-        <div class="h-full flex flex-col">
-            <!-- Header del sidebar -->
+    <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-40 w-64 bg-white shadow-lg transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col justify-between">
+        <!-- Header del sidebar -->
 
-            <!-- Contenido del menú -->
-            <div class="flex-1 overflow-y-auto">
+        <!-- Contenido del menú -->
+        <div class="flex-1 overflow-y-auto">
 
-                <!-- Menú Administrativo -->
-                {% if user.tipo_usuario == 'directivo' %}
-                <div id="menu-administrativo" >
+            <!-- Menú Administrativo -->
+            {% if user.tipo_usuario == 'directivo' %}
+            <div id="menu-administrativo" >
+                <div class="p-4 bg-gray-50 border-b">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Panel Administrativo</h3>
+                </div>
+                <nav class="mt-2">
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-purple-500">
+                        <i class="fas fa-tachometer-alt mr-3 text-purple-500 w-5"></i>
+                        <span class="text-sm sm:text-base">Dashboard Principal</span>
+                    </a>
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-blue-500">
+                        <i class="fas fa-users mr-3 text-blue-500 w-5"></i>
+                        <span class="text-sm sm:text-base">Gestión de Usuarios</span>
+                    </a>
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-green-500">
+                        <i class="fas fa-book mr-3 text-green-500 w-5"></i>
+                        <span class="text-sm sm:text-base">Gestión de Cursos</span>
+                    </a>
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-orange-500">
+                        <i class="fas fa-calendar-alt mr-3 text-orange-500 w-5"></i>
+                        <span class="text-sm sm:text-base">Horarios</span>
+                    </a>
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-red-500">
+                        <i class="fas fa-chart-bar mr-3 text-red-500 w-5"></i>
+                        <span class="text-sm sm:text-base">Reportes Académicos</span>
+                    </a>
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-gray-500">
+                        <i class="fas fa-cog mr-3 text-gray-500 w-5"></i>
+                        <span class="text-sm sm:text-base">Configuración</span>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Menú Profesor -->
+            {% elif user.tipo_usuario == 'profesor' %}
+            <div id="menu-profesor" >
+                <div class="p-4 bg-gray-50 border-b">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Panel Profesor</h3>
+                </div>
+                <nav class="mt-2">
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-purple-500">
+                        <i class="fas fa-home mr-3 text-purple-500 w-5"></i>
+                        <span class="text-sm sm:text-base">Mi Dashboard</span>
+                    </a>
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-blue-500">
+                        <i class="fas fa-chalkboard-teacher mr-3 text-blue-500 w-5"></i>
+                        <span class="text-sm sm:text-base">Mis Cursos</span>
+                    </a>
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-green-500">
+                        <i class="fas fa-clipboard-list mr-3 text-green-500 w-5"></i>
+                        <span class="text-sm sm:text-base">Calificaciones</span>
+                    </a>
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-orange-500">
+                        <i class="fas fa-users mr-3 text-orange-500 w-5"></i>
+                        <span class="text-sm sm:text-base">Mis Estudiantes</span>
+                    </a>
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-red-500">
+                        <i class="fas fa-tasks mr-3 text-red-500 w-5"></i>
+                        <span class="text-sm sm:text-base">Tareas y Exámenes</span>
+                    </a>
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-red-500">
+                        <i class="fas fa-user mr-3 text-red-500 w-5"></i>
+                        <span class="text-sm sm:text-base">Mi Perfil</span>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Menú Estudiante -->
+            {% elif user.tipo_usuario == 'estudiante' %}
+                <div id="menu-estudiante" >
                     <div class="p-4 bg-gray-50 border-b">
-                        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Panel Administrativo</h3>
+                        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Panel Estudiante</h3>
                     </div>
                     <nav class="mt-2">
-                        <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-purple-500">
-                            <i class="fas fa-tachometer-alt mr-3 text-purple-500 w-5"></i>
-                            <span class="text-sm sm:text-base">Dashboard Principal</span>
+                        <a href='{% url 'dashboard_estudiante' %}' class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-purple-500">
+                            <i class="fas fa-home mr-3 text-purple-500 w-5"></i>
+                            <span class="text-sm sm:text-base">Mi Dashboard</span>
                         </a>
-                        <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-blue-500">
-                            <i class="fas fa-users mr-3 text-blue-500 w-5"></i>
-                            <span class="text-sm sm:text-base">Gestión de Usuarios</span>
+                        <a href='{% url 'cursos_estudiante' %}' class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-blue-500">
+                            <i class="fas fa-book-open mr-3 text-blue-500 w-5"></i>
+                            <span class="text-sm sm:text-base">Mis Cursos</span>
                         </a>
-                        <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-green-500">
-                            <i class="fas fa-book mr-3 text-green-500 w-5"></i>
-                            <span class="text-sm sm:text-base">Gestión de Cursos</span>
+                        <a href='{% url 'notas_estudiante' %}' class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-yellow-500">
+                            <i class="fas fa-star mr-3 text-yellow-500 w-5"></i>
+                            <span class="text-sm sm:text-base">Mis Notas</span>
                         </a>
-                        <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-orange-500">
-                            <i class="fas fa-calendar-alt mr-3 text-orange-500 w-5"></i>
-                            <span class="text-sm sm:text-base">Horarios</span>
+                        <a href='{% url 'boletin_estudiante' %}' class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-green-500">
+                            <i class="fas fa-calendar mr-3 text-green-500 w-5"></i>
+                            <span class="text-sm sm:text-base">Boletín Académico</span>
                         </a>
-                        <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-red-500">
-                            <i class="fas fa-chart-bar mr-3 text-red-500 w-5"></i>
-                            <span class="text-sm sm:text-base">Reportes Académicos</span>
+                        <a href='{% url 'tareas_estudiante' %}' class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-orange-500">
+                            <i class="fas fa-clipboard-check mr-3 text-orange-500 w-5"></i>
+                            <span class="text-sm sm:text-base">Tareas Pendientes</span>
                         </a>
-                        <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-gray-500">
-                            <i class="fas fa-cog mr-3 text-gray-500 w-5"></i>
-                            <span class="text-sm sm:text-base">Configuración</span>
+                        <a href='{% url 'perfil_estudiante' %}' class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-red-500">
+                            <i class="fas fa-user mr-3 text-red-500 w-5"></i>
+                            <span class="text-sm sm:text-base">Mi Perfil</span>
                         </a>
                     </nav>
-                </div>
+            </div>
 
-                <!-- Menú Profesor -->
-                {% elif user.tipo_usuario == 'profesor' %}
-                <div id="menu-profesor" >
+
+            <!-- Menú Acudiente -->
+            {% elif user.tipo_usuario == 'acudiente' %}
+                <div id="menu-estudiante" >
                     <div class="p-4 bg-gray-50 border-b">
-                        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Panel Profesor</h3>
+                        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Panel Acudiente</h3>
                     </div>
                     <nav class="mt-2">
+                        <!-- Define menu items for Acudiente -->
                         <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-purple-500">
                             <i class="fas fa-home mr-3 text-purple-500 w-5"></i>
                             <span class="text-sm sm:text-base">Mi Dashboard</span>
                         </a>
                         <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-blue-500">
-                            <i class="fas fa-chalkboard-teacher mr-3 text-blue-500 w-5"></i>
-                            <span class="text-sm sm:text-base">Mis Cursos</span>
-                        </a>
-                        <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-green-500">
-                            <i class="fas fa-clipboard-list mr-3 text-green-500 w-5"></i>
-                            <span class="text-sm sm:text-base">Calificaciones</span>
-                        </a>
-                        <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-orange-500">
-                            <i class="fas fa-users mr-3 text-orange-500 w-5"></i>
+                            <i class="fas fa-book-open mr-3 text-blue-500 w-5"></i>
                             <span class="text-sm sm:text-base">Mis Estudiantes</span>
                         </a>
-                        <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-red-500">
-                            <i class="fas fa-tasks mr-3 text-red-500 w-5"></i>
-                            <span class="text-sm sm:text-base">Tareas y Exámenes</span>
+                        <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-yellow-500">
+                            <i class="fas fa-star mr-3 text-yellow-500 w-5"></i>
+                            <span class="text-sm sm:text-base">Notas De Mis Estuduantes</span>
+                        </a>
+                        <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-green-500">
+                            <i class="fas fa-calendar mr-3 text-green-500 w-5"></i>
+                            <span class="text-sm sm:text-base">Boletín Académico</span>
+                        </a>
+                        <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-orange-500">
+                            <i class="fas fa-clipboard-check mr-3 text-orange-500 w-5"></i>
+                            <span class="text-sm sm:text-base">Tareas Pendientes</span>
                         </a>
                         <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-red-500">
                             <i class="fas fa-user mr-3 text-red-500 w-5"></i>
@@ -167,96 +224,47 @@
                         </a>
                     </nav>
                 </div>
-
-                <!-- Menú Estudiante -->
-                {% elif user.tipo_usuario == 'estudiante' %}
-                    <div id="menu-estudiante" >
-                        <div class="p-4 bg-gray-50 border-b">
-                            <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Panel Estudiante</h3>
-                        </div>
-                        <nav class="mt-2">
-                            <a href='{% url 'dashboard_estudiante' %}' class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-purple-500">
-                                <i class="fas fa-home mr-3 text-purple-500 w-5"></i>
-                                <span class="text-sm sm:text-base">Mi Dashboard</span>
-                            </a>
-                            <a href='{% url 'cursos_estudiante' %}' class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-blue-500">
-                                <i class="fas fa-book-open mr-3 text-blue-500 w-5"></i>
-                                <span class="text-sm sm:text-base">Mis Cursos</span>
-                            </a>
-                            <a href='{% url 'notas_estudiante' %}' class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-yellow-500">
-                                <i class="fas fa-star mr-3 text-yellow-500 w-5"></i>
-                                <span class="text-sm sm:text-base">Mis Notas</span>
-                            </a>
-                            <a href='{% url 'boletin_estudiante' %}' class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-green-500">
-                                <i class="fas fa-calendar mr-3 text-green-500 w-5"></i>
-                                <span class="text-sm sm:text-base">Boletín Académico</span>
-                            </a>
-                            <a href='{% url 'tareas_estudiante' %}' class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-orange-500">
-                                <i class="fas fa-clipboard-check mr-3 text-orange-500 w-5"></i>
-                                <span class="text-sm sm:text-base">Tareas Pendientes</span>
-                            </a>
-                            <a href='{% url 'perfil_estudiante' %}' class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-red-500">
-                                <i class="fas fa-user mr-3 text-red-500 w-5"></i>
-                                <span class="text-sm sm:text-base">Mi Perfil</span>
-                            </a>
-                        </nav>
-                </div>
-
-
-                <!-- Menú Acudiente -->
-                {% elif user.tipo_usuario == 'acudiente' %}
-                    <div id="menu-estudiante" >
-                        <div class="p-4 bg-gray-50 border-b">
-                            <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Panel Acudiente</h3>
-                        </div>
-                        <nav class="mt-2">
-                            <!-- Define menu items for Acudiente -->
-                            <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-purple-500">
-                                <i class="fas fa-home mr-3 text-purple-500 w-5"></i>
-                                <span class="text-sm sm:text-base">Mi Dashboard</span>
-                            </a>
-                            <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-blue-500">
-                                <i class="fas fa-book-open mr-3 text-blue-500 w-5"></i>
-                                <span class="text-sm sm:text-base">Mis Estudiantes</span>
-                            </a>
-                            <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-yellow-500">
-                                <i class="fas fa-star mr-3 text-yellow-500 w-5"></i>
-                                <span class="text-sm sm:text-base">Notas De Mis Estuduantes</span>
-                            </a>
-                            <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-green-500">
-                                <i class="fas fa-calendar mr-3 text-green-500 w-5"></i>
-                                <span class="text-sm sm:text-base">Boletín Académico</span>
-                            </a>
-                            <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-orange-500">
-                                <i class="fas fa-clipboard-check mr-3 text-orange-500 w-5"></i>
-                                <span class="text-sm sm:text-base">Tareas Pendientes</span>
-                            </a>
-                            <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-red-500">
-                                <i class="fas fa-user mr-3 text-red-500 w-5"></i>
-                                <span class="text-sm sm:text-base">Mi Perfil</span>
-                            </a>
-                        </nav>
-                    </div>
-                {% endif %}
-            </div>
-             <div class="p-4 border-t border-slate-200">
-                 <form action="{% url 'logout' %}" method="post" class="w-full">
-                     {% csrf_token %}
-                     <button type="submit" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors text-left">
-                         <i class="fas fa-sign-out-alt fa-fw"></i>
-                         <span>Cerrar Sesión</span>
-                     </button>
-                 </form>
-             </div>
+            {% endif %}
         </div>
-    </aside>
+
+        <!-- Botón Cerrar Sesión pegado abajo -->
+        <div class="p-4 border-t border-slate-200">
+            <form action="{% url 'logout' %}" method="post" class="w-full">
+                {% csrf_token %}
+                <button type="submit" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors text-left">
+                    <i class="fas fa-sign-out-alt fa-fw"></i>
+                    <span>Cerrar Sesión</span>
+                </button>
+            </form>
+        </div>
+
+</aside>
 
     <!-- Contenido Principal -->
-    {% block dashboard_content %}{% endblock %}
+    <main class="flex-1 bg-gray-50 min-h-screen">
+        {% block dashboard_content %}{% endblock %}
+    </main>
 
+    <!-- Overlay para el menú móvil -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-30 hidden lg:hidden"></div>
 
 </div>
 <!--menu desègable tailwind-->
 <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
-{% endblock %}
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        function toggleMenu() {
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+
+        mobileMenuBtn.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
+    });
+</script>
+{% endblock %}
