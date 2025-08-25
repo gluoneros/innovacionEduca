@@ -86,7 +86,7 @@ DATABASES = {
         'NAME': 'innovacioneducativa',
         'USER': 'usuario',
         'PASSWORD': 'usuario6',
-        'HOST': 'localhost',
+        'HOST': 'localhost',    
         'PORT': '5432',
     }
 }
