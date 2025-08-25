@@ -1,80 +1,202 @@
-{% extends "users/estudiante/dashboard_estudiante.html" %}
-
+{% extends "users/estudiante/dashboard_estudiante.html" %} 
 {% block estudiante_content %}
-    <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
-        <!-- Encabezado de la sección -->
-        <div class="mb-6 border-b pb-4">
-            <h2 class="text-2xl font-bold text-gray-900">Mis Cursos</h2>
-            <p class="mt-1 text-sm text-gray-600">Aquí puedes ver todos los cursos en los que estás inscrito.</p>
+<div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+  <!-- Encabezado de la sección -->
+  <div class="mb-6 border-b pb-4">
+    <h2 class="text-2xl font-bold text-gray-900">Mis Tareas</h2>
+    <p class="mt-1 text-sm text-gray-600">
+      Aquí puedes ver todas las tareas asignadas y su estado de progreso.
+    </p>
+  </div>
+
+  <!-- Filtros de estado -->
+  <div class="mb-6 flex flex-wrap gap-2">
+    <button
+      class="px-4 py-2 text-sm font-medium text-purple-700 bg-purple-100 rounded-lg hover:bg-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
+    >
+      Todas
+    </button>
+    <button
+      class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+    >
+      Pendientes
+    </button>
+    <button
+      class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+    >
+      En Progreso
+    </button>
+    <button
+      class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+    >
+      Completadas
+    </button>
+  </div>
+
+  <!-- Lista de tareas -->
+  <div class="space-y-4">
+    <!-- Tarea 1 - Pendiente -->
+    <div
+      class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+    >
+      <div class="flex items-start justify-between">
+        <div class="flex-1">
+          <div class="flex items-center gap-3 mb-2">
+            <span
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800"
+            >
+              Pendiente
+            </span>
+            <span class="text-sm text-gray-500">Matemáticas</span>
+          </div>
+          <h3 class="text-lg font-medium text-gray-900 mb-1">
+            Resolver ejercicios de álgebra
+          </h3>
+          <p class="text-sm text-gray-600 mb-3">
+            Completar los ejercicios del capítulo 5, páginas 120-125. Incluir
+            procedimientos detallados.
+          </p>
+          <div class="flex items-center gap-4 text-sm text-gray-500">
+            <span>📅 Fecha límite: 28 Feb 2025</span>
+            <span>👨‍🏫 Prof. Ana López</span>
+          </div>
         </div>
-
-        <!-- Contenedor de la tabla para overflow en móviles -->
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                <tr>
-                    <th scope="col"
-                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Curso
-                    </th>
-                    <th scope="col"
-                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Profesor
-                    </th>
-                    <th scope="col"
-                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Compañeros
-                    </th>
-                    <th scope="col" class="relative px-6 py-3">
-                        <span class="sr-only">Acciones</span>
-                    </th>
-                </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                <!-- Fila de ejemplo 1 -->
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm font-medium text-gray-900">Matemáticas</div>
-                        <div class="text-sm text-gray-500">Grado 11°</div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">Prof. Ana López</div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        30
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <a href="#"
-                           class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
-                            Ir al Curso
-                        </a>
-                    </td>
-                </tr>
-
-                <!-- Fila de ejemplo 2 -->
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm font-medium text-gray-900">Literatura</div>
-                        <div class="text-sm text-gray-500">Grado 11°</div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">Prof. Juan Pérez</div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        28
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <a href="#"
-                        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
-                            Ir al Curso
-                        </a>
-                    </td>
-                </tr>
-
-                <!-- Puedes agregar más filas dinámicamente con un bucle de Django aquí -->
-
-                </tbody>
-            </table>
+        <div class="ml-4 flex flex-col gap-2">
+          <button
+            class="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+          >
+            Ver Detalles
+          </button>
         </div>
+      </div>
     </div>
+
+    <!-- Tarea 2 - En Progreso -->
+    <div
+      class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+    >
+      <div class="flex items-start justify-between">
+        <div class="flex-1">
+          <div class="flex items-center gap-3 mb-2">
+            <span
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"
+            >
+              En Progreso
+            </span>
+            <span class="text-sm text-gray-500">Literatura</span>
+          </div>
+          <h3 class="text-lg font-medium text-gray-900 mb-1">
+            Ensayo sobre "Cien años de soledad"
+          </h3>
+          <p class="text-sm text-gray-600 mb-3">
+            Escribir un ensayo de 1000 palabras analizando los temas principales
+            de la obra de García Márquez.
+          </p>
+          <div class="flex items-center gap-4 text-sm text-gray-500 mb-2">
+            <span>📅 Fecha límite: 5 Mar 2025</span>
+            <span>👨‍🏫 Prof. Juan Pérez</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-2">
+            <div
+              class="bg-yellow-500 h-2 rounded-full"
+              style="width: 60%"
+            ></div>
+          </div>
+          <span class="text-xs text-gray-500 mt-1">60% completado</span>
+        </div>
+        <div class="ml-4 flex flex-col gap-2">
+          <button
+            class="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+          >
+            Continuar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tarea 3 - Completada -->
+    <div
+      class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow bg-green-50"
+    >
+      <div class="flex items-start justify-between">
+        <div class="flex-1">
+          <div class="flex items-center gap-3 mb-2">
+            <span
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
+            >
+              Completada
+            </span>
+            <span class="text-sm text-gray-500">Ciencias</span>
+          </div>
+          <h3 class="text-lg font-medium text-gray-900 mb-1">
+            Laboratorio de química - Reacciones ácido-base
+          </h3>
+          <p class="text-sm text-gray-600 mb-3">
+            Realizar experimentos y documentar observaciones sobre reacciones
+            ácido-base.
+          </p>
+          <div class="flex items-center gap-4 text-sm text-gray-500">
+            <span>✅ Entregado: 20 Feb 2025</span>
+            <span>👩‍🏫 Prof. María García</span>
+            <span class="font-medium text-green-600">Calificación: 9.5/10</span>
+          </div>
+        </div>
+        <div class="ml-4 flex flex-col gap-2">
+          <button
+            class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+          >
+            Ver Retroalimentación
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tarea 4 - Próxima a vencer -->
+    <div
+      class="border border-red-200 rounded-lg p-4 hover:shadow-md transition-shadow bg-red-50"
+    >
+      <div class="flex items-start justify-between">
+        <div class="flex-1">
+          <div class="flex items-center gap-3 mb-2">
+            <span
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800"
+            >
+              ⚠️ Urgente
+            </span>
+            <span class="text-sm text-gray-500">Historia</span>
+          </div>
+          <h3 class="text-lg font-medium text-gray-900 mb-1">
+            Investigación sobre la Independencia
+          </h3>
+          <p class="text-sm text-gray-600 mb-3">
+            Presentación grupal sobre los eventos que llevaron a la
+            independencia de Colombia.
+          </p>
+          <div class="flex items-center gap-4 text-sm text-gray-500">
+            <span class="text-red-600 font-medium"
+              >📅 Vence mañana: 25 Feb 2025</span
+            >
+            <span>👨‍🏫 Prof. Carlos Ruiz</span>
+          </div>
+        </div>
+        <div class="ml-4 flex flex-col gap-2">
+          <button
+            class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+          >
+            ¡Empezar Ya!
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mensaje cuando no hay tareas -->
+    <!-- 
+            <div class="text-center py-12">
+                <div class="text-gray-400 text-6xl mb-4">📝</div>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No tienes tareas asignadas</h3>
+                <p class="text-gray-500">Cuando tus profesores asignen tareas, aparecerán aquí.</p>
+            </div>
+            -->
+  </div>
+</div>
 {% endblock %}
