@@ -70,17 +70,17 @@ def perfil_estudiante(request):
 
 #profesor----------------------------------------------
 @login_required
-def dashboard_view(request):
+def dashboard_profesor(request):
     tipo = request.user.tipo_usuario # selecciona el contenido segun el tipo de usuario
 
     template_map = {
         'estudiante': 'users/estudiante/dashboard_estudiante.html',
-        'profesor': 'users/dashboard_profesor.html',
-        'directivo': 'users/dashboard_directivo.html',
-        'acudiente': 'users/dashboard_acudiente.html',
+        'profesor': 'users/profesor/dashboard_profesor.html',
+        'directivo': 'users/directivo/dashboard_directivo.html',
+        'acudiente': 'users/acudiente/dashboard_acudiente.html',
     }
 
 
-    return render(request, template_map.get(tipo, 'users/estudiante/dashboard_estudiante.html'), {
+    return render(request, template_map.get(tipo, 'users/profesor/dashboard_profesor.html'), {
         'user': request.user
     })
