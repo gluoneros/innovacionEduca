@@ -68,19 +68,30 @@ def tareas_estudiante(request):
 def perfil_estudiante(request):
     return render(request, 'users/estudiante/perfil_estudiante.html')
 
+
 #profesor----------------------------------------------
 @login_required
 def dashboard_profesor(request):
-    tipo = request.user.tipo_usuario # selecciona el contenido segun el tipo de usuario
+    return render(request, 'users/profesor/dashboard_profesor.html')
 
-    template_map = {
-        'estudiante': 'users/estudiante/dashboard_estudiante.html',
-        'profesor': 'users/profesor/dashboard_profesor.html',
-        'directivo': 'users/directivo/dashboard_directivo.html',
-        'acudiente': 'users/acudiente/dashboard_acudiente.html',
-    }
+@login_required
+def cursos_profesor(request):
+    return render(request, 'users/profesor/cursos_profesor.html')
+
+@login_required
+def calificaciones_profesor(request):
+    return render(request, 'users/profesor/calificaciones_profesor.html')
+
+@login_required
+def estudiantes_profesor(request):
+    return render(request, 'users/profesor/estudiantes_profesor.html')
+
+@login_required
+def tareas_profesor(request):
+    return render(request, 'users/profesor/tareas_profesor.html')
+
+@login_required
+def perfil_profesor(request):
+    return render(request, 'users/profesor/perfil_profesor.html')
 
 
-    return render(request, template_map.get(tipo, 'users/profesor/dashboard_profesor.html'), {
-        'user': request.user
-    })

@@ -1,0 +1,385 @@
+{% extends "users/profesor/dashboard_profesor.html" %}
+
+{% block profesor_content %}
+    <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+        <!-- Encabezado de la sección -->
+        <div class="mb-6 border-b pb-4">
+            <h2 class="text-2xl font-bold text-gray-900">Gestión de Calificaciones</h2>
+            <p class="mt-1 text-sm text-gray-600">Administra las calificaciones de tus estudiantes por curso y período académico.</p>
+        </div>
+
+        <!-- Filtros y búsqueda -->
+        <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Selector de Curso -->
+            <div>
+                <label for="curso-select" class="block text-sm font-medium text-gray-700 mb-2">
+                    Seleccionar Curso
+                </label>
+                <select id="curso-select" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+                    <option value="">Todos los cursos</option>
+                    <option value="matematicas">Matemáticas 11°</option>
+                    <option value="quimica">Química 11°</option>
+                    <option value="literatura">Literatura 11°</option>
+                    <option value="fisica">Física 10°</option>
+                </select>
+            </div>
+
+            <!-- Selector de Período -->
+            <div>
+                <label for="periodo-select" class="block text-sm font-medium text-gray-700 mb-2">
+                    Período Académico
+                </label>
+                <select id="periodo-select" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+                    <option value="">Todos los períodos</option>
+                    <option value="1">Primer Período</option>
+                    <option value="2">Segundo Período</option>
+                    <option value="3">Tercer Período</option>
+                    <option value="4">Cuarto Período</option>
+                </select>
+            </div>
+
+            <!-- Búsqueda -->
+            <div>
+                <label for="busqueda" class="block text-sm font-medium text-gray-700 mb-2">
+                    Buscar Estudiante
+                </label>
+                <input type="text" id="busqueda" placeholder="Nombre del estudiante..." 
+                       class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+            </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="mb-6 flex flex-wrap gap-3">
+            <button id="agregar-calificacion" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Agregar Calificación
+            </button>
+            <button id="exportar-calificaciones" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                Exportar Excel
+            </button>
+            <button id="generar-boletines" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                Generar Boletines
+            </button>
+        </div>
+
+        <!-- Tabla de calificaciones -->
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <input type="checkbox" class="rounded border-gray-300 text-purple-600 focus:ring-purple-500">
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Estudiante
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Curso
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Período
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Calificación
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Estado
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Fecha
+                        </th>
+                        <th scope="col" class="relative px-6 py-3">
+                            <span class="sr-only">Acciones</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="calificaciones-body" class="bg-white divide-y divide-gray-200">
+                    <!-- Las calificaciones se cargarán dinámicamente aquí -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Paginación -->
+        <div class="mt-6 flex items-center justify-between">
+            <div class="text-sm text-gray-700">
+                Mostrando <span id="inicio-registros">1</span> a <span id="fin-registros">10</span> de <span id="total-registros">25</span> resultados
+            </div>
+            <div class="flex space-x-2">
+                <button class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50" disabled>
+                    Anterior
+                </button>
+                <button class="px-3 py-2 text-sm font-medium text-white bg-purple-600 border border-transparent rounded-md hover:bg-purple-700">
+                    1
+                </button>
+                <button class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                    2
+                </button>
+                <button class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                    3
+                </button>
+                <button class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                    Siguiente
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para agregar/editar calificación -->
+    <div id="modal-calificacion" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-medium text-gray-900" id="modal-titulo">Agregar Calificación</h3>
+                    <button id="cerrar-modal" class="text-gray-400 hover:text-gray-600">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <form id="form-calificacion" class="space-y-4">
+                    <div>
+                        <label for="estudiante-select" class="block text-sm font-medium text-gray-700">Estudiante</label>
+                        <select id="estudiante-select" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                            <option value="">Seleccionar estudiante</option>
+                            <option value="1">Ana García</option>
+                            <option value="2">Carlos López</option>
+                            <option value="3">María Rodríguez</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="curso-modal" class="block text-sm font-medium text-gray-700">Curso</label>
+                        <select id="curso-modal" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                            <option value="">Seleccionar curso</option>
+                            <option value="matematicas">Matemáticas 11°</option>
+                            <option value="quimica">Química 11°</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="calificacion-input" class="block text-sm font-medium text-gray-700">Calificación</label>
+                        <input type="number" id="calificacion-input" min="0" max="5" step="0.1" 
+                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                    </div>
+                    <div>
+                        <label for="observaciones" class="block text-sm font-medium text-gray-700">Observaciones</label>
+                        <textarea id="observaciones" rows="3" 
+                                  class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500"></textarea>
+                    </div>
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" id="cancelar-calificacion" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-purple-600 border border-transparent rounded-md hover:bg-purple-700">
+                            Guardar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Datos de ejemplo para las calificaciones
+        const calificacionesData = [
+            {
+                id: 1,
+                estudiante: 'Ana García',
+                curso: 'Matemáticas 11°',
+                periodo: 'Primer Período',
+                calificacion: 4.2,
+                estado: 'Aprobado',
+                fecha: '2024-01-15',
+                observaciones: 'Excelente rendimiento'
+            },
+            {
+                id: 2,
+                estudiante: 'Carlos López',
+                curso: 'Matemáticas 11°',
+                periodo: 'Primer Período',
+                calificacion: 3.8,
+                estado: 'Aprobado',
+                fecha: '2024-01-15',
+                observaciones: 'Buen trabajo'
+            },
+            {
+                id: 3,
+                estudiante: 'María Rodríguez',
+                curso: 'Química 11°',
+                periodo: 'Primer Período',
+                calificacion: 4.5,
+                estado: 'Aprobado',
+                fecha: '2024-01-16',
+                observaciones: 'Destacado'
+            },
+            {
+                id: 4,
+                estudiante: 'Juan Pérez',
+                curso: 'Literatura 11°',
+                periodo: 'Segundo Período',
+                calificacion: 2.9,
+                estado: 'Reprobado',
+                fecha: '2024-02-10',
+                observaciones: 'Necesita mejorar'
+            },
+            {
+                id: 5,
+                estudiante: 'Sofia Martínez',
+                curso: 'Física 10°',
+                periodo: 'Primer Período',
+                calificacion: 4.0,
+                estado: 'Aprobado',
+                fecha: '2024-01-18',
+                observaciones: 'Muy bien'
+            }
+        ];
+
+        // Función para renderizar la tabla
+        function renderizarTabla(datos = calificacionesData) {
+            const tbody = document.getElementById('calificaciones-body');
+            tbody.innerHTML = '';
+
+            datos.forEach(calificacion => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <input type="checkbox" class="rounded border-gray-300 text-purple-600 focus:ring-purple-500">
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
+                                <span class="text-sm font-medium text-purple-700">${calificacion.estudiante.charAt(0)}</span>
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-sm font-medium text-gray-900">${calificacion.estudiante}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        ${calificacion.curso}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${calificacion.periodo}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-bold text-gray-900">${calificacion.calificacion}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${calificacion.estado === 'Aprobado' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                            ${calificacion.estado}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${new Date(calificacion.fecha).toLocaleDateString()}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <div class="flex space-x-2">
+                            <button onclick="editarCalificacion(${calificacion.id})" class="text-purple-600 hover:text-purple-900">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                            </button>
+                            <button onclick="eliminarCalificacion(${calificacion.id})" class="text-red-600 hover:text-red-900">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Función para filtrar calificaciones
+        function filtrarCalificaciones() {
+            const curso = document.getElementById('curso-select').value;
+            const periodo = document.getElementById('periodo-select').value;
+            const busqueda = document.getElementById('busqueda').value.toLowerCase();
+
+            let datosFiltrados = calificacionesData;
+
+            if (curso) {
+                datosFiltrados = datosFiltrados.filter(cal => cal.curso.toLowerCase().includes(curso));
+            }
+
+            if (periodo) {
+                const periodos = {
+                    '1': 'Primer Período',
+                    '2': 'Segundo Período',
+                    '3': 'Tercer Período',
+                    '4': 'Cuarto Período'
+                };
+                datosFiltrados = datosFiltrados.filter(cal => cal.periodo === periodos[periodo]);
+            }
+
+            if (busqueda) {
+                datosFiltrados = datosFiltrados.filter(cal => 
+                    cal.estudiante.toLowerCase().includes(busqueda)
+                );
+            }
+
+            renderizarTabla(datosFiltrados);
+        }
+
+        // Event listeners
+        document.getElementById('curso-select').addEventListener('change', filtrarCalificaciones);
+        document.getElementById('periodo-select').addEventListener('change', filtrarCalificaciones);
+        document.getElementById('busqueda').addEventListener('input', filtrarCalificaciones);
+
+        // Modal functions
+        document.getElementById('agregar-calificacion').addEventListener('click', function() {
+            document.getElementById('modal-titulo').textContent = 'Agregar Calificación';
+            document.getElementById('modal-calificacion').classList.remove('hidden');
+        });
+
+        document.getElementById('cerrar-modal').addEventListener('click', function() {
+            document.getElementById('modal-calificacion').classList.add('hidden');
+        });
+
+        document.getElementById('cancelar-calificacion').addEventListener('click', function() {
+            document.getElementById('modal-calificacion').classList.add('hidden');
+        });
+
+        // Funciones de acción
+        function editarCalificacion(id) {
+            const calificacion = calificacionesData.find(cal => cal.id === id);
+            if (calificacion) {
+                document.getElementById('modal-titulo').textContent = 'Editar Calificación';
+                document.getElementById('estudiante-select').value = calificacion.estudiante;
+                document.getElementById('curso-modal').value = calificacion.curso;
+                document.getElementById('calificacion-input').value = calificacion.calificacion;
+                document.getElementById('observaciones').value = calificacion.observaciones;
+                document.getElementById('modal-calificacion').classList.remove('hidden');
+            }
+        }
+
+        function eliminarCalificacion(id) {
+            if (confirm('¿Estás seguro de que quieres eliminar esta calificación?')) {
+                const index = calificacionesData.findIndex(cal => cal.id === id);
+                if (index > -1) {
+                    calificacionesData.splice(index, 1);
+                    renderizarTabla();
+                }
+            }
+        }
+
+        // Botones de acción
+        document.getElementById('exportar-calificaciones').addEventListener('click', function() {
+            alert('Exportando calificaciones a Excel...\n\nEn producción, esto generaría un archivo Excel con las calificaciones filtradas.');
+        });
+
+        document.getElementById('generar-boletines').addEventListener('click', function() {
+            alert('Generando boletines...\n\nEn producción, esto generaría los boletines PDF para todos los estudiantes del período seleccionado.');
+        });
+
+        // Inicializar la tabla
+        renderizarTabla();
+    </script>
+{% endblock %}

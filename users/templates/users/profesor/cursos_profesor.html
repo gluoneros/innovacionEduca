@@ -1,0 +1,553 @@
+{% extends "users/profesor/dashboard_profesor.html" %}
+
+{% block profesor_content %}
+    <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+        <!-- Encabezado de la sección -->
+        <div class="mb-6 border-b pb-4">
+            <h2 class="text-2xl font-bold text-gray-900">Mis Cursos</h2>
+            <p class="mt-1 text-sm text-gray-600">Gestiona tus cursos, estudiantes y contenido académico.</p>
+        </div>
+
+        <!-- Filtros y búsqueda -->
+        <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Selector de Grado -->
+            <div>
+                <label for="grado-select" class="block text-sm font-medium text-gray-700 mb-2">
+                    Filtrar por Grado
+                </label>
+                <select id="grado-select" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+                    <option value="">Todos los grados</option>
+                    <option value="9">Grado 9°</option>
+                    <option value="10">Grado 10°</option>
+                    <option value="11">Grado 11°</option>
+                </select>
+            </div>
+
+            <!-- Selector de Materia -->
+            <div>
+                <label for="materia-select" class="block text-sm font-medium text-gray-700 mb-2">
+                    Filtrar por Materia
+                </label>
+                <select id="materia-select" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+                    <option value="">Todas las materias</option>
+                    <option value="matematicas">Matemáticas</option>
+                    <option value="quimica">Química</option>
+                    <option value="fisica">Física</option>
+                    <option value="literatura">Literatura</option>
+                    <option value="historia">Historia</option>
+                </select>
+            </div>
+
+            <!-- Búsqueda -->
+            <div>
+                <label for="busqueda" class="block text-sm font-medium text-gray-700 mb-2">
+                    Buscar Curso
+                </label>
+                <input type="text" id="busqueda" placeholder="Nombre del curso..." 
+                       class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+            </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="mb-6 flex flex-wrap gap-3">
+            <button id="crear-curso" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Crear Nuevo Curso
+            </button>
+            <button id="importar-estudiantes" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
+                </svg>
+                Importar Estudiantes
+            </button>
+            <button id="exportar-cursos" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                Exportar Lista
+            </button>
+        </div>
+
+        <!-- Grid de cursos -->
+        <div id="cursos-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Las tarjetas de cursos se cargarán dinámicamente aquí -->
+        </div>
+
+        <!-- Vista de lista (alternativa) -->
+        <div id="vista-lista" class="hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Curso
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Estudiantes
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Horario
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Estado
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Progreso
+                            </th>
+                            <th scope="col" class="relative px-6 py-3">
+                                <span class="sr-only">Acciones</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="cursos-tabla-body" class="bg-white divide-y divide-gray-200">
+                        <!-- Las filas se cargarán dinámicamente aquí -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Controles de vista -->
+        <div class="mt-6 flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <span class="text-sm text-gray-700">Vista:</span>
+                <button id="vista-grid" class="p-2 text-purple-600 bg-purple-100 rounded-md">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                    </svg>
+                </button>
+                <button id="vista-lista-btn" class="p-2 text-gray-400 hover:text-gray-600">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="text-sm text-gray-700">
+                <span id="total-cursos">6</span> cursos encontrados
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para crear/editar curso -->
+    <div id="modal-curso" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-10 mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-medium text-gray-900" id="modal-titulo">Crear Nuevo Curso</h3>
+                    <button id="cerrar-modal" class="text-gray-400 hover:text-gray-600">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <form id="form-curso" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="nombre-curso" class="block text-sm font-medium text-gray-700">Nombre del Curso</label>
+                            <input type="text" id="nombre-curso" placeholder="Ej: Matemáticas 11°" 
+                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                        </div>
+                        <div>
+                            <label for="materia-curso" class="block text-sm font-medium text-gray-700">Materia</label>
+                            <select id="materia-curso" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                                <option value="">Seleccionar materia</option>
+                                <option value="matematicas">Matemáticas</option>
+                                <option value="quimica">Química</option>
+                                <option value="fisica">Física</option>
+                                <option value="literatura">Literatura</option>
+                                <option value="historia">Historia</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="grado-curso" class="block text-sm font-medium text-gray-700">Grado</label>
+                            <select id="grado-curso" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                                <option value="">Seleccionar grado</option>
+                                <option value="9">Grado 9°</option>
+                                <option value="10">Grado 10°</option>
+                                <option value="11">Grado 11°</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="aula-curso" class="block text-sm font-medium text-gray-700">Aula</label>
+                            <input type="text" id="aula-curso" placeholder="Ej: Aula 201" 
+                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="horario-curso" class="block text-sm font-medium text-gray-700">Horario</label>
+                            <input type="text" id="horario-curso" placeholder="Ej: Lunes 8:00-10:00" 
+                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                        </div>
+                        <div>
+                            <label for="capacidad-curso" class="block text-sm font-medium text-gray-700">Capacidad Máxima</label>
+                            <input type="number" id="capacidad-curso" min="1" max="50" placeholder="30" 
+                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="descripcion-curso" class="block text-sm font-medium text-gray-700">Descripción</label>
+                        <textarea id="descripcion-curso" rows="3" placeholder="Descripción del curso..." 
+                                  class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500"></textarea>
+                    </div>
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" id="cancelar-curso" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-purple-600 border border-transparent rounded-md hover:bg-purple-700">
+                            Guardar Curso
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Datos de ejemplo para los cursos
+        const cursosData = [
+            {
+                id: 1,
+                nombre: 'Matemáticas 11°',
+                materia: 'Matemáticas',
+                grado: '11',
+                aula: 'Aula 201',
+                horario: 'Lunes 8:00-10:00',
+                estudiantes: 28,
+                capacidad: 30,
+                estado: 'Activo',
+                progreso: 75,
+                descripcion: 'Curso de matemáticas avanzadas para grado 11°',
+                color: 'blue'
+            },
+            {
+                id: 2,
+                nombre: 'Química 11°',
+                materia: 'Química',
+                grado: '11',
+                aula: 'Laboratorio 1',
+                horario: 'Martes 10:00-12:00',
+                estudiantes: 25,
+                capacidad: 25,
+                estado: 'Activo',
+                progreso: 60,
+                descripcion: 'Curso de química con prácticas de laboratorio',
+                color: 'green'
+            },
+            {
+                id: 3,
+                nombre: 'Física 10°',
+                materia: 'Física',
+                grado: '10',
+                aula: 'Aula 105',
+                horario: 'Miércoles 14:00-16:00',
+                estudiantes: 32,
+                capacidad: 35,
+                estado: 'Activo',
+                progreso: 45,
+                descripcion: 'Fundamentos de física para grado 10°',
+                color: 'red'
+            },
+            {
+                id: 4,
+                nombre: 'Literatura 11°',
+                materia: 'Literatura',
+                grado: '11',
+                aula: 'Aula 203',
+                horario: 'Jueves 8:00-10:00',
+                estudiantes: 20,
+                capacidad: 25,
+                estado: 'Activo',
+                progreso: 80,
+                descripcion: 'Análisis literario y composición',
+                color: 'purple'
+            },
+            {
+                id: 5,
+                nombre: 'Historia 10°',
+                materia: 'Historia',
+                grado: '10',
+                aula: 'Aula 108',
+                horario: 'Viernes 10:00-12:00',
+                estudiantes: 30,
+                capacidad: 30,
+                estado: 'Activo',
+                progreso: 55,
+                descripcion: 'Historia de Colombia y el mundo',
+                color: 'yellow'
+            },
+            {
+                id: 6,
+                nombre: 'Matemáticas 9°',
+                materia: 'Matemáticas',
+                grado: '9',
+                aula: 'Aula 101',
+                horario: 'Lunes 14:00-16:00',
+                estudiantes: 18,
+                capacidad: 25,
+                estado: 'Activo',
+                progreso: 30,
+                descripcion: 'Matemáticas básicas para grado 9°',
+                color: 'blue'
+            }
+        ];
+
+        // Función para renderizar la vista de grid
+        function renderizarGrid(datos = cursosData) {
+            const grid = document.getElementById('cursos-grid');
+            grid.innerHTML = '';
+
+            datos.forEach(curso => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100';
+                card.innerHTML = `
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 bg-${curso.color}-100 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-${getIconoMateria(curso.materia)} text-${curso.color}-600 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">${curso.nombre}</h3>
+                                    <p class="text-sm text-gray-500">${curso.materia} - Grado ${curso.grado}°</p>
+                                </div>
+                            </div>
+                            <div class="flex space-x-1">
+                                <button onclick="editarCurso(${curso.id})" class="p-2 text-gray-400 hover:text-purple-600">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                    </svg>
+                                </button>
+                                <button onclick="eliminarCurso(${curso.id})" class="p-2 text-gray-400 hover:text-red-600">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3 mb-4">
+                            <div class="flex items-center text-sm text-gray-600">
+                                <i class="fas fa-map-marker-alt mr-2"></i>
+                                <span>${curso.aula}</span>
+                            </div>
+                            <div class="flex items-center text-sm text-gray-600">
+                                <i class="fas fa-clock mr-2"></i>
+                                <span>${curso.horario}</span>
+                            </div>
+                            <div class="flex items-center text-sm text-gray-600">
+                                <i class="fas fa-users mr-2"></i>
+                                <span>${curso.estudiantes}/${curso.capacidad} estudiantes</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="flex justify-between text-sm text-gray-600 mb-1">
+                                <span>Progreso del curso</span>
+                                <span>${curso.progreso}%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-${curso.color}-500 h-2 rounded-full" style="width: ${curso.progreso}%"></div>
+                            </div>
+                        </div>
+
+                        <div class="flex space-x-2">
+                            <button onclick="verEstudiantes(${curso.id})" class="flex-1 bg-purple-100 text-purple-700 px-3 py-2 rounded-lg text-sm font-medium hover:bg-purple-200 transition">
+                                Ver Estudiantes
+                            </button>
+                            <button onclick="verCalificaciones(${curso.id})" class="flex-1 bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition">
+                                Calificaciones
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Función para renderizar la vista de lista
+        function renderizarLista(datos = cursosData) {
+            const tbody = document.getElementById('cursos-tabla-body');
+            tbody.innerHTML = '';
+
+            datos.forEach(curso => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-${curso.color}-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-${getIconoMateria(curso.materia)} text-${curso.color}-600"></i>
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-sm font-medium text-gray-900">${curso.nombre}</div>
+                                <div class="text-sm text-gray-500">${curso.aula}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        ${curso.estudiantes}/${curso.capacidad}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${curso.horario}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                            ${curso.estado}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
+                                <div class="bg-${curso.color}-500 h-2 rounded-full" style="width: ${curso.progreso}%"></div>
+                            </div>
+                            <span class="text-sm text-gray-600">${curso.progreso}%</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <div class="flex space-x-2">
+                            <button onclick="verEstudiantes(${curso.id})" class="text-purple-600 hover:text-purple-900">Estudiantes</button>
+                            <button onclick="verCalificaciones(${curso.id})" class="text-gray-600 hover:text-gray-900">Calificaciones</button>
+                            <button onclick="editarCurso(${curso.id})" class="text-blue-600 hover:text-blue-900">Editar</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Función para obtener el icono de la materia
+        function getIconoMateria(materia) {
+            const iconos = {
+                'Matemáticas': 'calculator',
+                'Química': 'flask',
+                'Física': 'atom',
+                'Literatura': 'book-open',
+                'Historia': 'landmark'
+            };
+            return iconos[materia] || 'book';
+        }
+
+        // Función para filtrar cursos
+        function filtrarCursos() {
+            const grado = document.getElementById('grado-select').value;
+            const materia = document.getElementById('materia-select').value;
+            const busqueda = document.getElementById('busqueda').value.toLowerCase();
+
+            let datosFiltrados = cursosData;
+
+            if (grado) {
+                datosFiltrados = datosFiltrados.filter(curso => curso.grado === grado);
+            }
+
+            if (materia) {
+                datosFiltrados = datosFiltrados.filter(curso => curso.materia.toLowerCase().includes(materia));
+            }
+
+            if (busqueda) {
+                datosFiltrados = datosFiltrados.filter(curso => 
+                    curso.nombre.toLowerCase().includes(busqueda) ||
+                    curso.materia.toLowerCase().includes(busqueda)
+                );
+            }
+
+            const vistaLista = document.getElementById('vista-lista');
+            if (vistaLista.classList.contains('hidden')) {
+                renderizarGrid(datosFiltrados);
+            } else {
+                renderizarLista(datosFiltrados);
+            }
+
+            document.getElementById('total-cursos').textContent = datosFiltrados.length;
+        }
+
+        // Event listeners para filtros
+        document.getElementById('grado-select').addEventListener('change', filtrarCursos);
+        document.getElementById('materia-select').addEventListener('change', filtrarCursos);
+        document.getElementById('busqueda').addEventListener('input', filtrarCursos);
+
+        // Event listeners para vista
+        document.getElementById('vista-grid').addEventListener('click', function() {
+            document.getElementById('cursos-grid').classList.remove('hidden');
+            document.getElementById('vista-lista').classList.add('hidden');
+            this.classList.add('text-purple-600', 'bg-purple-100');
+            this.classList.remove('text-gray-400');
+            document.getElementById('vista-lista-btn').classList.add('text-gray-400');
+            document.getElementById('vista-lista-btn').classList.remove('text-purple-600', 'bg-purple-100');
+            renderizarGrid();
+        });
+
+        document.getElementById('vista-lista-btn').addEventListener('click', function() {
+            document.getElementById('cursos-grid').classList.add('hidden');
+            document.getElementById('vista-lista').classList.remove('hidden');
+            this.classList.add('text-purple-600', 'bg-purple-100');
+            this.classList.remove('text-gray-400');
+            document.getElementById('vista-grid').classList.add('text-gray-400');
+            document.getElementById('vista-grid').classList.remove('text-purple-600', 'bg-purple-100');
+            renderizarLista();
+        });
+
+        // Modal functions
+        document.getElementById('crear-curso').addEventListener('click', function() {
+            document.getElementById('modal-titulo').textContent = 'Crear Nuevo Curso';
+            document.getElementById('form-curso').reset();
+            document.getElementById('modal-curso').classList.remove('hidden');
+        });
+
+        document.getElementById('cerrar-modal').addEventListener('click', function() {
+            document.getElementById('modal-curso').classList.add('hidden');
+        });
+
+        document.getElementById('cancelar-curso').addEventListener('click', function() {
+            document.getElementById('modal-curso').classList.add('hidden');
+        });
+
+        // Funciones de acción
+        function editarCurso(id) {
+            const curso = cursosData.find(c => c.id === id);
+            if (curso) {
+                document.getElementById('modal-titulo').textContent = 'Editar Curso';
+                document.getElementById('nombre-curso').value = curso.nombre;
+                document.getElementById('materia-curso').value = curso.materia.toLowerCase();
+                document.getElementById('grado-curso').value = curso.grado;
+                document.getElementById('aula-curso').value = curso.aula;
+                document.getElementById('horario-curso').value = curso.horario;
+                document.getElementById('capacidad-curso').value = curso.capacidad;
+                document.getElementById('descripcion-curso').value = curso.descripcion;
+                document.getElementById('modal-curso').classList.remove('hidden');
+            }
+        }
+
+        function eliminarCurso(id) {
+            if (confirm('¿Estás seguro de que quieres eliminar este curso?')) {
+                const index = cursosData.findIndex(c => c.id === id);
+                if (index > -1) {
+                    cursosData.splice(index, 1);
+                    filtrarCursos();
+                }
+            }
+        }
+
+        function verEstudiantes(id) {
+            alert(`Ver estudiantes del curso ${id}\n\nEn producción, esto navegaría a la página de estudiantes del curso.`);
+        }
+
+        function verCalificaciones(id) {
+            alert(`Ver calificaciones del curso ${id}\n\nEn producción, esto navegaría a la página de calificaciones del curso.`);
+        }
+
+        // Botones de acción
+        document.getElementById('importar-estudiantes').addEventListener('click', function() {
+            alert('Importar estudiantes...\n\nEn producción, esto abriría un modal para subir un archivo Excel con la lista de estudiantes.');
+        });
+
+        document.getElementById('exportar-cursos').addEventListener('click', function() {
+            alert('Exportando lista de cursos...\n\nEn producción, esto generaría un archivo Excel con la información de los cursos.');
+        });
+
+        // Inicializar la vista
+        renderizarGrid();
+    </script>
+{% endblock %}

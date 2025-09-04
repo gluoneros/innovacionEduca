@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.contrib.auth.views import LoginView, LogoutView
 from .views import registro_view, registro_exitoso_view, CustomLoginView
 from .views import dashboard_estudiante, cursos_estudiante, notas_estudiante, boletin_estudiante, tareas_estudiante, perfil_estudiante
-from .views import dashboard_profesor
+from .views import dashboard_profesor, cursos_profesor, calificaciones_profesor, estudiantes_profesor, tareas_profesor, perfil_profesor
 
 
 urlpatterns = [
@@ -24,6 +24,10 @@ urlpatterns = [
 
 # Profesor
     path('profesor/dashboard/', dashboard_profesor, name='dashboard_profesor'),
-
+    path('profesor/cursos/', cursos_profesor, name='cursos_profesor'),
+    path('profesor/calificaciones/', calificaciones_profesor, name='calificaciones_profesor'),
+    path('profesor/estudiantes/', estudiantes_profesor, name='estudiantes_profesor'),
+    path('profesor/tareas/', tareas_profesor, name='tareas_profesor'),
+    path('profesor/perfil/', perfil_profesor, name='perfil_profesor'),
 
 ]

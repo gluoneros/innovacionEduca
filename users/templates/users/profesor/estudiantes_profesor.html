@@ -1,0 +1,607 @@
+{% extends "users/profesor/dashboard_profesor.html" %}
+
+{% block profesor_content %}
+    <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+        <!-- Encabezado de la sección -->
+        <div class="mb-6 border-b pb-4">
+            <h2 class="text-2xl font-bold text-gray-900">Gestión de Estudiantes</h2>
+            <p class="mt-1 text-sm text-gray-600">Administra la asistencia de tus estudiantes por curso y fecha.</p>
+        </div>
+
+        <!-- Filtros y búsqueda -->
+        <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Selector de Grado -->
+            <div>
+                <label for="grado-select" class="block text-sm font-medium text-gray-700 mb-2">
+                    Filtrar por Grado
+                </label>
+                <select id="grado-select" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+                    <option value="">Todos los grados</option>
+                    <option value="9">Grado 9°</option>
+                    <option value="10">Grado 10°</option>
+                    <option value="11">Grado 11°</option>
+                </select>
+            </div>
+
+            <!-- Selector de Materia -->
+            <div>
+                <label for="materia-select" class="block text-sm font-medium text-gray-700 mb-2">
+                    Filtrar por Materia
+                </label>
+                <select id="materia-select" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+                    <option value="">Todas las materias</option>
+                    <option value="matematicas">Matemáticas</option>
+                    <option value="quimica">Química</option>
+                    <option value="fisica">Física</option>
+                    <option value="literatura">Literatura</option>
+                    <option value="historia">Historia</option>
+                </select>
+            </div>
+
+            <!-- Búsqueda -->
+            <div>
+                <label for="busqueda" class="block text-sm font-medium text-gray-700 mb-2">
+                    Buscar Curso
+                </label>
+                <input type="text" id="busqueda" placeholder="Nombre del curso..." 
+                       class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+            </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="mb-6 flex flex-wrap gap-3">
+            <button id="marcar-todas-asistencias" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Marcar Todas Asistencias
+            </button>
+            <button id="exportar-asistencias" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                Exportar Asistencias
+            </button>
+            <button id="generar-reporte" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                Generar Reporte
+            </button>
+        </div>
+
+        <!-- Grid de cursos -->
+        <div id="cursos-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Las tarjetas de cursos se cargarán dinámicamente aquí -->
+        </div>
+
+        <!-- Contenedor de tabla de asistencia (inicialmente oculto) -->
+        <div id="tabla-asistencia-container" class="hidden">
+            <div class="mb-4 flex items-center justify-between">
+                <h3 id="titulo-curso" class="text-lg font-semibold text-gray-900">Asistencia del Curso</h3>
+                <button id="cerrar-tabla" class="text-gray-400 hover:text-gray-600">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Controles de fechas -->
+            <div class="mb-4 flex flex-wrap gap-2">
+                <button id="agregar-fecha" class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700">
+                    <svg class="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    Agregar Fecha
+                </button>
+                <button id="eliminar-fecha" class="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                    <svg class="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                    Eliminar Fecha
+                </button>
+            </div>
+
+            <!-- Tabla de asistencia -->
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200 border border-gray-300">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-300">
+                                Estudiante
+                            </th>
+                            <th scope="col" class="px-2 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-300">
+                                <div class="flex items-center justify-center">
+                                    <span>15/01/2024</span>
+                                    <button onclick="eliminarFecha('15/01/2024')" class="ml-2 text-red-500 hover:text-red-700">
+                                        <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </th>
+                            <th scope="col" class="px-2 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-300">
+                                <div class="flex items-center justify-center">
+                                    <span>17/01/2024</span>
+                                    <button onclick="eliminarFecha('17/01/2024')" class="ml-2 text-red-500 hover:text-red-700">
+                                        <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </th>
+                            <th scope="col" class="px-2 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-300">
+                                <div class="flex items-center justify-center">
+                                    <span>19/01/2024</span>
+                                    <button onclick="eliminarFecha('19/01/2024')" class="ml-2 text-red-500 hover:text-red-700">
+                                        <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </th>
+                            <th scope="col" class="px-2 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <div class="flex items-center justify-center">
+                                    <span>22/01/2024</span>
+                                    <button onclick="eliminarFecha('22/01/2024')" class="ml-2 text-red-500 hover:text-red-700">
+                                        <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-asistencia-body" class="bg-white divide-y divide-gray-200">
+                        <!-- Las filas de estudiantes se cargarán dinámicamente aquí -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Resumen de asistencia -->
+            <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                            <svg class="h-4 w-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-green-800">Asistencias</p>
+                            <p class="text-2xl font-bold text-green-900" id="total-asistencias">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-red-50 p-4 rounded-lg">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                            <svg class="h-4 w-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-red-800">Ausencias</p>
+                            <p class="text-2xl font-bold text-red-900" id="total-ausencias">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-yellow-50 p-4 rounded-lg">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+                            <svg class="h-4 w-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-yellow-800">Excusas</p>
+                            <p class="text-2xl font-bold text-yellow-900" id="total-excusas">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para agregar fecha -->
+    <div id="modal-fecha" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-medium text-gray-900">Agregar Fecha de Clase</h3>
+                    <button id="cerrar-modal-fecha" class="text-gray-400 hover:text-gray-600">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <form id="form-fecha" class="space-y-4">
+                    <div>
+                        <label for="fecha-clase" class="block text-sm font-medium text-gray-700">Fecha de la Clase</label>
+                        <input type="date" id="fecha-clase" 
+                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                    </div>
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" id="cancelar-fecha" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-purple-600 border border-transparent rounded-md hover:bg-purple-700">
+                            Agregar Fecha
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Datos de ejemplo para los cursos
+        const cursosData = [
+            {
+                id: 1,
+                nombre: 'Matemáticas 11°',
+                materia: 'Matemáticas',
+                grado: '11',
+                aula: 'Aula 201',
+                horario: 'Lunes 8:00-10:00',
+                estudiantes: 28,
+                color: 'blue',
+                estudiantesLista: [
+                    { id: 1, nombre: 'Ana García', apellido: 'López' },
+                    { id: 2, nombre: 'Carlos', apellido: 'Martínez' },
+                    { id: 3, nombre: 'María', apellido: 'Rodríguez' },
+                    { id: 4, nombre: 'Juan', apellido: 'Pérez' },
+                    { id: 5, nombre: 'Sofia', apellido: 'González' }
+                ]
+            },
+            {
+                id: 2,
+                nombre: 'Química 11°',
+                materia: 'Química',
+                grado: '11',
+                aula: 'Laboratorio 1',
+                horario: 'Martes 10:00-12:00',
+                estudiantes: 25,
+                color: 'green',
+                estudiantesLista: [
+                    { id: 6, nombre: 'Pedro', apellido: 'Hernández' },
+                    { id: 7, nombre: 'Laura', apellido: 'Díaz' },
+                    { id: 8, nombre: 'Diego', apellido: 'Morales' },
+                    { id: 9, nombre: 'Camila', apellido: 'Vargas' },
+                    { id: 10, nombre: 'Andrés', apellido: 'Silva' }
+                ]
+            },
+            {
+                id: 3,
+                nombre: 'Física 10°',
+                materia: 'Física',
+                grado: '10',
+                aula: 'Aula 105',
+                horario: 'Miércoles 14:00-16:00',
+                estudiantes: 32,
+                color: 'red',
+                estudiantesLista: [
+                    { id: 11, nombre: 'Isabella', apellido: 'Castro' },
+                    { id: 12, nombre: 'Sebastián', apellido: 'Rojas' },
+                    { id: 13, nombre: 'Valentina', apellido: 'Jiménez' },
+                    { id: 14, nombre: 'Nicolás', apellido: 'Torres' },
+                    { id: 15, nombre: 'Gabriela', apellido: 'Ramírez' }
+                ]
+            }
+        ];
+
+        // Fechas de ejemplo
+        let fechasClases = ['15/01/2024', '17/01/2024', '19/01/2024', '22/01/2024'];
+        let cursoSeleccionado = null;
+        let asistencias = {}; // { estudianteId: { fecha: 'asistio'|'ausente'|'excusa' } }
+
+        // Función para renderizar las tarjetas de cursos
+        function renderizarCursos(datos = cursosData) {
+            const grid = document.getElementById('cursos-grid');
+            grid.innerHTML = '';
+
+            datos.forEach(curso => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100 cursor-pointer curso-card';
+                card.setAttribute('data-curso-id', curso.id);
+                card.innerHTML = `
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 bg-${curso.color}-100 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-${getIconoMateria(curso.materia)} text-${curso.color}-600 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">${curso.nombre}</h3>
+                                    <p class="text-sm text-gray-500">${curso.materia} - Grado ${curso.grado}°</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-2xl font-bold text-${curso.color}-600">${curso.estudiantes}</div>
+                                <div class="text-sm text-gray-500">estudiantes</div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-2 mb-4">
+                            <div class="flex items-center text-sm text-gray-600">
+                                <i class="fas fa-map-marker-alt mr-2"></i>
+                                <span>${curso.aula}</span>
+                            </div>
+                            <div class="flex items-center text-sm text-gray-600">
+                                <i class="fas fa-clock mr-2"></i>
+                                <span>${curso.horario}</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <div class="text-sm text-gray-600 mb-1">Haz clic para ver asistencia</div>
+                            <div class="text-xs text-gray-500">Gestiona la asistencia de tus estudiantes</div>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Función para obtener el icono de la materia
+        function getIconoMateria(materia) {
+            const iconos = {
+                'Matemáticas': 'calculator',
+                'Química': 'flask',
+                'Física': 'atom',
+                'Literatura': 'book-open',
+                'Historia': 'landmark'
+            };
+            return iconos[materia] || 'book';
+        }
+
+        // Función para mostrar la tabla de asistencia
+        function mostrarTablaAsistencia(cursoId) {
+            const curso = cursosData.find(c => c.id === cursoId);
+            if (!curso) return;
+
+            cursoSeleccionado = curso;
+            document.getElementById('titulo-curso').textContent = `Asistencia - ${curso.nombre}`;
+            document.getElementById('tabla-asistencia-container').classList.remove('hidden');
+            
+            // Scroll hacia la tabla
+            document.getElementById('tabla-asistencia-container').scrollIntoView({ behavior: 'smooth' });
+            
+            renderizarTablaAsistencia();
+        }
+
+        // Función para renderizar la tabla de asistencia
+        function renderizarTablaAsistencia() {
+            const tbody = document.getElementById('tabla-asistencia-body');
+            tbody.innerHTML = '';
+
+            cursoSeleccionado.estudiantesLista.forEach(estudiante => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50';
+                
+                let celdasHTML = `
+                    <td class="px-4 py-3 whitespace-nowrap border-r border-gray-300">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                                <span class="text-sm font-medium text-purple-700">${estudiante.nombre.charAt(0)}</span>
+                            </div>
+                            <div class="ml-3">
+                                <div class="text-sm font-medium text-gray-900">${estudiante.nombre} ${estudiante.apellido}</div>
+                            </div>
+                        </div>
+                    </td>
+                `;
+
+                fechasClases.forEach(fecha => {
+                    const asistenciaKey = `${estudiante.id}_${fecha}`;
+                    const estadoActual = asistencias[asistenciaKey] || 'asistio';
+                    
+                    celdasHTML += `
+                        <td class="px-2 py-3 text-center border-r border-gray-300">
+                            <select class="asistencia-select text-xs border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-purple-500" 
+                                    data-estudiante="${estudiante.id}" data-fecha="${fecha}">
+                                <option value="asistio" ${estadoActual === 'asistio' ? 'selected' : ''}>Asistió</option>
+                                <option value="ausente" ${estadoActual === 'ausente' ? 'selected' : ''}>Ausente</option>
+                                <option value="excusa" ${estadoActual === 'excusa' ? 'selected' : ''}>Excusa</option>
+                            </select>
+                        </td>
+                    `;
+                });
+
+                row.innerHTML = celdasHTML;
+                tbody.appendChild(row);
+            });
+
+            // Agregar event listeners a los selects
+            tbody.querySelectorAll('.asistencia-select').forEach(select => {
+                select.addEventListener('change', function() {
+                    const estudianteId = this.getAttribute('data-estudiante');
+                    const fecha = this.getAttribute('data-fecha');
+                    const estado = this.value;
+                    
+                    asistencias[`${estudianteId}_${fecha}`] = estado;
+                    actualizarResumen();
+                });
+            });
+
+            actualizarResumen();
+        }
+
+        // Función para actualizar el resumen de asistencia
+        function actualizarResumen() {
+            let totalAsistencias = 0;
+            let totalAusencias = 0;
+            let totalExcusas = 0;
+
+            Object.values(asistencias).forEach(estado => {
+                switch(estado) {
+                    case 'asistio':
+                        totalAsistencias++;
+                        break;
+                    case 'ausente':
+                        totalAusencias++;
+                        break;
+                    case 'excusa':
+                        totalExcusas++;
+                        break;
+                }
+            });
+
+            document.getElementById('total-asistencias').textContent = totalAsistencias;
+            document.getElementById('total-ausencias').textContent = totalAusencias;
+            document.getElementById('total-excusas').textContent = totalExcusas;
+        }
+
+        // Función para agregar una nueva fecha
+        function agregarFecha(fecha) {
+            if (!fechasClases.includes(fecha)) {
+                fechasClases.push(fecha);
+                actualizarEncabezadosTabla();
+                if (cursoSeleccionado) {
+                    renderizarTablaAsistencia();
+                }
+            }
+        }
+
+        // Función para eliminar una fecha
+        function eliminarFecha(fecha) {
+            const index = fechasClases.indexOf(fecha);
+            if (index > -1) {
+                fechasClases.splice(index, 1);
+                // Eliminar asistencias de esa fecha
+                Object.keys(asistencias).forEach(key => {
+                    if (key.endsWith(`_${fecha}`)) {
+                        delete asistencias[key];
+                    }
+                });
+                actualizarEncabezadosTabla();
+                if (cursoSeleccionado) {
+                    renderizarTablaAsistencia();
+                }
+            }
+        }
+
+        // Función para actualizar los encabezados de la tabla
+        function actualizarEncabezadosTabla() {
+            const thead = document.querySelector('thead tr');
+            const encabezadoEstudiante = thead.querySelector('th:first-child');
+            const encabezadosFechas = thead.querySelectorAll('th:not(:first-child)');
+            
+            // Eliminar encabezados de fechas existentes
+            encabezadosFechas.forEach(th => th.remove());
+            
+            // Agregar nuevos encabezados de fechas
+            fechasClases.forEach(fecha => {
+                const th = document.createElement('th');
+                th.className = 'px-2 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-300';
+                th.innerHTML = `
+                    <div class="flex items-center justify-center">
+                        <span>${fecha}</span>
+                        <button onclick="eliminarFecha('${fecha}')" class="ml-2 text-red-500 hover:text-red-700">
+                            <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                `;
+                thead.appendChild(th);
+            });
+        }
+
+        // Función para filtrar cursos
+        function filtrarCursos() {
+            const grado = document.getElementById('grado-select').value;
+            const materia = document.getElementById('materia-select').value;
+            const busqueda = document.getElementById('busqueda').value.toLowerCase();
+
+            let datosFiltrados = cursosData;
+
+            if (grado) {
+                datosFiltrados = datosFiltrados.filter(curso => curso.grado === grado);
+            }
+
+            if (materia) {
+                datosFiltrados = datosFiltrados.filter(curso => curso.materia.toLowerCase().includes(materia));
+            }
+
+            if (busqueda) {
+                datosFiltrados = datosFiltrados.filter(curso => 
+                    curso.nombre.toLowerCase().includes(busqueda) ||
+                    curso.materia.toLowerCase().includes(busqueda)
+                );
+            }
+
+            renderizarCursos(datosFiltrados);
+        }
+
+        // Event listeners
+        document.getElementById('grado-select').addEventListener('change', filtrarCursos);
+        document.getElementById('materia-select').addEventListener('change', filtrarCursos);
+        document.getElementById('busqueda').addEventListener('input', filtrarCursos);
+
+        // Event listener para las tarjetas de cursos
+        document.addEventListener('click', function(e) {
+            const cursoCard = e.target.closest('.curso-card');
+            if (cursoCard) {
+                const cursoId = parseInt(cursoCard.getAttribute('data-curso-id'));
+                mostrarTablaAsistencia(cursoId);
+            }
+        });
+
+        // Event listeners para cerrar tabla
+        document.getElementById('cerrar-tabla').addEventListener('click', function() {
+            document.getElementById('tabla-asistencia-container').classList.add('hidden');
+            cursoSeleccionado = null;
+        });
+
+        // Event listeners para modal de fecha
+        document.getElementById('agregar-fecha').addEventListener('click', function() {
+            document.getElementById('modal-fecha').classList.remove('hidden');
+        });
+
+        document.getElementById('cerrar-modal-fecha').addEventListener('click', function() {
+            document.getElementById('modal-fecha').classList.add('hidden');
+        });
+
+        document.getElementById('cancelar-fecha').addEventListener('click', function() {
+            document.getElementById('modal-fecha').classList.add('hidden');
+        });
+
+        document.getElementById('form-fecha').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const fecha = document.getElementById('fecha-clase').value;
+            if (fecha) {
+                const fechaFormateada = new Date(fecha).toLocaleDateString('es-ES');
+                agregarFecha(fechaFormateada);
+                document.getElementById('modal-fecha').classList.add('hidden');
+                document.getElementById('form-fecha').reset();
+            }
+        });
+
+        // Botones de acción
+        document.getElementById('marcar-todas-asistencias').addEventListener('click', function() {
+            if (cursoSeleccionado) {
+                cursoSeleccionado.estudiantesLista.forEach(estudiante => {
+                    fechasClases.forEach(fecha => {
+                        asistencias[`${estudiante.id}_${fecha}`] = 'asistio';
+                    });
+                });
+                renderizarTablaAsistencia();
+            }
+        });
+
+        document.getElementById('exportar-asistencias').addEventListener('click', function() {
+            alert('Exportando asistencias...\n\nEn producción, esto generaría un archivo Excel con el registro de asistencias.');
+        });
+
+        document.getElementById('generar-reporte').addEventListener('click', function() {
+            alert('Generando reporte de asistencias...\n\nEn producción, esto generaría un reporte PDF con estadísticas de asistencia.');
+        });
+
+        // Hacer funciones globales para los botones inline
+        window.eliminarFecha = eliminarFecha;
+
+        // Inicializar
+        renderizarCursos();
+    </script>
+{% endblock %}

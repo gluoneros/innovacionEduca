@@ -1,0 +1,77 @@
+{% extends "users/profesor/dashboard_profesor.html" %}
+
+{% block profesor_content %}
+    <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+        <!-- Encabezado -->
+        <div class="mb-6 border-b pb-4">
+            <h2 class="text-2xl font-bold text-gray-900">Mi Perfil</h2>
+            <p class="mt-1 text-sm text-gray-600">Información personal y cursos inscritos.</p>
+        </div>
+
+        <!-- Información de usuario -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h3 class="text-lg font-semibold text-gray-900">Información Personal</h3>
+                <ul class="mt-2 space-y-1">
+                    <li class="flex justify-between">
+                        <span class="text-sm text-gray-600">Nombre:</span>
+                        <span class="text-sm font-medium text-gray-900">Juan Pérez</span>
+                    </li>
+                    <li class="flex justify-between">
+                        <span class="text-sm text-gray-600">Email:</span>
+                        <span class="text-sm font-medium text-gray-900">juan.perez@example.com</span>
+                    </li>
+                    <li class="flex justify-between">
+                        <span class="text-sm text-gray-600">Grado:</span>
+                        <span class="text-sm font-medium text-gray-900">11°</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Avatar o imagen de perfil -->
+            <div class="flex flex-col items-center">
+                <img src="/static/images/avatar.jpg" alt="Avatar" class="w-24 h-24 rounded-full mb-3 shadow-md">
+                <h3 class="text-lg font-semibold text-gray-900">Juan Pérez</h3>
+                <p class="text-sm text-gray-600">Estudiante de Grado 11°</p>
+            </div>
+        </div>
+
+        <!-- Cursos inscritos -->
+        <div class="mb-8">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Cursos Inscritos</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Curso 1 -->
+                <div class="bg-purple-50 p-4 rounded-lg border border-purple-200 shadow-sm">
+                    <h4 class="font-medium text-gray-900">Matemáticas</h4>
+                    <p class="text-sm text-gray-600">Grado 11°</p>
+                    <div class="mt-2 flex justify-between items-center">
+                        <span class="text-sm text-gray-500">Profesor: Ana López</span>
+                        <span class="text-sm text-gray-500">Compañeros: 30</span>
+                    </div>
+                </div>
+
+                <!-- Curso 2 -->
+                <div class="bg-purple-50 p-4 rounded-lg border border-purple-200 shadow-sm">
+                    <h4 class="font-medium text-gray-900">Literatura</h4>
+                    <p class="text-sm text-gray-600">Grado 11°</p>
+                    <div class="mt-2 flex justify-between items-center">
+                        <span class="text-sm text-gray-500">Profesor: Juan Pérez</span>
+                        <span class="text-sm text-gray-500">Compañeros: 28</span>
+                    </div>
+                </div>
+
+                <!-- Puedes agregar más cursos dinámicamente aquí -->
+            </div>
+        </div>
+
+        <!-- Acciones -->
+        <div class="flex space-x-4">
+            <a href="#" class="px-4 py-2 bg-purple-600 text-white rounded-md shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                Editar Perfil
+            </a>
+            <a href="#" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                Ver Información
+            </a>
+        </div>
+    </div>
+{% endblock %}
