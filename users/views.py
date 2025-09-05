@@ -95,3 +95,52 @@ def perfil_profesor(request):
     return render(request, 'users/profesor/perfil_profesor.html')
 
 
+#directivo----------------------------------------------
+@login_required
+def dashboard_directivo(request):
+    return render(request, 'users/directivo/dashboard_directivo.html')
+
+@login_required
+def usuarios_directivo(request):
+    return render(request, 'users/directivo/usuarios_directivo.html')
+
+@login_required
+def cursos_directivo(request):
+    return render(request, 'users/directivo/cursos_directivo.html')
+
+@login_required
+def horarios_directivo(request):
+    return render(request, 'users/directivo/horarios_directivo.html')
+
+@login_required
+def reportes_directivo(request):
+    return render(request, 'users/directivo/reportes_directivo.html')
+
+@login_required
+def perfil_directivo(request):
+    return render(request, 'users/directivo/perfil_directivo.html')
+
+#acudiente----------------------------------------------
+@login_required
+def dashboard_acudiente(request):
+    return render(request, 'users/acudiente/dashboard_acudiente.html')
+
+@login_required
+def perfil_acudiente(request):
+    return render(request, 'users/acudiente/perfil_acudiente.html')
+
+@login_required
+def estudiantes_acudiente(request):
+    return render(request, 'users/acudiente/estudiantes_acudiente.html')
+
+@login_required
+def notas_acudiente(request):
+    return render(request, 'users/acudiente/notas_acudiente.html')
+
+@login_required
+def boletin_acudiente(request):
+    return render(request, 'users/acudiente/boletin_acudiente.html')
+
+@login_required
+def tareas_acudiente(request):
+    return render(request, 'users/acudiente/tareas_acudiente.html')

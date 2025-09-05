@@ -1,0 +1,83 @@
+{% extends "users/profesor/dashboard_profesor.html" %}
+
+{% block profesor_content %}
+    <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+        <!-- Encabezado de la sección -->
+        <div class="mb-6 border-b pb-4">
+            <h2 class="text-2xl font-bold text-gray-900">Mis Tareas</h2>
+            <p class="mt-1 text-sm text-gray-600">
+                Aquí puedes crear editar o eliminar todas las tareas de tus alumnos.
+            </p>
+        </div>
+
+        <!-- Filtros y búsqueda -->
+        <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Selector de Curso -->
+            <div>
+                <label for="curso-select" class="block text-sm font-medium text-gray-700 mb-2">
+                    Seleccionar Curso
+                </label>
+                <select id="curso-select" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+                    <option value="">Todos los cursos</option>
+                    <option value="matematicas">Matemáticas 11°</option>
+                    <option value="quimica">Química 11°</option>
+                    <option value="literatura">Literatura 11°</option>
+                    <option value="fisica">Física 10°</option>
+                </select>
+            </div>
+
+            <!-- Selector de Materia -->
+            <div>
+                <label for="materia-select" class="block text-sm font-medium text-gray-700 mb-2">
+                    Seleccionar Materia
+                </label>
+                <select id="materia-select" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+                    <option value="">Todas las materias</option>
+                    <option value="matematicas">Matemáticas</option>
+                    <option value="quimica">Química</option>
+                    <option value="fisica">Física</option>
+                    <option value="literatura">Literatura</option>
+                    <option value="historia">Historia</option>
+                </select>
+            </div>
+
+            <!-- Búsqueda -->
+            <div>
+                <label for="busqueda" class="block text-sm font-medium text-gray-700 mb-2">
+                    Buscar Tarea
+                </label>
+                <input type="text" id="busqueda" placeholder="Título de la tarea..." 
+                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+            </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="mb-6 flex flex-wrap gap-3">
+            <button id="crear-tarea" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Crear Nueva Tarea
+            </button>
+            <button id="importar-estudiantes" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
+                </svg>
+                Importar Tareas
+            </button>
+            <button id="exportar-cursos" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                Exportar Tareas
+            </button>
+        </div>
+
+        <!-- Grid de cursos -->
+        <div id="cursos-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Tarjetas de cursos (generadas dinámicamente) -->
+        </div>
+    </div>
+{% endblock profesor_content %}
+
+

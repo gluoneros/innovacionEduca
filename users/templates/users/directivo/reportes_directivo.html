@@ -1,0 +1,187 @@
+{% extends "users/directivo/dashboard_directivo.html" %}
+
+{% block directivo_content %}
+
+<div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+    <!-- Encabezado de la sección -->
+    <div class="mb-6 border-b pb-4">
+        <h2 class="text-2xl font-bold text-gray-900">Mi Boletín Académico</h2>
+        <p class="mt-1 text-sm text-gray-600">Consulta tus calificaciones y el boletín oficial de tu rendimiento académico.</p>
+    </div>
+
+    <!-- Selector de Período Académico -->
+    <div class="mb-6">
+        <label for="periodo-select" class="block text-sm font-medium text-gray-700 mb-2">
+            Seleccionar Período Académico
+        </label>
+        <select id="periodo-select" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+            <option value="">Selecciona un período</option>
+            <option value="1">Primer Período</option>
+            <option value="2">Segundo Período</option>
+            <option value="3">Tercer Período</option>
+            <option value="4">Cuarto Período</option>
+        </select>
+    </div>
+
+    <!-- Contenedor de Calificaciones del Período Seleccionado -->
+    <div id="calificaciones-container" class="mb-8 hidden">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Calificaciones del Período</h3>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Asignatura
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Calificación
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Promedio
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Estado
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="calificaciones-body" class="bg-white divide-y divide-gray-200">
+                    <!-- Las calificaciones se cargarán dinámicamente aquí -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Visor de PDF del Boletín -->
+    <div class="mb-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Boletín Oficial</h3>
+        <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+            <div id="pdf-viewer" class="hidden">
+                <iframe id="pdf-iframe" class="w-full h-96 border border-gray-300 rounded-lg" frameborder="0"></iframe>
+            </div>
+            <div id="pdf-placeholder" class="text-gray-500">
+                <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <p class="mt-2 text-sm">Selecciona un período para ver el boletín oficial</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botón para Descargar Boletín -->
+    <div class="text-center">
+        <button id="descargar-boletin" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+            <svg class="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            Descargar Boletín
+        </button>
+    </div>
+</div>
+
+<script>
+    // Datos de ejemplo para las calificaciones
+    const calificacionesData = {
+        1: [
+            { asignatura: 'Matemáticas', calificacion: 4.2, promedio: 3.8, estado: 'Aprobado' },
+            { asignatura: 'Literatura', calificacion: 4.5, promedio: 4.1, estado: 'Aprobado' },
+            { asignatura: 'Ciencias', calificacion: 3.9, promedio: 3.7, estado: 'Aprobado' },
+            { asignatura: 'Historia', calificacion: 4.0, promedio: 3.9, estado: 'Aprobado' },
+            { asignatura: 'Inglés', calificacion: 4.3, promedio: 4.0, estado: 'Aprobado' }
+        ],
+        2: [
+            { asignatura: 'Matemáticas', calificacion: 4.0, promedio: 3.9, estado: 'Aprobado' },
+            { asignatura: 'Literatura', calificacion: 4.2, promedio: 4.0, estado: 'Aprobado' },
+            { asignatura: 'Ciencias', calificacion: 4.1, promedio: 3.8, estado: 'Aprobado' },
+            { asignatura: 'Historia', calificacion: 3.8, promedio: 3.7, estado: 'Aprobado' },
+            { asignatura: 'Inglés', calificacion: 4.4, promedio: 4.1, estado: 'Aprobado' }
+        ],
+        3: [
+            { asignatura: 'Matemáticas', calificacion: 4.3, promedio: 4.0, estado: 'Aprobado' },
+            { asignatura: 'Literatura', calificacion: 4.1, promedio: 3.9, estado: 'Aprobado' },
+            { asignatura: 'Ciencias', calificacion: 4.0, promedio: 3.8, estado: 'Aprobado' },
+            { asignatura: 'Historia', calificacion: 4.2, promedio: 3.9, estado: 'Aprobado' },
+            { asignatura: 'Inglés', calificacion: 4.5, promedio: 4.2, estado: 'Aprobado' }
+        ],
+        4: [
+            { asignatura: 'Matemáticas', calificacion: 4.1, promedio: 4.0, estado: 'Aprobado' },
+            { asignatura: 'Literatura', calificacion: 4.3, promedio: 4.0, estado: 'Aprobado' },
+            { asignatura: 'Ciencias', calificacion: 4.2, promedio: 3.9, estado: 'Aprobado' },
+            { asignatura: 'Historia', calificacion: 4.0, promedio: 3.8, estado: 'Aprobado' },
+            { asignatura: 'Inglés', calificacion: 4.4, promedio: 4.1, estado: 'Aprobado' }
+        ]
+    };
+
+    // Función para mostrar calificaciones
+    function mostrarCalificaciones(periodo) {
+        const container = document.getElementById('calificaciones-container');
+        const tbody = document.getElementById('calificaciones-body');
+        const pdfViewer = document.getElementById('pdf-viewer');
+        const pdfPlaceholder = document.getElementById('pdf-placeholder');
+        const descargarBtn = document.getElementById('descargar-boletin');
+
+        if (periodo && calificacionesData[periodo]) {
+            // Mostrar contenedor de calificaciones
+            container.classList.remove('hidden');
+            
+            // Limpiar tabla anterior
+            tbody.innerHTML = '';
+            
+            // Agregar filas de calificaciones
+            calificacionesData[periodo].forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">${item.asignatura}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-bold text-gray-900">${item.calificacion}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${item.promedio}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${item.estado === 'Aprobado' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                            ${item.estado}
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Mostrar visor de PDF (simulado)
+            pdfViewer.classList.remove('hidden');
+            pdfPlaceholder.classList.add('hidden');
+            
+            // Simular carga de PDF (en producción, aquí se cargaría el PDF real)
+            const iframe = document.getElementById('pdf-iframe');
+            iframe.src = `data:text/html,<html><body style="display:flex;align-items:center;justify-content:center;height:100%;margin:0;font-family:Arial,sans-serif;color:#666;"><div style="text-align:center;"><h3>Boletín del ${periodo}° Período</h3><p>Aquí se mostraría el PDF del boletín oficial</p><p>En producción, este iframe cargaría el archivo PDF real</p></div></body></html>`;
+
+            // Habilitar botón de descarga
+            descargarBtn.disabled = false;
+        } else {
+            // Ocultar contenedor de calificaciones
+            container.classList.add('hidden');
+            pdfViewer.classList.add('hidden');
+            pdfPlaceholder.classList.remove('hidden');
+            descargarBtn.disabled = true;
+        }
+    }
+
+    // Event listener para el selector de período
+    document.getElementById('periodo-select').addEventListener('change', function() {
+        const periodo = this.value;
+        mostrarCalificaciones(periodo);
+    });
+
+    // Event listener para el botón de descarga
+    document.getElementById('descargar-boletin').addEventListener('click', function() {
+        const periodo = document.getElementById('periodo-select').value;
+        if (periodo) {
+            // En producción, aquí se implementaría la descarga real del PDF
+            alert(`Descargando boletín del ${periodo}° período...\n\nEn producción, este botón descargaría el archivo PDF real del boletín.`);
+        }
+    });
+</script>
+
+{% endblock directivo_content %}
+                    
