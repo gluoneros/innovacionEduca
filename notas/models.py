@@ -6,7 +6,7 @@ class Grado(models.Model):
     nombre = models.CharField(max_length=100)
     estudiantes = models.ManyToManyField(Estudiante, related_name='grados')
     profesores = models.ManyToManyField(Profesor, related_name='grados')
-    materias = models.ManyToManyField(Materia, related_name='grados')
+    materias = models.ManyToManyField('Materia', related_name='grados')
     
     def __str__(self):
         return self.nombre
@@ -16,7 +16,7 @@ class Materia(models.Model):
     profesor = models.ForeignKey(Profesor, on_delete=models.CASCADE, related_name='materias')
     estudiantes = models.ManyToManyField(Estudiante, related_name='materias')
     grados = models.ManyToManyField(Grado, related_name='materias')
-    notas = models.ManyToManyField(Nota, related_name='materias')
+    notas = models.ManyToManyField('Nota', related_name='materias')
     
     def __str__(self):
         return self.nombre
