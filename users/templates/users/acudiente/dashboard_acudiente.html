@@ -6,27 +6,27 @@
 	<div class="max-w-7xl mx-auto">
 	<!-- Encabezado -->
 	<div class="mb-8">
-		<h1 class="text-3xl font-extrabold text-gray-900 mb-1">Dashboard Estudiante</h1>
+		<h1 class="text-3xl font-extrabold text-gray-900 mb-1">Dashboard Acudiente</h1>
 		<p class="text-base text-gray-600">
-			¡Hola, <span class="font-semibold">{{ user.first_name|default:user.username }}</span>! Aquí tienes un resumen de tu actividad académica.
+			¡Hola, <span class="font-semibold">{{ user.first_name|default:user.username }}</span>! Aquí tienes un resumen de tus estudiantes.
 		</p>
 	</div>
 
 	<!-- Tarjetas resumen -->
 
 	<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-		<a href="{% url 'cursos_estudiante' %}">
+		<a href="{% url 'estudiantes_acudiente' %}">
 			<div class="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition cursor-pointer border border-blue-100">
 				<div class="flex items-center space-x-4">
 					<i class="fas fa-book text-3xl text-blue-500"></i>
 					<div>
-						<h3 class="text-lg font-semibold text-gray-800">Mis materias</h3>
+						<h3 class="text-lg font-semibold text-gray-800">Mis estudiantes</h3>
 						<p class="text-2xl font-bold text-blue-700">12</p>
 					</div>
 				</div>
 			</div>
 		</a>
-		<a href="{% url 'tareas_estudiante' %}">
+		<a href="{% url 'tareas_acudiente' %}">
 			<div class="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition border border-green-100">
 				<div class="flex items-center space-x-4">
 					<i class="fas fa-clipboard-check text-3xl text-green-500"></i>
@@ -37,16 +37,18 @@
 				</div>
 			</div>
 		</a>
-		<div class="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition border border-purple-100">
-			<div class="flex items-center space-x-4">
-				<i class="fas fa-users text-3xl text-purple-500"></i>
-				<div>
-					<h3 class="text-lg font-semibold text-gray-800">Promedio general</h3>
-					<p class="text-2xl font-bold text-purple-700">245</p>
-				</div>
-			</div>
-		</div>
-		</div>
+        <a href="{% url 'tareas_acudiente' %}">
+            <div class="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition border border-purple-100">
+                <div class="flex items-center space-x-4">
+                    <i class="fas fa-users text-3xl text-purple-500"></i>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800">Promedio general</h3>
+                        <p class="text-2xl font-bold text-purple-700">245</p>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
 	</div>
 
 	{% block acudiente_content %}
