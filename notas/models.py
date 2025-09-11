@@ -1,5 +1,7 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.db.models import Sum, F
+
 from users.models import Profesor, Estudiante
 
 class EscalaNota(models.Model):
@@ -48,7 +50,27 @@ class Periodo(models.Model):
     anio_escolar = models.ForeignKey(AnioEscolar, on_delete=models.CASCADE, related_name='periodos')
     nombre = models.CharField(max_length=50)
     porcentaje = models.DecimalField(max_digits=5, decimal_places=2)
-    
+
+    # Calcula el promedio de un estudiante en este periodo
+    # considerando las notas y sus porcentajes
+    # Retorna None si no hay notas
+    def promedio_estudiante(self, estudiante):
+        notas = self.notas.filter(estudiante=estudiante)
+        if not notas.exists():
+            return None
+        total = notas.aggregate(suma=Sum(F('valor') * F('porcentaje') / 100))['suma']
+
+        return round(total, 2) if total is not None else None
+
+    # Valida que la suma de los porcentajes no supere 100%
+    def clean(self):
+        super().clean()
+        total = Periodo.objects.filter(anio_escolar=self.anio_escolar) \
+                    .exclude(pk=self.pk) \
+                    .aggregate(suma=Sum("porcentaje"))["suma"] or 0
+        if total + self.porcentaje > 100:
+            raise ValidationError("La suma de los porcentajes de los periodos no puede superar 100%.")
+
     class Meta:
         unique_together = ("anio_escolar", "nombre")
     
