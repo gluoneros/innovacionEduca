@@ -2,16 +2,18 @@
 
 ## Índice
 
-- [Introducción y Contexto](#introducción-y-contexto)
-- [Arquitectura del Sistema](#arquitectura-del-sistema)
-- [Especificaciones de Seguridad](#especificaciones-de-seguridad)
-- [Documentación Técnica](#documentación-técnica)
-- [Preparación del Entorno](#preparación-del-entorno)
-- [Configuración de la Base de Datos](#configuración-de-la-base-de-datos)
-- [Desarrollo Paso a Paso](#desarrollo-paso-a-paso)
-- [Integración y Testing](#integración-y-testing)
-- [Despliegue Local](#despliegue-local)
-- [Troubleshooting y Próximos Pasos](#troubleshooting-y-próximos-pasos)
+- [Plan de Desarrollo de la Aplicación Web para Administración de Calificaciones de Colegio](#plan-de-desarrollo-de-la-aplicación-web-para-administración-de-calificaciones-de-colegio)
+  - [Índice](#índice)
+  - [Introducción y Contexto](#introducción-y-contexto)
+  - [Arquitectura del Sistema](#arquitectura-del-sistema)
+  - [Especificaciones de Seguridad](#especificaciones-de-seguridad)
+  - [Documentación Técnica](#documentación-técnica)
+  - [Preparación del Entorno](#preparación-del-entorno)
+  - [Configuración de la Base de Datos](#configuración-de-la-base-de-datos)
+  - [Desarrollo Paso a Paso (MVP)](#desarrollo-paso-a-paso-mvp)
+  - [Integración y Testing](#integración-y-testing)
+  - [Despliegue Local](#despliegue-local)
+  - [Troubleshooting y Próximos Pasos](#troubleshooting-y-próximos-pasos)
 
 ## Introducción y Contexto
 
