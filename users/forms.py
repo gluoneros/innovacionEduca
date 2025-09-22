@@ -20,7 +20,7 @@ class RegistroGeneralForm(UserCreationForm):
         # --- ¡AQUÍ ESTÁ EL CAMBIO PRINCIPAL! ---
         # Añadimos los nuevos campos a la lista.
         fields = ('username', 'first_name', 'last_name', 'email', 'telefono',
-                  'tipo_usuario', 'fecha_nacimiento', 'nombre_colegio')
+                    'tipo_usuario', 'fecha_nacimiento', 'nombre_colegio')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -19,11 +19,13 @@ from django.urls import path, include
 from django.views.generic import RedirectView
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls), # Habilitar el admin general, util a veces
     path('', include('core.urls')),  # Incluye las URLs de la aplicación core
     
-    path('usuarios/', include('users.urls')),
+    path('usuarios/', include('users.urls')), # Urls de la app users
     path('', RedirectView.as_view(url='/usuarios/login/', permanent=False)),  # Redirige la raíz al login
+    
+    path('notas/', include('notas.urls')), # Urls de la app notas
 
 ]
 
