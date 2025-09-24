@@ -4,7 +4,7 @@ from .models import EscalaNota, AnioEscolar, Grado, Materia, Periodo, Nota, Info
 from users.models import Profesor, Estudiante
 
 
-class EscalaNotaForm(forms.ModelForm):
+class EscalaNotaForm(forms.ModelForm): # Define escalas de las notas
     class Meta:
         model = EscalaNota
         fields = ['nombre', 'minimo', 'maximo', 'paso']
@@ -30,7 +30,7 @@ class EscalaNotaForm(forms.ModelForm):
             })
         }
 
-    def clean(self):
+    def clean(self): # 
         cleaned_data = super().clean()
         minimo = cleaned_data.get('minimo')
         maximo = cleaned_data.get('maximo')
