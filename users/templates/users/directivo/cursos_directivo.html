@@ -1,547 +1,109 @@
 {% extends "users/directivo/dashboard_directivo.html" %}
 
 {% block directivo_content %}
+
     <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
         <!-- Encabezado de la sección -->
         <div class="mb-6 border-b pb-4">
             <h2 class="text-2xl font-bold text-gray-900">Gestión de Cursos</h2>
             <p class="mt-1 text-sm text-gray-600">Administra los cursos de la institución.</p>
         </div>
+    </div>
 
-        <!-- Alertas -->
-        <div id="alert-container" class="mb-4"></div>
-
-        <!-- Sección de Gestión de Años y Escalas -->
-        <div class="mb-8 border-b pb-6">
-            <h3 class="text-xl font-semibold text-gray-800 mb-4">Configuración Académica</h3>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-                <!-- Gestión de Años -->
-                <div class="bg-gray-50 p-4 rounded-lg">
-                    <h4 class="text-lg font-medium text-gray-700 mb-3">Años Escolares</h4>
-
-                    <!-- Selector de año activo -->
-                    <div class="mb-4">
-                        <label for="anio-select" class="block text-sm font-medium text-gray-700 mb-2">
-                            Año Escolar Activo
-                        </label>
-                        <select id="anio-select" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
-                            <option value="">Selecciona un año</option>
-                            {% for anio in anios_escolares %}
-                                <option value="{{ anio.id }}" {% if anio.activo %}selected{% endif %}>
-                                    {{ anio.anio }} - {{ anio.escala.nombre }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    <!-- Formulario nuevo año -->
-                    <div class="space-y-3">
-                        <input type="number" id="nuevo-anio" placeholder="Nuevo año (ej: 2025)"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm" min="2020" max="2030">
-
-                        <select id="escala-anio" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm">
-                            <option value="">Selecciona escala</option>
-                            {% for escala in escalas %}
-                                <option value="{{ escala.id }}">{{ escala.nombre }}</option>
-                            {% endfor %}
-                        </select>
-                        <button id="btn-crear-anio" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
-                            Crear Año Escolar
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Gestión de Escalas -->
-                <div class="bg-gray-50 p-4 rounded-lg">
-                    <h4 class="text-lg font-medium text-gray-700 mb-3">Escalas de Notas</h4>
-
-                        <!-- Lista de escalas existentes qwen-->
-                            <h1>Escalas de Notas</h1>
-
-                            <ul>
-                            {% for escala in escalas %}
-                                <li>
-                                    {{ escala }}
-                                    <a href="{% url 'escala_editar' escala.pk %}">Editar</a>
-                                    <a href="{% url 'escala_eliminar' escala.pk %}">Eliminar</a>
-                                </li>
-                            {% empty %}
-                                <li>No hay escalas creadas.</li>
-                            {% endfor %}
-                            </ul>
-                        <!-- Lista de escalas existentes qwen-->
-
-                    <!-- Lista de escalas existentes -->
-                    <div class="mb-4">
-                        <select id="escalas-existentes" class="block w-full px-3 py-2 border border-gray-300 rounded-md text-sm">
-                            <option value="">Escalas existentes</option>
-                            {% for escala in escalas %}
-                                <option value="{{ escala.id }}">{{ escala.nombre }} ({{ escala.minimo }} - {{ escala.maximo }})</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    <!-- Formulario nueva escala -->
-                    <div class="space-y-3">
-                        <input type="text" id="nombre-escala" placeholder="Nombre de escala (ej: Escala 0-20)"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm">
-                        <div class="grid grid-cols-3 gap-2">
-                            <input type="number" id="minimo-escala" placeholder="Min" step="0.01"
-                                   class="px-3 py-2 border border-gray-300 rounded-md text-sm">
-                            <input type="number" id="maximo-escala" placeholder="Max" step="0.01"
-                                   class="px-3 py-2 border border-gray-300 rounded-md text-sm">
-                            <input type="number" id="paso-escala" placeholder="Paso" step="0.01" value="0.1"
-                                   class="px-3 py-2 border border-gray-300 rounded-md text-sm">
-                        </div>
-                        <button id="btn-crear-escala" class="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
-                            Crear Escala
-                        </button>
-                    </div>
-                </div>
+    <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Selector de Grado -->
+            <div>            
+                <label for="grado-select" class="block text-sm font-medium text-gray-700 mb-2">
+                Gestionar grados
+                <button class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors w-full sm:w-auto">
+                    Agregar Grado
+                </button>
+                <select id="grado-select" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+                    <option value="">Todos los grados</option>
+                    <option value="9">Grado 9°</option>
+                    <option value="10">Grado 10°</option>
+                    <option value="11">Grado 11°</option>
+                </select>
             </div>
-        </div>
 
-        <!-- Sección de Grados y Materias -->
-        <div class="mb-6">
-            <h3 class="text-xl font-semibold text-gray-800 mb-4">Grados y Materias</h3>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-                <!-- Gestión de Grados -->
-                <div class="bg-gray-50 p-4 rounded-lg">
-                    <h4 class="text-lg font-medium text-gray-700 mb-3">Grados</h4>
-
-                    <div class="space-y-3">
-                        <input type="text" id="nombre-grado" placeholder="Nombre del grado (ej: Grado 11°)"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm">
-                        <button id="btn-crear-grado" class="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
-                            Crear Grado
-                        </button>
-                    </div>
-
-                    <!-- Lista de grados del año seleccionado -->
-                    <div class="mt-4">
-                        <h5 class="text-sm font-medium text-gray-600 mb-2">Grados del Año Seleccionado:</h5>
-                        <div id="lista-grados" class="space-y-1">
-                            <!-- Se llena dinámicamente -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Gestión de Materias -->
-                <div class="bg-gray-50 p-4 rounded-lg">
-                    <h4 class="text-lg font-medium text-gray-700 mb-3">Materias</h4>
-
-                    <div class="space-y-3">
-                        <input type="text" id="nombre-materia" placeholder="Nombre de la materia"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm">
-                        <select id="grado-materia" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm">
-                            <option value="">Selecciona grado</option>
-                        </select>
-                        <select id="profesor-materia" class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm">
-                            <option value="">Selecciona profesor (opcional)</option>
-                            {% for profesor in profesores %}
-                                <option value="{{ profesor.id }}">{{ profesor.user.first_name }} {{ profesor.user.last_name }}</option>
-                            {% endfor %}
-                        </select>
-                        <button id="btn-crear-materia" class="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
-                            Crear Materia
-                        </button>
-                    </div>
-                </div>
+            <!-- Selector de Materia -->
+            <div>
+                <label for="materia-select" class="block text-sm font-medium text-gray-700 mb-2">
+                    Filtrar por Materia
+                <button class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors w-full sm:w-auto">
+                    Agregar Materia
+                </button>    
+                <select id="materia-select" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+                    <option value="">Todas las materias</option>
+                    <option value="matematicas">Matemáticas</option>
+                    <option value="quimica">Química</option>
+                    <option value="literatura">Literatura</option>
+                    <option value="fisica">Física</option>
+                </select>
             </div>
-        </div>
-
-        <!-- Tabla de Materias -->
-        <div class="overflow-x-auto">
-            <h3 class="text-xl font-semibold text-gray-800 mb-4">Materias del Año Seleccionado</h3>
-            <table id="tabla-materias" class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Materia
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Grado
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Profesor
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Acciones
-                        </th>
-                    </tr>
-                </thead>
-                <tbody id="tbody-materias" class="bg-white divide-y divide-gray-200">
-                    <!-- Se llena dinámicamente -->
-                </tbody>
-            </table>
         </div>
     </div>
-    <!-- ---------Scripsts js----------  -->
-    <script>
-     // Variables globales
-        let anioSeleccionado = null;
 
-        document.addEventListener('DOMContentLoaded', function() {
-            // Event listeners
-            document.getElementById('anio-select').addEventListener('change', cambiarAnio);
-            document.getElementById('btn-crear-anio').addEventListener('click', crearAnio);
-            document.getElementById('btn-crear-escala').addEventListener('click', crearEscala);
-            document.getElementById('btn-crear-grado').addEventListener('click', crearGrado);
-            document.getElementById('btn-crear-materia').addEventListener('click', crearMateria);
+    <!-- Botones de acción -->
+    <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
 
-            // ===== CORRECCIÓN: Inicializar año seleccionado al cargar =====
-            const anioSelect = document.getElementById('anio-select');
-            if (anioSelect.value) {
-                anioSeleccionado = anioSelect.value; // Establecer la variable global
-                cambiarAnio(); // Cargar datos del año
-            }
-        });
+    </div>
 
-        function cambiarAnio() {
-            const anioId = document.getElementById('anio-select').value;
-            if (!anioId) {
-                limpiarDatos();
-                anioSeleccionado = null; // Limpiar variable global
-                return;
-            }
+    <!-- Tabla de cursos -->
+    <div class="mb-6">
+        <table id="tabla-cursos" class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">  
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Curso
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Materia
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Grado
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Profesor
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Acciones
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                <!-- Filas de cursos -->
+            </tbody>
+        </table>
+    </div>
 
-            anioSeleccionado = anioId; // Actualizar variable global
-
-            fetch(`/notas/ajax/obtener-datos-anio/${anioId}/`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        actualizarGrados(data.grados);
-                        actualizarMaterias(data.materias);
-                        actualizarSelectGrados(data.grados);
-                    } else {
-                        mostrarAlerta('error', data.error);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    mostrarAlerta('error', 'Error al cargar datos del año');
-                });
-        }
-
-        function crearAnio() {
-            const anio = document.getElementById('nuevo-anio').value;
-            const escalaId = document.getElementById('escala-anio').value;
-
-            if (!anio || !escalaId) {
-                mostrarAlerta('error', 'Complete todos los campos');
-                return;
-            }
-
-            const data = {
-                anio: parseInt(anio),
-                escala_id: parseInt(escalaId),
-                activo: true
-            };
-
-            fetch('/notas/ajax/crear-anio/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken')
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    mostrarAlerta('success', 'Año escolar creado exitosamente');
-                    // Agregar al select
-                    const anioSelect = document.getElementById('anio-select');
-                    const option = new Option(`${data.anio_escolar.anio} - ${data.anio_escolar.escala_nombre}`, data.anio_escolar.id);
-                    anioSelect.add(option);
-                    anioSelect.value = data.anio_escolar.id;
-
-                    // ===== CORRECCIÓN: Actualizar variable global después de crear =====
-                    anioSeleccionado = data.anio_escolar.id;
-                    cambiarAnio(); // Cargar datos del nuevo año
-
-                    // Limpiar campos
-                    document.getElementById('nuevo-anio').value = '';
-                    document.getElementById('escala-anio').value = '';
-                } else {
-                    mostrarAlerta('error', data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                mostrarAlerta('error', 'Error al crear año escolar');
-            });
-        }
-
-        function crearEscala() {
-            const nombre = document.getElementById('nombre-escala').value;
-            const minimo = document.getElementById('minimo-escala').value;
-            const maximo = document.getElementById('maximo-escala').value;
-            const paso = document.getElementById('paso-escala').value;
-
-            if (!nombre || !minimo || !maximo) {
-                mostrarAlerta('error', 'Complete todos los campos obligatorios');
-                return;
-            }
-
-            const data = {
-                nombre: nombre,
-                minimo: parseFloat(minimo),
-                maximo: parseFloat(maximo),
-                paso: parseFloat(paso) || 0.1
-            };
-
-            fetch('/notas/ajax/crear-escala/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken')
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    mostrarAlerta('success', 'Escala creada exitosamente');
-                    // Agregar a los selects
-                    const escalasSelect = document.getElementById('escalas-existentes');
-                    const escalaAnioSelect = document.getElementById('escala-anio');
-
-                    const option1 = new Option(`${data.escala.nombre} (${data.escala.minimo} - ${data.escala.maximo})`, data.escala.id);
-                    const option2 = new Option(data.escala.nombre, data.escala.id);
-
-                    escalasSelect.add(option1);
-                    escalaAnioSelect.add(option2);
-
-                    // Limpiar campos
-                    document.getElementById('nombre-escala').value = '';
-                    document.getElementById('minimo-escala').value = '';
-                    document.getElementById('maximo-escala').value = '';
-                    document.getElementById('paso-escala').value = '0.1';
-                } else {
-                    mostrarAlerta('error', data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                mostrarAlerta('error', 'Error al crear escala');
-            });
-        }
-
-        function crearGrado() {
-            // ===== CORRECCIÓN: Debug para verificar el valor =====
-            console.log('anioSeleccionado:', anioSeleccionado);
-
-            if (!anioSeleccionado) {
-                mostrarAlerta('error', 'Seleccione un año escolar primero');
-                return;
-            }
-
-            const nombre = document.getElementById('nombre-grado').value;
-            if (!nombre) {
-                mostrarAlerta('error', 'Ingrese el nombre del grado');
-                return;
-            }
-
-            const data = {
-                nombre: nombre,
-                anio_id: parseInt(anioSeleccionado)
-            };
-
-            console.log('Datos enviados:', data); // Debug
-
-            fetch('/notas/ajax/crear-grado/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken')
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Respuesta:', data); // Debug
-                if (data.success) {
-                    mostrarAlerta('success', 'Grado creado exitosamente');
-                    document.getElementById('nombre-grado').value = '';
-                    cambiarAnio(); // Recargar datos
-                } else {
-                    mostrarAlerta('error', data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                mostrarAlerta('error', 'Error al crear grado');
-            });
-        }
-
-        function crearMateria() {
-            const nombre = document.getElementById('nombre-materia').value;
-            const gradoId = document.getElementById('grado-materia').value;
-            const profesorId = document.getElementById('profesor-materia').value;
-
-            if (!nombre || !gradoId) {
-                mostrarAlerta('error', 'Complete el nombre y seleccione un grado');
-                return;
-            }
-
-            const data = {
-                nombre: nombre,
-                grado_id: parseInt(gradoId),
-                profesor_id: profesorId ? parseInt(profesorId) : null
-            };
-
-            fetch('/notas/ajax/crear-materia/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken')
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    mostrarAlerta('success', 'Materia creada exitosamente');
-                    document.getElementById('nombre-materia').value = '';
-                    document.getElementById('grado-materia').value = '';
-                    document.getElementById('profesor-materia').value = '';
-                    cambiarAnio(); // Recargar datos
-                } else {
-                    mostrarAlerta('error', data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                mostrarAlerta('error', 'Error al crear materia');
-            });
-        }
-
-        function actualizarGrados(grados) {
-            const listaGrados = document.getElementById('lista-grados');
-            listaGrados.innerHTML = '';
-
-            if (grados.length === 0) {
-                listaGrados.innerHTML = '<div class="text-center text-gray-500 py-2 text-sm">No hay grados creados para este año</div>';
-                return;
-            }
-
-            grados.forEach(grado => {
-                const div = document.createElement('div');
-                div.className = 'px-3 py-2 bg-white rounded border text-sm';
-                div.textContent = grado.nombre;
-                listaGrados.appendChild(div);
-            });
-        }
-
-        function actualizarMaterias(materias) {
-            const tbody = document.getElementById('tbody-materias');
-            tbody.innerHTML = '';
-
-            if (materias.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">No hay materias creadas para este año</td></tr>';
-                return;
-            }
-
-            materias.forEach(materia => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        ${materia.nombre}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        ${materia.grado || 'Sin asignar'}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        ${materia.profesor || 'Sin asignar'}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button onclick="editarMateria(${materia.id})" class="text-indigo-600 hover:text-indigo-900 mr-3">
-                            Editar
-                        </button>
-                        <button onclick="eliminarMateria(${materia.id})" class="text-red-600 hover:text-red-900">
-                            Eliminar
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function actualizarSelectGrados(grados) {
-            const gradoSelect = document.getElementById('grado-materia');
-            gradoSelect.innerHTML = '<option value="">Selecciona grado</option>';
-
-            grados.forEach(grado => {
-                const option = new Option(grado.nombre, grado.id);
-                gradoSelect.add(option);
-            });
-        }
-
-        function limpiarDatos() {
-            document.getElementById('lista-grados').innerHTML = '<div class="text-center text-gray-500 py-2 text-sm">Selecciona un año para ver los grados</div>';
-            document.getElementById('tbody-materias').innerHTML = '<tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">Selecciona un año para ver las materias</td></tr>';
-            document.getElementById('grado-materia').innerHTML = '<option value="">Selecciona grado</option>';
-            anioSeleccionado = null;
-        }
-
-        function mostrarAlerta(tipo, mensaje) {
-            const alertContainer = document.getElementById('alert-container');
-            const alertClass = tipo === 'success' ? 'bg-green-100 border-green-500 text-green-700' : 'bg-red-100 border-red-500 text-red-700';
-
-            const alertHTML = `
-                <div class="${alertClass} border px-4 py-3 rounded mb-4" role="alert">
-                    <span class="block sm:inline">${mensaje}</span>
-                    <span class="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer" onclick="this.parentElement.remove()">
-                        <svg class="fill-current h-6 w-6" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                            <title>Close</title>
-                            <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/>
-                        </svg>
-                    </span>
+    <!-- Modal de editar curso -->
+    <div id="modal-curso" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+        <div class="bg-white rounded-xl shadow-lg p-4 sm:p-6">
+            <form id="form-curso" class="space-y-4 sm:space-y-6">
+                <!-- Campos del formulario -->
+                <div class="space-y-2 sm:space-y-3">
+                    <label for="nombre-curso" class="block text-sm font-medium text-gray-700">Nombre del Curso</label>
+                    <input type="text" id="nombre-curso" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
                 </div>
-            `;
+                <div class="space-y-2 sm:space-y-3">
+                    
+                    <!-- Botones de acción -->
+                    <div class="flex space-x-4">
+                        <button type="button" id="cancelar-curso" class="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
+                            Cancelar
+                        </button>
+                        <button type="submit" id="guardar-curso" class="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
+                            
+                            Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
-            alertContainer.innerHTML = alertHTML;
 
-            // Auto-remove after 5 seconds
-            setTimeout(() => {
-                const alert = alertContainer.querySelector('[role="alert"]');
-                if (alert) alert.remove();
-            }, 5000);
-        }
 
-        function editarMateria(materiaId) {
-            // Implementar lógica de edición
-            console.log('Editar materia:', materiaId);
-            // Aquí puedes abrir un modal o redirigir a una página de edición
-        }
-
-        function eliminarMateria(materiaId) {
-            if (confirm('¿Está seguro de eliminar esta materia?')) {
-                // Implementar lógica de eliminación
-                console.log('Eliminar materia:', materiaId);
-                // Hacer petición AJAX para eliminar
-            }
-        }
-
-        // Función para obtener el token CSRF
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-    </script>
 
 {% endblock directivo_content %}
