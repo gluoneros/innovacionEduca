@@ -4,6 +4,19 @@ from . import views
 app_name = 'notas'
 
 urlpatterns = [
+
+    #==========================0=========================QWEN==================================
+    #==========================0=========================QWEN==================================
+
+    path('', views.EscalaNotaListView.as_view(), name='escala_lista'),
+    path('nueva/', views.EscalaNotaCreateView.as_view(), name='escala_nueva'),
+    path('editar/<int:pk>/', views.EscalaNotaUpdateView.as_view(), name='escala_editar'),
+    path('eliminar/<int:pk>/', views.EscalaNotaDeleteView.as_view(), name='escala_eliminar'),
+
+
+
+    #==========================0=========================QWEN==================================
+    #==========================0=========================QWEN==================================
     # Escalas de notas
     path('escalas/', views.lista_escalas, name='lista_escalas'),
     path('escalas/crear/', views.crear_escala, name='crear_escala'),

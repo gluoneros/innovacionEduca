@@ -3,6 +3,25 @@ from django.core.exceptions import ValidationError
 from .models import EscalaNota, AnioEscolar, Grado, Materia, Periodo, Nota, InformeFinal
 from users.models import Profesor, Estudiante
 
+#==============================================================QWEN==================================
+#==============================================================QWEN======================================
+
+from django import forms
+from .models import EscalaNota
+
+class EscalaNotaForm(forms.ModelForm):
+    class Meta:
+        model = EscalaNota
+        fields = ['nombre', 'minimo', 'maximo', 'paso']
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
+            'minimo': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+            'maximo': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+            'paso': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+        }
+##000000000000000000000==================================================================
+#==========================================================================================
+
 
 class EscalaNotaForm(forms.ModelForm): # Define escalas de las notas
     class Meta:

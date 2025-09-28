@@ -18,6 +18,46 @@ from .forms import (
     PeriodoForm, NotaForm, InformeFinalForm, BuscarEstudianteForm, 
     BuscarNotaForm, ImportarNotasForm
 )
+#---------------------========================Qwen==mas escalable y legible======================================0
+#============================0====VISTA BASADA EN CLASES======================================================
+from django.shortcuts import render, get_object_or_404, redirect
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+from .models import EscalaNota
+from .forms import EscalaNotaForm  # Asumiendo que crearás un formulario
+
+# Lista de escalas
+class EscalaNotaListView(ListView):
+    model = EscalaNota
+    template_name = 'escalanota/lista.html'
+    context_object_name = 'escalas'
+
+# Crear nueva escala
+class EscalaNotaCreateView(CreateView):
+    model = EscalaNota
+    form_class = EscalaNotaForm
+    template_name = 'escalanota/form.html'
+    success_url = reverse_lazy('escala_lista')
+
+# Editar escala existente
+class EscalaNotaUpdateView(UpdateView):
+    model = EscalaNota
+    form_class = EscalaNotaForm
+    template_name = 'escalanota/form.html'
+    success_url = reverse_lazy('escala_lista')
+
+# Eliminar escala
+class EscalaNotaDeleteView(DeleteView):
+    model = EscalaNota
+    template_name = 'escalanota/confirmar_eliminar.html'
+    success_url = reverse_lazy('escala_lista')
+
+
+
+
+#===========================================0menos escalable==========================================00=======
+#====================================VISTA BASADA EN FUNCIONES=====================================================0
+
 
 
 @login_required
