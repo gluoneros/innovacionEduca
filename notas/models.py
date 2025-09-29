@@ -4,12 +4,18 @@ from django.db.models import Sum, F
 
 from users.models import Profesor, Estudiante
 
+ESCALAS_PREDEFINIDAS = [
+    ("0 a 5", 0.00, 5.00),
+    ("1 a 5", 1.00, 5.00),
+    ("0 a 10", 0.00, 10.00),
+    ("1 a 10", 1.00, 10.00),
+]
+
 class EscalaNota(models.Model):
-    nombre = models.CharField(max_length=50, unique=True)  # Ej: "Escala 0 a 5"
-    minimo = models.DecimalField(max_digits=4, decimal_places=2)  # Ej: 0.00
-    maximo = models.DecimalField(max_digits=4, decimal_places=2)  # Ej: 5.00
-    paso = models.DecimalField(max_digits=4, decimal_places=2, default=0.1)  
-    # paso = intervalo permitido (ej: 0.1, 0.5, 1)
+    nombre = models.CharField(max_length=50, unique=True)
+    minimo = models.DecimalField(max_digits=5, decimal_places=2)  # aumenté a 5 para soportar 10.00
+    maximo = models.DecimalField(max_digits=5, decimal_places=2)
+    paso = models.DecimalField(max_digits=4, decimal_places=2, default=0.01)
 
     def __str__(self):
         return f"{self.nombre} ({self.minimo} - {self.maximo})"

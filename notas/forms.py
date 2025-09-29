@@ -23,43 +23,6 @@ class EscalaNotaForm(forms.ModelForm):
 #==========================================================================================
 
 
-class EscalaNotaForm(forms.ModelForm): # Define escalas de las notas
-    class Meta:
-        model = EscalaNota
-        fields = ['nombre', 'minimo', 'maximo', 'paso']
-        widgets = {
-            'nombre': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Ej: Escala 0 a 5'
-            }),
-            'minimo': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'step': '0.01',
-                'min': '0'
-            }),
-            'maximo': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'step': '0.01',
-                'min': '0'
-            }),
-            'paso': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'step': '0.01',
-                'min': '0.01'
-            })
-        }
-
-    def clean(self): # 
-        cleaned_data = super().clean()
-        minimo = cleaned_data.get('minimo')
-        maximo = cleaned_data.get('maximo')
-        
-        if minimo and maximo and minimo >= maximo:
-            raise ValidationError('El valor mínimo debe ser menor que el máximo.')
-        
-        return cleaned_data
-
-
 class AnioEscolarForm(forms.ModelForm):
     class Meta:
         model = AnioEscolar

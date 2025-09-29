@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from .models import EscalaNota, AnioEscolar, Grado, Materia, Periodo, Nota, InformeFinal
+from .models import  AnioEscolar, Grado, Materia, Periodo, Nota, InformeFinal
 from users.models import Profesor, Estudiante
 
 from django.db.models import Q, Sum, F
@@ -20,77 +20,60 @@ from .forms import (
 )
 #---------------------========================Qwen==mas escalable y legible======================================0
 #============================0====VISTA BASADA EN CLASES======================================================
-from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from django.contrib.auth.mixins import LoginRequiredMixin  # <-- Importa esto
 from django.urls import reverse_lazy
-from .models import EscalaNota
-from .forms import EscalaNotaForm
 
-# Lista de escalas
-class EscalaNotaListView(LoginRequiredMixin, ListView):
-    model = EscalaNota
-    template_name = 'escalanota/lista.html'
-    context_object_name = 'escalas'
+from .forms import EscalaNotaForm
+from django.contrib.auth.mixins import LoginRequiredMixin
+from .models import EscalaNota, ESCALAS_PREDEFINIDAS
+
 
 # Crear nueva escala
 class EscalaNotaCreateView(LoginRequiredMixin, CreateView):
     model = EscalaNota
     form_class = EscalaNotaForm
-    template_name = 'escalanota/form.html'
+    template_name = 'notas/escalas/form.html'
     success_url = reverse_lazy('escala_lista')
 
 # Editar escala existente
 class EscalaNotaUpdateView(LoginRequiredMixin, UpdateView):
     model = EscalaNota
     form_class = EscalaNotaForm
-    template_name = 'escalanota/form.html'
+    template_name = 'notas/escalas/form.html'
     success_url = reverse_lazy('escala_lista')
 
 # Eliminar escala
 class EscalaNotaDeleteView(LoginRequiredMixin, DeleteView):
     model = EscalaNota
-    template_name = 'escalanota/confirmar_eliminar.html'
+    template_name = 'notas/escalas/confirmar_eliminar.html'
     success_url = reverse_lazy('escala_lista')
 
 
+class EscalaNotaListView(LoginRequiredMixin, ListView):
+    model = EscalaNota
+    template_name = 'notas/escala/lista.html'
+    context_object_name = 'escalas'
 
+    def get_queryset(self):
+        # Asegurar que las escalas predefinidas existan
+        for nombre, min_val, max_val in ESCALAS_PREDEFINIDAS:
+            EscalaNota.objects.get_or_create(
+                nombre=nombre,
+                ddefaults={'minimo': min_val, 'maximo': max_val, 'paso': 0.01, 'es_predefinida': True}
+            )
+        return super().get_queryset()
 #===========================================0menos escalable==========================================00=======
 #====================================VISTA BASADA EN FUNCIONES=====================================================0
 
+class AnioEscolarCreateView(LoginRequiredMixin, CreateView):
+    model = AnioEscolar
+    form_class = AnioEscolarForm
+    template_name = 'notas/anios/crear.html'
+    success_url = reverse_lazy('notas:lista_anios')
+    def form_valid(self, form):
+        messages.success(self.request, 'Año escolar creado exitosamente.')
+        return super().form_valid(form)
 
-
-@login_required
-def lista_escalas(request):
-    escalas = EscalaNota.objects.all()
-    return render(request, 'notas/escalas/lista.html', {'escalas': escalas})
-
-
-@login_required
-def crear_escala(request):
-    if request.method == 'POST':
-        form = EscalaNotaForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Escala creada exitosamente.')
-            return redirect('notas:lista_escalas')
-    else:
-        form = EscalaNotaForm()
-    return render(request, 'notas/escalas/crear.html', {'form': form})
-
-
-@login_required
-def editar_escala(request, pk):
-    escala = get_object_or_404(EscalaNota, pk=pk)
-    if request.method == 'POST':
-        form = EscalaNotaForm(request.POST, instance=escala)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Escala actualizada exitosamente.')
-            return redirect('notas:lista_escalas')
-    else:
-        form = EscalaNotaForm(instance=escala)
-    return render(request, 'notas/escalas/editar.html', {'form': form, 'escala': escala})
 
 
 @login_required
