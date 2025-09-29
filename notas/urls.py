@@ -8,20 +8,21 @@ urlpatterns = [
     #==========================0=========================QWEN==================================
     #==========================0=========================QWEN==================================
 
-    path('', views.EscalaNotaListView.as_view(), name='escala_lista'),
-    path('nueva/', views.EscalaNotaCreateView.as_view(), name='escala_nueva'),
-    path('editar/<int:pk>/', views.EscalaNotaUpdateView.as_view(), name='escala_editar'),
-    path('eliminar/<int:pk>/', views.EscalaNotaDeleteView.as_view(), name='escala_eliminar'),
+    path('escalas', views.EscalaNotaListView.as_view(), name='escala_lista'),
+    path('nuevaescalas/crear/', views.EscalaNotaCreateView.as_view(), name='escala_nueva'),
+    path('escalas/<int:pk>/editar/', views.EscalaNotaUpdateView.as_view(), name='escala_editar'),
+    path('escalas/<int:pk>/eliminar/', views.EscalaNotaDeleteView.as_view(), name='escala_eliminar'),
 
 
 
     #==========================0=========================QWEN==================================
     #==========================0=========================QWEN==================================
     # Escalas de notas
-    path('escalas/', views.lista_escalas, name='lista_escalas'),
-    path('escalas/crear/', views.crear_escala, name='crear_escala'),
-    path('escalas/<int:pk>/editar/', views.editar_escala, name='editar_escala'),
-
+    
+    # path('escalas/', views.lista_escalas, name='lista_escalas'),
+        # path('escalas/crear/', views.crear_escala, name='crear_escala'),
+    #path('escalas/<int:pk>/editar/', views.editar_escala, name='editar_escala'),
+    
     # Años escolares
     path('anios/', views.lista_anios_escolares, name='lista_anios'),
     path('anios/crear/', views.crear_anio_escolar, name='crear_anio'),
@@ -66,4 +67,5 @@ urlpatterns = [
     path('ajax/activar-anio/<int:anio_id>/', views.activar_anio_escolar, name='activar_anio'),
     path('ajax/crear-periodo/', views.crear_periodo_ajax, name='crear_periodo_ajax'),
     path('ajax/estadisticas-anio/<int:anio_id>/', views.obtener_estadisticas_anio, name='estadisticas_anio'),
+    
 ]

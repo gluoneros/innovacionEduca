@@ -22,36 +22,36 @@ from .forms import (
 #============================0====VISTA BASADA EN CLASES======================================================
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin  # <-- Importa esto
 from django.urls import reverse_lazy
 from .models import EscalaNota
-from .forms import EscalaNotaForm  # Asumiendo que crearás un formulario
+from .forms import EscalaNotaForm
 
 # Lista de escalas
-class EscalaNotaListView(ListView):
+class EscalaNotaListView(LoginRequiredMixin, ListView):
     model = EscalaNota
     template_name = 'escalanota/lista.html'
     context_object_name = 'escalas'
 
 # Crear nueva escala
-class EscalaNotaCreateView(CreateView):
+class EscalaNotaCreateView(LoginRequiredMixin, CreateView):
     model = EscalaNota
     form_class = EscalaNotaForm
     template_name = 'escalanota/form.html'
     success_url = reverse_lazy('escala_lista')
 
 # Editar escala existente
-class EscalaNotaUpdateView(UpdateView):
+class EscalaNotaUpdateView(LoginRequiredMixin, UpdateView):
     model = EscalaNota
     form_class = EscalaNotaForm
     template_name = 'escalanota/form.html'
     success_url = reverse_lazy('escala_lista')
 
 # Eliminar escala
-class EscalaNotaDeleteView(DeleteView):
+class EscalaNotaDeleteView(LoginRequiredMixin, DeleteView):
     model = EscalaNota
     template_name = 'escalanota/confirmar_eliminar.html'
     success_url = reverse_lazy('escala_lista')
-
 
 
 
