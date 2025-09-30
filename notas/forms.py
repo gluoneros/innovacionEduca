@@ -6,7 +6,6 @@ from users.models import Profesor, Estudiante
 #==============================================================QWEN==================================
 #==============================================================QWEN======================================
 
-from django import forms
 from .models import EscalaNota
 
 class EscalaNotaForm(forms.ModelForm):
@@ -24,6 +23,12 @@ class EscalaNotaForm(forms.ModelForm):
 
 
 class AnioEscolarForm(forms.ModelForm):
+    numero_periodos = forms.ChoiceField(
+        choices=[(2, '2 periodos'), (3, '3 periodos'), (4, '4 periodos'), (5, '5 periodos')],
+        widget=forms.Select(attrs={'class': 'form-select'}),
+        label="Número de periodos académicos"
+    )
+
     class Meta:
         model = AnioEscolar
         fields = ['anio', 'activo', 'escala']
@@ -40,6 +45,45 @@ class AnioEscolarForm(forms.ModelForm):
                 'class': 'form-select'
             })
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Asegurar que las escalas predefinidas existan (opcional aquí también)
+        from .models import ESCALAS_PREDEFINIDAS
+        for nombre, min_val, max_val in ESCALAS_PREDEFINIDAS:
+            EscalaNota.objects.get_or_create(
+                nombre=nombre,
+                defaults={'minimo': min_val, 'maximo': max_val, 'paso': 0.01}
+            )
+        # Solo escalas existentes
+        self.fields['escala'].queryset = EscalaNota.objects.all()
+
+class PeriodoForm(forms.ModelForm):
+    class Meta:
+        model = Periodo
+        fields = ['anio_escolar', 'nombre', 'porcentaje']
+        widgets = {
+            'anio_escolar': forms.Select(attrs={
+                'class': 'form-select'
+            }),
+            'nombre': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Ej: Primer Período'
+            }),
+            'porcentaje': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'step': '0.01',
+                'min': '0',
+                'max': '100'
+            })
+        }
+
+    def clean_porcentaje(self):
+        porcentaje = self.cleaned_data.get('porcentaje')
+        if porcentaje and (porcentaje < 0 or porcentaje > 100):
+            raise ValidationError('El porcentaje debe estar entre 0 y 100.')
+        return porcentaje
+
 
 
 class GradoForm(forms.ModelForm):
@@ -78,33 +122,6 @@ class MateriaForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         # Filtrar profesores activos
         self.fields['profesor'].queryset = Profesor.objects.filter(user__is_active=True)
-
-
-class PeriodoForm(forms.ModelForm):
-    class Meta:
-        model = Periodo
-        fields = ['anio_escolar', 'nombre', 'porcentaje']
-        widgets = {
-            'anio_escolar': forms.Select(attrs={
-                'class': 'form-select'
-            }),
-            'nombre': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Ej: Primer Período'
-            }),
-            'porcentaje': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'step': '0.01',
-                'min': '0',
-                'max': '100'
-            })
-        }
-
-    def clean_porcentaje(self):
-        porcentaje = self.cleaned_data.get('porcentaje')
-        if porcentaje and (porcentaje < 0 or porcentaje > 100):
-            raise ValidationError('El porcentaje debe estar entre 0 y 100.')
-        return porcentaje
 
 
 class NotaForm(forms.ModelForm):

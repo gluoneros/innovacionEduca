@@ -30,28 +30,6 @@ class AnioEscolar(models.Model):
     def __str__(self):
         return str(self.anio)   
 
-
-# Entidad que representa el grado
-class Grado(models.Model):
-    nombre = models.CharField(max_length=100, unique=True)
-    anio = models.ForeignKey(AnioEscolar, on_delete=models.SET_NULL, null=True, blank=True, related_name='grados')
-    
-    def __str__(self):
-        return self.nombre
-
-# Entidad que representa la materia
-class Materia(models.Model):
-    nombre = models.CharField(max_length=100)
-    grado = models.ForeignKey(Grado, on_delete=models.SET_NULL, null=True, blank=True, related_name='materias')     
-    profesor = models.ForeignKey(Profesor, on_delete=models.SET_NULL, null=True, blank=True)
-    
-    # Evita duplicados por grado
-    class Meta:
-        unique_together = ("nombre", "grado")  
-    
-    def __str__(self):
-        return self.nombre
-    
 class Periodo(models.Model):
     anio_escolar = models.ForeignKey(AnioEscolar, on_delete=models.CASCADE, related_name='periodos')
     nombre = models.CharField(max_length=50)
@@ -82,7 +60,28 @@ class Periodo(models.Model):
     
     def __str__(self):
         return f"{self.anio_escolar.anio} - {self.nombre}"
-    
+
+
+class Grado(models.Model):
+    nombre = models.CharField(max_length=100, unique=True)
+    anio = models.ForeignKey(AnioEscolar, on_delete=models.SET_NULL, null=True, blank=True, related_name='grados')
+
+    def __str__(self):
+        return self.nombre
+
+
+# Entidad que representa la materia
+class Materia(models.Model):
+    nombre = models.CharField(max_length=100)
+    grado = models.ForeignKey(Grado, on_delete=models.SET_NULL, null=True, blank=True, related_name='materias')
+    profesor = models.ForeignKey(Profesor, on_delete=models.SET_NULL, null=True, blank=True)
+
+    # Evita duplicados por grado
+    class Meta:
+        unique_together = ("nombre", "grado")
+
+    def __str__(self):
+        return self.nombre
 
 class Nota(models.Model):
     estudiante = models.ForeignKey("users.Estudiante", on_delete=models.CASCADE, related_name="notas")

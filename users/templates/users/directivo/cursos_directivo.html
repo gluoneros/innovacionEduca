@@ -1,162 +1,51 @@
+<!-- users/templates/users/directivo/cursos_directivo.html -->
 {% extends "users/directivo/dashboard_directivo.html" %}
 
 {% block directivo_content %}
-
-    <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
-        <!-- Encabezado de la sección -->
-        <div class="mb-6 border-b pb-4">
-            <h2 class="text-2xl font-bold text-gray-900">Gestión de Cursos</h2>
-            <p class="mt-1 text-sm text-gray-600">Administra los cursos de la institución.</p>
-        </div>
-        
-        <!-- escalas -->
-        
-        <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                <!-- Selector de escalas -->
-                <!-- templates/notas/escalanota_lista.html -->
-            <!-- templates/notas/escalanota_lista.html -->
-<div class="p-6">
-    <h2 class="text-xl font-bold text-gray-800 mb-4">Gestión de Escalas de Notas</h2>
-
-    <div class="mb-6">
-        <label for="escala-select" class="block text-sm font-medium text-gray-700 mb-2">
-            Seleccionar escala
-        </label>
-        <select id="escala-select" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
-            <option value="">-- Elige una escala --</option>
-            <!-- Escalas predefinidas (siempre visibles) -->
-            <option value="0a5">Escala 0 a 5</option>
-            <option value="1a5">Escala 1 a 5</option>
-            <option value="0a10">Escala 0 a 10</option>
-            <option value="1a10">Escala 1 a 10</option>
-            <!-- Opción para crear una nueva -->
-            <option value="otra">Otra escala personalizada...</option>
-        </select>
-    </div>
-
-    <div id="acciones-escala" class="hidden mt-4 space-x-2">
-        <!-- Estos botones aparecerán solo si se selecciona una escala predefinida -->
-        <button id="btn-usar-escala" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
-            Usar esta escala
-        </button>
-        <!-- Opcional: ver detalles -->
-    </div>
-
-    <div id="formulario-otra" class="hidden mt-6 p-4 border border-gray-200 rounded bg-gray-50">
-        <h3 class="font-medium text-gray-700 mb-3">Crear escala personalizada</h3>
-        <a href="{% url 'notas:escala_nueva' %}" class="inline-block bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
-            Ir al formulario de creación
+<div class="space-y-8">
+    <!-- Sección de creación -->
+    <div class="bg-white p-6 rounded-2xl shadow-lg">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">Crear Nuevo Año Escolar</h2>
+        <a href="{% url 'notas:crear_anio' %}" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
+            Configurar Año Escolar
         </a>
     </div>
-</div>
 
-
-                
-            <div>
-                <label for="materia-select" class="block text-sm font-medium text-gray-700 mb-2">
-                    Filtrar por Materia
-                <button class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors w-full sm:w-auto">
-                    Agregar Materia
-                </button>
-                <select id="materia-select" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
-                    <option value="">Todas las materias</option>
-                    <option value="matematicas">Matemáticas</option>
-                    <option value="quimica">Química</option>
-                    <option value="literatura">Literatura</option>
-                    <option value="fisica">Física</option>
-                </select>
-
-
-
-
-    
-
-
-
-    <!-- Tabla de cursos -->
-    <div class="mb-6">
-        <table id="tabla-cursos" class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">  
-                <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Curso
-                    </th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Materia
-                    </th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Grado
-                    </th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Profesor
-                    </th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Acciones
-                    </th>
-                </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-                <!-- Filas de cursos -->
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Modal de editar curso -->
-    <div id="modal-curso" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-        <div class="bg-white rounded-xl shadow-lg p-4 sm:p-6">
-            <form id="form-curso" class="space-y-4 sm:space-y-6">
-                <!-- Campos del formulario -->
-                <div class="space-y-2 sm:space-y-3">
-                    <label for="nombre-curso" class="block text-sm font-medium text-gray-700">Nombre del Curso</label>
-                    <input type="text" id="nombre-curso" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
-                </div>
-                <div class="space-y-2 sm:space-y-3">
-                    
-                    <!-- Botones de acción -->
-                    <div class="flex space-x-4">
-                        <button type="button" id="cancelar-curso" class="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
-                            Cancelar
-                        </button>
-                        <button type="submit" id="guardar-curso" class="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
-                            
-                            Guardar Cambios
-                        </button>
-                    </div>
-
+    <!-- Sección de lista -->
+    <div class="bg-white p-6 rounded-2xl shadow-lg">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">Años Escolares Registrados</h2>
+        {% if anios %}
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Año</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Escala</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Periodos</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Activo</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        {% for anio in anios %}
+                        <tr>
+                            <td class="px-4 py-2">{{ anio.anio }}</td>
+                            <td class="px-4 py-2">{{ anio.escala.nombre }}</td>
+                            <td class="px-4 py-2">{{ anio.periodos.count }}</td>
+                            <td class="px-4 py-2">
+                                {% if anio.activo %}
+                                    <span class="px-2 py-1 text-xs bg-green-100 text-green-800 rounded">Activo</span>
+                                {% else %}
+                                    <span class="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded">Inactivo</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
-
-
-
-    <!-- JavaScript para habilitar botones según selección -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const select = document.getElementById('escala-select');
-            const accionesDiv = document.getElementById('acciones-escala');
-            const formularioDiv = document.getElementById('formulario-otra');
-            const btnUsar = document.getElementById('btn-usar-escala');
-
-            select.addEventListener('change', function () {
-                const valor = select.value;
-
-                // Ocultar todo primero
-                accionesDiv.classList.add('hidden');
-                formularioDiv.classList.add('hidden');
-
-                if (valor === 'otra') {
-                    // Mostrar formulario para crear
-                    formularioDiv.classList.remove('hidden');
-                } else if (valor) {
-                    // Mostrar botón de usar (podrías redirigir o guardar selección)
-                    accionesDiv.classList.remove('hidden');
-                    btnUsar.onclick = function() {
-                        alert('Escala seleccionada: ' + select.options[select.selectedIndex].text);
-                        // Aquí podrías:
-                        // - Guardar en localStorage
-                        // - Enviar por AJAX
-                        // - Redirigir con parámetro
-                    };
-                }
-            });
-        });
-    </script>
-{% endblock directivo_content %}
+        {% else %}
+            <p class="text-gray-500">No hay años escolares registrados.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -20,12 +20,12 @@ urlpatterns = [
     # Escalas de notas
     
     # path('escalas/', views.lista_escalas, name='lista_escalas'),
-        # path('escalas/crear/', views.crear_escala, name='crear_escala'),
+    # path('escalas/crear/', views.crear_escala, name='crear_escala'),
     #path('escalas/<int:pk>/editar/', views.editar_escala, name='editar_escala'),
     
     # Años escolares
-    path('anios/', views.lista_anios_escolares, name='lista_anios'),
-    path('anios/crear/', views.crear_anio_escolar, name='crear_anio'),
+    
+    path('anios/crear/', views.AnioEscolarCreateView.as_view(), name='crear_anio'),
 
     # Grados
     path('grados/', views.lista_grados, name='lista_grados'),

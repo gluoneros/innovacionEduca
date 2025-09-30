@@ -5,6 +5,7 @@ from django.contrib.auth.views import LoginView
 from .forms import RegistroGeneralForm
 from django.contrib.auth import login
 import random
+from notas.models import AnioEscolar
 
 def generar_id():
     return random.randint(100000, 999999)
@@ -106,7 +107,8 @@ def usuarios_directivo(request):
 
 @login_required
 def cursos_directivo(request):
-    return render(request, 'users/directivo/cursos_directivo.html')
+    anios = AnioEscolar.objects.select_related('escala').prefetch_related('periodos').order_by('-anio')
+    return render(request, 'users/directivo/cursos_directivo.html', {'anios': anios})
 
 @login_required
 def horarios_directivo(request):

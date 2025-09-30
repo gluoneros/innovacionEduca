@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.db import transaction
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
@@ -7,7 +8,6 @@ from users.models import Profesor, Estudiante
 
 from django.db.models import Q, Sum, F
 from django.http import JsonResponse
-from django.db import transaction
 from django.core.exceptions import ValidationError
 import json
 
@@ -65,34 +65,44 @@ class EscalaNotaListView(LoginRequiredMixin, ListView):
 #===========================================0menos escalable==========================================00=======
 #====================================VISTA BASADA EN FUNCIONES=====================================================0
 
+
+
 class AnioEscolarCreateView(LoginRequiredMixin, CreateView):
     model = AnioEscolar
     form_class = AnioEscolarForm
     template_name = 'notas/anios/crear.html'
     success_url = reverse_lazy('notas:lista_anios')
+
     def form_valid(self, form):
-        messages.success(self.request, 'Año escolar creado exitosamente.')
-        return super().form_valid(form)
+        numero_periodos = int(form.cleaned_data['numero_periodos'])
+        porcentaje_por_periodo = 100 / numero_periodos  # Distribución equitativa
 
+        try:
+            with transaction.atomic():
+                # Guardar el año escolar
+                anio_escolar = form.save()
 
+                # Crear los periodos
+                for i in range(1, numero_periodos + 1):
+                    Periodo.objects.create(
+                        anio_escolar=anio_escolar,
+                        nombre=f"Periodo {i}",
+                        porcentaje=round(porcentaje_por_periodo, 2)
+                    )
 
-@login_required
-def lista_anios_escolares(request):
-    anios = AnioEscolar.objects.all().order_by('-anio')
-    return render(request, 'notas/anios/lista.html', {'anios': anios})
+            messages.success(self.request, f'Año escolar {anio_escolar.anio} creado con {numero_periodos} periodos.')
+            return super().form_valid(form)
 
+        except Exception as e:
+            messages.error(self.request, f'Error al crear el año escolar: {str(e)}')
+            return self.form_invalid(form)
 
-@login_required
-def crear_anio_escolar(request):
-    if request.method == 'POST':
-        form = AnioEscolarForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Año escolar creado exitosamente.')
-            return redirect('notas:lista_anios')
-    else:
-        form = AnioEscolarForm()
-    return render(request, 'notas/anios/crear.html', {'form': form})
+class AnioEscolarListView(LoginRequiredMixin, ListView):
+    model = AnioEscolar
+    template_name = 'notas/anios/lista.html'
+    context_object_name = 'anios'
+    ordering = ['-anio']
+
 
 
 @login_required
