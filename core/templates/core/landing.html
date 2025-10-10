@@ -2,862 +2,776 @@
 {% load static %}
 
 {% block head %}
-<header class="sticky inset-0 z-50 border-b border-slate-100 bg-white/80 backdrop-blur-lg">
-    <nav class="mx-auto flex max-w-6xl gap-2 px-6 transition-all duration-200 ease-in-out lg:px-12 py-4">
-        <div class="relative flex items-center gap-2 ">
-            <a href="/">
-                <img src="{% static 'global/img/logo-r.png' %}" alt="Logo Innovación Educativa" class="h-10 w-auto">
-            </a>
+<header class="sticky top-0 z-50 border-b border-gray-200 bg-white/90 backdrop-blur-xl shadow-sm transition-all duration-300">
+  <nav class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
+    <!-- Logo y nombre -->
+    <div class="flex items-center gap-3">
+      <a href="/" class="flex items-center focus:outline-none" aria-label="Inicio">
+        <img src="{% static 'global/img/logo-r.png' %}" alt="Logo Innovación Educativa" class="h-10 w-auto object-contain">
+      </a>
+      <div class="hidden sm:block">
+        <div class="text-base font-semibold text-gray-900 hover:text-blue-600 transition-colors duration-200">
+          <a href="/" class="block">Innovación Educativa</a>
         </div>
-        <div class="flex flex-col gap-0.5 ">
-            <span class="text-1xl font-bold tracking-tight"><a href="/">Innovación Educativa</a></span>
-            <span class="text-xs text-blue-500 font-medium"><a href="/">Transformando el futuro</a></span>
-        </div>
-        <div class="flex-grow"></div>
-        <ul class="hidden items-center justify-center gap-6 md:flex ">
-            <li class="pt-1.5 font-dm text-sm font-medium text-slate-700">
-                <a href="#">Nosotros</a>
-            </li>
-            <li class="pt-1.5 font-dm text-sm font-medium text-slate-700">
-                <a href="#">Servicios</a>
-            </li>
-            <li class="pt-1.5 font-dm text-sm font-medium text-slate-700">
-                <a href="#">Blog</a>
-            </li>
-            <li class="pt-1.5 font-dm text-sm font-medium text-slate-700">
-                <a href="#">Docs</a>
-            </li>
-            <li class="pt-1.5 font-dm text-sm font-medium text-slate-700">
-                <a href="#">Contacto</a>
-            </li>
-        </ul>
-        <div class="flex-grow"></div>
-        <div class="hidden items-center justify-center gap-6 md:flex">
-            <a href="{% url 'login' %}"  class="font-dm text-sm font-medium text-slate-700">Iniciar sesión</a>
-            <a href="{% url 'registro' %}"
-                class="rounded-md bg-gradient-to-br from-green-600 to-emerald-400 px-3 py-1.5 font-dm text-sm font-medium text-white shadow-md shadow-green-400/50 transition-transform duration-200 ease-in-out hover:scale-[1.03]">
-                Regístrate gratis
-            </a>
-        </div>
-        <div class="relative flex items-center justify-center md:hidden">
-            <button type="button">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" class="h-6 w-auto text-slate-900"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"></path></svg>
-            </button>
-        </div>
-    </nav>
-</header>
-{% endblock %}
+        <div class="text-xs text-blue-600 font-medium">Transformando el futuro</div>
+      </div>
+    </div>
 
+    <!-- Menú de escritorio -->
+    <div class="hidden md:flex items-center gap-1">
+      <a href="#nosotros" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors duration-200">Nosotros</a>
+      <a href="#servicios" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors duration-200">Servicios</a>
+      <a href="#precios" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors duration-200">Precios</a>
+      <a href="#testimonios" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors duration-200">Testimonios</a>
+      <a href="#faqs" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors duration-200">FAQ</a>
+      <a href="#contacto" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors duration-200">Contacto</a>
+    </div>
+
+    <!-- Botones de acción (escritorio) -->
+    <div class="hidden md:flex items-center gap-3">
+      <a href="{% url 'login' %}" class="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors duration-200">Iniciar sesión</a>
+      <a href="{% url 'registro' %}"
+         class="rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 text-sm shadow-sm transition-all duration-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+        Regístrate gratis
+      </a>
+    </div>
+
+    <!-- Botón de menú móvil -->
+    <button id="mobile-menu-button" type="button"
+            class="md:hidden p-2 text-gray-700 hover:text-blue-600 hover:bg-gray-100 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            aria-controls="mobile-menu" aria-expanded="false">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+  </nav>
+
+  <!-- Menú móvil (oculto por defecto) -->
+  <div id="mobile-menu" class="hidden md:hidden border-t border-gray-100 bg-white/95 backdrop-blur-xl">
+    <div class="px-4 py-4 space-y-3">
+      <a href="#nosotros" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 rounded-lg transition-colors">Nosotros</a>
+      <a href="#servicios" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 rounded-lg transition-colors">Servicios</a>
+      <a href="#precios" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 rounded-lg transition-colors">Precios</a>
+      <a href="#testimonios" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 rounded-lg transition-colors">Testimonios</a>
+      <a href="#faqs" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 rounded-lg transition-colors">FAQ</a>
+      <a href="#contacto" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 rounded-lg transition-colors">Contacto</a>
+
+      <div class="pt-3 mt-3 border-t border-gray-100 space-y-2">
+        <a href="{% url 'login' %}" class="block w-full text-center px-4 py-2 text-base font-medium text-gray-700 hover:text-blue-600 transition-colors">Iniciar sesión</a>
+        <a href="{% url 'registro' %}"
+           class="block w-full text-center rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 text-base shadow-sm transition-all duration-200 hover:shadow-md">
+          Regístrate gratis
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+{% endblock %}
 
 {% block content %}
 <!-- Hero Section -->
-<section class="relative bg-gradient-to-br from-blue-50 to-white py-20 md:py-32">
-  <div class="container mx-auto px-4">
-    <div class="flex flex-col md:flex-row items-center gap-12">
-      <div class="md:w-1/2 space-y-6">
-        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
-          Transformando la educación <span class="text-blue-600">con innovación</span>
-        </h1>
-        <p class="text-lg text-gray-600 leading-relaxed">
-          Plataforma educativa diseñada para revolucionar el aprendizaje con herramientas interactivas, contenido personalizado y seguimiento en tiempo real.
-        </p>
-        <div class="flex flex-col sm:flex-row gap-4 pt-4">
-          <a href="{% url 'registro' %}" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition duration-300 transform hover:scale-105 shadow-lg">
-            Comenzar ahora
-          </a>
-          <a href="#servicios" class="border border-blue-600 text-blue-600 hover:bg-blue-50 font-medium py-3 px-6 rounded-lg transition duration-300">
-            Conocer más
-          </a>
+<section class="relative bg-gradient-to-br from-gray-50 to-white py-20 md:py-32">
+    <div class="container mx-auto px-6 lg:px-12">
+        <div class="flex flex-col md:flex-row items-center gap-12">
+            <div class="md:w-1/2 space-y-8">
+                <div class="space-y-4">
+                    <h1 class="text-4xl md:text-6xl font-bold text-gray-900 leading-tight">
+                        Transformando la educación <span class="text-blue-600">con innovación</span>
+                    </h1>
+                    <p class="text-xl text-gray-600 leading-relaxed max-w-lg">
+                        Plataforma educativa diseñada para revolucionar el aprendizaje con herramientas interactivas, contenido personalizado y seguimiento en tiempo real.
+                    </p>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="{% url 'registro' %}" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                        Comenzar ahora
+                    </a>
+                    <a href="#servicios" class="border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white font-semibold py-3 px-8 rounded-lg transition-all duration-200">
+                        Conocer más
+                    </a>
+                </div>
+            </div>
+            <div class="md:w-1/2">
+                <img src="{% static 'global/img/hero-education.png' %}" alt="Educación innovadora" class="rounded-2xl shadow-2xl w-full max-w-xl mx-auto">
+            </div>
         </div>
-      </div>
-      <div class="md:w-1/2">
-        <img src="{% static 'global/img/hero-education.png' %}" alt="Educación innovadora" class="rounded-xl shadow-2xl">
-      </div>
     </div>
-  </div>
-</section>
-
-<!-- Stats Section -->
-<section class="py-16 bg-white">
-  <div class="container mx-auto px-4">
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-      <div class="p-6 rounded-xl bg-blue-50">
-        <h3 class="text-3xl font-bold text-blue-600">10,000+</h3>
-        <p class="text-gray-600 mt-2">Estudiantes activos</p>
-      </div>
-      <div class="p-6 rounded-xl bg-green-50">
-        <h3 class="text-3xl font-bold text-green-600">500+</h3>
-        <p class="text-gray-600 mt-2">Instituciones asociadas</p>
-      </div>
-      <div class="p-6 rounded-xl bg-purple-50">
-        <h3 class="text-3xl font-bold text-purple-600">95%</h3>
-        <p class="text-gray-600 mt-2">Satisfacción de usuarios</p>
-      </div>
-      <div class="p-6 rounded-xl bg-orange-50">
-        <h3 class="text-3xl font-bold text-orange-600">24/7</h3>
-        <p class="text-gray-600 mt-2">Soporte disponible</p>
-      </div>
-    </div>
-  </div>
 </section>
 
 <!-- Nosotros Section -->
-<section id="nosotros" class="py-20 bg-gray-50">
-  <div class="container mx-auto px-4">
-    <div class="text-center mb-16">
-      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Nuestra <span class="text-blue-600">Misión</span></h2>
-      <div class="w-20 h-1 bg-blue-600 mx-auto"></div>
+<section id="nosotros" class="py-24 bg-white">
+    <div class="container mx-auto px-6 lg:px-12">
+        <div class="flex flex-col md:flex-row items-center gap-16">
+            <div class="md:w-1/2">
+                <img src="{% static 'global/img/blog-3.png' %}" alt="Sobre nosotros" class="rounded-xl shadow-lg w-full max-w-xl mx-auto">
+            </div>
+            <div class="md:w-1/2 space-y-6">
+                <div class="space-y-4">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Nuestra <span class="text-blue-600">Misión</span></h2>
+                    <div class="w-16 h-1 bg-blue-600"></div>
+                </div>
+                <p class="text-lg text-gray-600 leading-relaxed">
+                    En Innovación Educativa creemos que cada estudiante merece una experiencia de aprendizaje personalizada y accesible. Nuestra plataforma combina tecnología de vanguardia con metodologías pedagógicas probadas para ofrecer resultados excepcionales.
+                </p>
+                <div class="grid grid-cols-1 gap-4">
+                    <div class="flex items-start gap-4">
+                        <div class="bg-blue-100 p-2 rounded-full">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-900">Plataforma intuitiva</h3>
+                            <p class="text-gray-600">Fácil de usar para educadores y estudiantes</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4">
+                        <div class="bg-blue-100 p-2 rounded-full">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-900">Contenido personalizado</h3>
+                            <p class="text-gray-600">Adaptado a las necesidades específicas</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4">
+                        <div class="bg-blue-100 p-2 rounded-full">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-900">Seguimiento en tiempo real</h3>
+                            <p class="text-gray-600">Métricas detalladas del progreso</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div class="flex flex-col md:flex-row items-center gap-12">
-      <div class="md:w-1/2">
-        <img src="{% static 'global/img/about-education.jpg' %}" alt="Sobre nosotros" class="rounded-xl shadow-lg">
-      </div>
-      <div class="md:w-1/2 space-y-6">
-        <h3 class="text-2xl font-bold text-gray-900">Revolucionando la educación desde 2020</h3>
-        <p class="text-gray-600 leading-relaxed">
-          En Innovación Educativa creemos que cada estudiante merece una experiencia de aprendizaje personalizada y accesible. Nuestra plataforma combina tecnología de vanguardia con metodologías pedagógicas probadas para ofrecer resultados excepcionales.
-        </p>
-        <ul class="space-y-3">
-          <li class="flex items-start gap-3">
-            <div class="bg-blue-100 p-1 rounded-full">
-              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-            </div>
-            <span class="text-gray-700">Plataforma intuitiva y fácil de usar</span>
-          </li>
-          <li class="flex items-start gap-3">
-            <div class="bg-blue-100 p-1 rounded-full">
-              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-            </div>
-            <span class="text-gray-700">Contenido creado por expertos</span>
-          </li>
-          <li class="flex items-start gap-3">
-            <div class="bg-blue-100 p-1 rounded-full">
-              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-            </div>
-            <span class="text-gray-700">Seguimiento del progreso en tiempo real</span>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
 </section>
 
 <!-- Servicios Section -->
-<section id="servicios" class="py-20 bg-white">
-  <div class="container mx-auto px-4">
-    <div class="text-center mb-16">
-      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Nuestros <span class="text-blue-600">Servicios</span></h2>
-      <p class="text-xl text-gray-600 max-w-3xl mx-auto">Soluciones educativas diseñadas para cada necesidad</p>
-      <div class="w-20 h-1 bg-blue-600 mx-auto mt-4"></div>
+<section id="servicios" class="py-24 bg-gray-50">
+    <div class="container mx-auto px-6 lg:px-12">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Nuestros <span class="text-blue-600">Servicios</span></h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">Soluciones educativas diseñadas para cada necesidad</p>
+            <div class="w-16 h-1 bg-blue-600 mx-auto mt-6"></div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="bg-white p-8 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100">
+                <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
+                    <i class="fas fa-chalkboard-teacher text-blue-600 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">Aula Virtual</h3>
+                <p class="text-gray-600 leading-relaxed">
+                    Entorno de aprendizaje completo con videoconferencias, materiales interactivos y seguimiento de progreso.
+                </p>
+            </div>
+
+            <div class="bg-white p-8 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100">
+                <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
+                    <i class="fas fa-book-open text-green-600 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">Contenido Personalizado</h3>
+                <p class="text-gray-600 leading-relaxed">
+                    Adaptamos el material educativo a las necesidades específicas de cada institución y estudiante.
+                </p>
+            </div>
+
+            <div class="bg-white p-8 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100">
+                <div class="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
+                    <i class="fas fa-chart-line text-purple-600 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">Analítica Educativa</h3>
+                <p class="text-gray-600 leading-relaxed">
+                    Dashboard con métricas detalladas para evaluar el desempeño y mejorar los resultados.
+                </p>
+            </div>
+
+            <div class="bg-white p-8 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100">
+                <div class="bg-orange-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
+                    <i class="fas fa-certificate text-orange-600 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">Certificaciones</h3>
+                <p class="text-gray-600 leading-relaxed">
+                    Emisión de certificados digitales con tecnología blockchain para validar los logros académicos.
+                </p>
+            </div>
+
+            <div class="bg-white p-8 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100">
+                <div class="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
+                    <i class="fas fa-users text-red-600 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">Capacitación Docente</h3>
+                <p class="text-gray-600 leading-relaxed">
+                    Programas de formación continua para educadores en metodologías innovadoras.
+                </p>
+            </div>
+
+            <div class="bg-white p-8 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100">
+                <div class="bg-yellow-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
+                    <i class="fas fa-mobile-alt text-yellow-600 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">App Móvil</h3>
+                <p class="text-gray-600 leading-relaxed">
+                    Acceso desde cualquier dispositivo con funcionalidades completas y contenido offline.
+                </p>
+            </div>
+        </div>
     </div>
+</section>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      <!-- Servicio 1 -->
-      <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border border-gray-100">
-        <div class="bg-blue-100 w-14 h-14 rounded-full flex items-center justify-center mb-6">
-          <i class="fas fa-chalkboard-teacher text-blue-600 text-xl"></i>
+<!-- Precios Section -->
+<section id="precios" class="py-24 bg-white">
+    <div class="container mx-auto px-6 lg:px-12">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Planes <span class="text-blue-600">a tu medida</span></h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">Elige el plan que mejor se adapte a tus necesidades</p>
+            <div class="w-16 h-1 bg-blue-600 mx-auto mt-6"></div>
         </div>
-        <h3 class="text-xl font-bold text-gray-900 mb-3">Aula Virtual</h3>
-        <p class="text-gray-600 mb-4">
-          Entorno de aprendizaje completo con videoconferencias, materiales interactivos y seguimiento de progreso.
-        </p>
-        <a href="#" class="text-blue-600 font-medium flex items-center gap-2">
-          Saber más <i class="fas fa-arrow-right"></i>
-        </a>
-      </div>
 
-      <!-- Servicio 2 -->
-      <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border border-gray-100">
-        <div class="bg-green-100 w-14 h-14 rounded-full flex items-center justify-center mb-6">
-          <i class="fas fa-book-open text-green-600 text-xl"></i>
-        </div>
-        <h3 class="text-xl font-bold text-gray-900 mb-3">Contenido Personalizado</h3>
-        <p class="text-gray-600 mb-4">
-          Adaptamos el material educativo a las necesidades específicas de cada institución y estudiante.
-        </p>
-        <a href="#" class="text-green-600 font-medium flex items-center gap-2">
-          Saber más <i class="fas fa-arrow-right"></i>
-        </a>
-      </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <!-- Plan Básico -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 hover:border-blue-500 transition-all duration-300 transform hover:-translate-y-2">
+                <div class="p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Básico</h3>
+                    <p class="text-gray-600 mb-6">Perfecto para pequeños grupos y tutores</p>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold text-gray-900">$29</span>
+                        <span class="text-gray-500">/mes</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-gray-700">Hasta 50 estudiantes</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-gray-700">5 cursos simultáneos</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-gray-700">Soporte por correo</span>
+                        </li>
+                    </ul>
+                    <a href="{% url 'registro' %}" class="block w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-3 px-4 rounded-lg text-center transition-all duration-200">
+                        Comenzar
+                    </a>
+                </div>
+            </div>
 
-      <!-- Servicio 3 -->
-      <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border border-gray-100">
-        <div class="bg-purple-100 w-14 h-14 rounded-full flex items-center justify-center mb-6">
-          <i class="fas fa-chart-line text-purple-600 text-xl"></i>
-        </div>
-        <h3 class="text-xl font-bold text-gray-900 mb-3">Analítica Educativa</h3>
-        <p class="text-gray-600 mb-4">
-          Dashboard con métricas detalladas para evaluar el desempeño y mejorar los resultados.
-        </p>
-        <a href="#" class="text-purple-600 font-medium flex items-center gap-2">
-          Saber más <i class="fas fa-arrow-right"></i>
-        </a>
-      </div>
+            <!-- Plan Profesional (Destacado) -->
+            <div class="bg-white rounded-xl shadow-xl overflow-hidden border-2 border-blue-500 transform -translate-y-4">
+                <div class="bg-blue-500 text-white text-center py-2">
+                    <span class="font-medium">Más popular</span>
+                </div>
+                <div class="p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Profesional</h3>
+                    <p class="text-gray-600 mb-6">Ideal para instituciones medianas</p>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold text-gray-900">$99</span>
+                        <span class="text-gray-500">/mes</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-gray-700">Hasta 500 estudiantes</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-gray-700">Cursos ilimitados</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-gray-700">Soporte prioritario</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-gray-700">Analítica avanzada</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-gray-700">Integraciones API</span>
+                        </li>
+                    </ul>
+                    <a href="{% url 'registro' %}" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg text-center transition-all duration-200 transform hover:scale-105">
+                        Comenzar
+                    </a>
+                </div>
+            </div>
 
-      <!-- Servicio 4 -->
-      <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border border-gray-100">
-        <div class="bg-orange-100 w-14 h-14 rounded-full flex items-center justify-center mb-6">
-          <i class="fas fa-certificate text-orange-600 text-xl"></i>
+            <!-- Plan Empresarial -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 hover:border-blue-500 transition-all duration-300 transform hover:-translate-y-2">
+                <div class="p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Empresarial</h3>
+                    <p class="text-gray-600 mb-6">Solución completa para grandes instituciones</p>
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold text-gray-900">$299</span>
+                        <span class="text-gray-500">/mes</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-gray-700">Estudiantes ilimitados</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-gray-700">Soporte 24/7</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-gray-700">Personalización completa</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-gray-700">Entrenamiento dedicado</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-gray-700">SSO y seguridad avanzada</span>
+                        </li>
+                    </ul>
+                    <a href="{% url 'registro' %}" class="block w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-3 px-4 rounded-lg text-center transition-all duration-200">
+                        Comenzar
+                    </a>
+                </div>
+            </div>
         </div>
-        <h3 class="text-xl font-bold text-gray-900 mb-3">Certificaciones</h3>
-        <p class="text-gray-600 mb-4">
-          Emisión de certificados digitales con tecnología blockchain para validar los logros académicos.
-        </p>
-        <a href="#" class="text-orange-600 font-medium flex items-center gap-2">
-          Saber más <i class="fas fa-arrow-right"></i>
-        </a>
-      </div>
 
-      <!-- Servicio 5 -->
-      <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border border-gray-100">
-        <div class="bg-red-100 w-14 h-14 rounded-full flex items-center justify-center mb-6">
-          <i class="fas fa-users text-red-600 text-xl"></i>
+        <div class="text-center mt-12">
+            <p class="text-gray-600">¿Necesitas un plan personalizado? <a href="#contacto" class="text-blue-600 font-medium hover:underline">Contáctanos</a></p>
         </div>
-        <h3 class="text-xl font-bold text-gray-900 mb-3">Capacitación Docente</h3>
-        <p class="text-gray-600 mb-4">
-          Programas de formación continua para educadores en metodologías innovadoras.
-        </p>
-        <a href="#" class="text-red-600 font-medium flex items-center gap-2">
-          Saber más <i class="fas fa-arrow-right"></i>
-        </a>
-      </div>
-
-      <!-- Servicio 6 -->
-      <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border border-gray-100">
-        <div class="bg-yellow-100 w-14 h-14 rounded-full flex items-center justify-center mb-6">
-          <i class="fas fa-mobile-alt text-yellow-600 text-xl"></i>
-        </div>
-        <h3 class="text-xl font-bold text-gray-900 mb-3">App Móvil</h3>
-        <p class="text-gray-600 mb-4">
-          Acceso desde cualquier dispositivo con funcionalidades completas y contenido offline.
-        </p>
-        <a href="#" class="text-yellow-600 font-medium flex items-center gap-2">
-          Saber más <i class="fas fa-arrow-right"></i>
-        </a>
-      </div>
     </div>
-  </div>
 </section>
 
 <!-- Testimonios Section -->
-<section class="py-20 bg-gray-50">
-  <div class="container mx-auto px-4">
-    <div class="text-center mb-16">
-      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Lo que dicen <span class="text-blue-600">nuestros usuarios</span></h2>
-      <p class="text-xl text-gray-600 max-w-3xl mx-auto">Experiencias reales de instituciones que transformaron su educación</p>
-      <div class="w-20 h-1 bg-blue-600 mx-auto mt-4"></div>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <!-- Testimonio 1 -->
-      <div class="bg-white p-8 rounded-xl shadow-md">
-        <div class="flex items-center mb-4">
-          <div class="text-yellow-400">
-            <i class="fas fa-star"></i>
-            <i class="fas fa-star"></i>
-            <i class="fas fa-star"></i>
-            <i class="fas fa-star"></i>
-            <i class="fas fa-star"></i>
-          </div>
+<section id="testimonios" class="py-24 bg-white">
+    <div class="container mx-auto px-6 lg:px-12">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Lo que dicen <span class="text-blue-600">nuestros usuarios</span></h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">Experiencias reales de instituciones que transformaron su educación</p>
+            <div class="w-16 h-1 bg-blue-600 mx-auto mt-6"></div>
         </div>
-        <p class="text-gray-600 italic mb-6">
-          "Desde que implementamos Innovación Educativa, nuestros estudiantes han mostrado un aumento del 30% en sus resultados académicos. La plataforma es intuitiva y el soporte excelente."
-        </p>
-        <div class="flex items-center">
-          <img src="{% static 'global/img/testimonial-1.jpg' %}" alt="María González" class="w-12 h-12 rounded-full object-cover mr-4">
-          <div>
-            <h4 class="font-bold text-gray-900">María González</h4>
-            <p class="text-gray-500 text-sm">Directora, Colegio San José</p>
-          </div>
-        </div>
-      </div>
 
-      <!-- Testimonio 2 -->
-      <div class="bg-white p-8 rounded-xl shadow-md">
-        <div class="flex items-center mb-4">
-          <div class="text-yellow-400">
-            <i class="fas fa-star"></i>
-            <i class="fas fa-star"></i>
-            <i class="fas fa-star"></i>
-            <i class="fas fa-star"></i>
-            <i class="fas fa-star"></i>
-          </div>
-        </div>
-        <p class="text-gray-600 italic mb-6">
-          "Los reportes de analítica nos permiten identificar rápidamente a los estudiantes que necesitan apoyo adicional. Ha revolucionado nuestra manera de enseñar."
-        </p>
-        <div class="flex items-center">
-          <img src="{% static 'global/img/testimonial-2.jpg' %}" alt="Carlos Mendoza" class="w-12 h-12 rounded-full object-cover mr-4">
-          <div>
-            <h4 class="font-bold text-gray-900">Carlos Mendoza</h4>
-            <p class="text-gray-500 text-sm">Coordinador Académico</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Testimonio 3 -->
-      <div class="bg-white p-8 rounded-xl shadow-md">
-        <div class="flex items-center mb-4">
-          <div class="text-yellow-400">
-            <i class="fas fa-star"></i>
-            <i class="fas fa-star"></i>
-            <i class="fas fa-star"></i>
-            <i class="fas fa-star"></i>
-            <i class="fas fa-star-half-alt"></i>
-          </div>
-        </div>
-        <p class="text-gray-600 italic mb-6">
-          "Como docente, valoro especialmente las herramientas de creación de contenido que me permiten diseñar lecciones interactivas en minutos."
-        </p>
-        <div class="flex items-center">
-          <img src="{% static 'global/img/testimonial-3.jpg' %}" alt="Laura Ramírez" class="w-12 h-12 rounded-full object-cover mr-4">
-          <div>
-            <h4 class="font-bold text-gray-900">Laura Ramírez</h4>
-            <p class="text-gray-500 text-sm">Profesora de Ciencias</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Pricing Section -->
-<section class="py-20 bg-white">
-  <div class="container mx-auto px-4">
-    <div class="text-center mb-16">
-      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Planes <span class="text-blue-600">a tu medida</span></h2>
-      <p class="text-xl text-gray-600 max-w-3xl mx-auto">Elige el plan que mejor se adapte a tus necesidades</p>
-      <div class="w-20 h-1 bg-blue-600 mx-auto mt-4"></div>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-      <!-- Plan Básico -->
-      <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 hover:border-blue-500 transition duration-300 transform hover:-translate-y-2">
-        <div class="p-8">
-          <h3 class="text-2xl font-bold text-gray-900 mb-2">Básico</h3>
-          <p class="text-gray-600 mb-6">Perfecto para pequeños grupos y tutores</p>
-          <div class="mb-6">
-            <span class="text-4xl font-bold text-gray-900">$29</span>
-            <span class="text-gray-500">/mes</span>
-          </div>
-          <ul class="space-y-3 mb-8">
-            <li class="flex items-center">
-              <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              <span class="text-gray-700">Hasta 50 estudiantes</span>
-            </li>
-            <li class="flex items-center">
-              <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              <span class="text-gray-700">5 cursos simultáneos</span>
-            </li>
-            <li class="flex items-center">
-              <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              <span class="text-gray-700">Soporte por correo</span>
-            </li>
-          </ul>
-          <a href="{% url 'registro' %}" class="block w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-3 px-4 rounded-lg text-center transition duration-300">
-            Comenzar
-          </a>
-        </div>
-      </div>
-
-      <!-- Plan Profesional (Destacado) -->
-      <div class="bg-white rounded-xl shadow-xl overflow-hidden border-2 border-blue-500 transform -translate-y-4">
-        <div class="bg-blue-500 text-white text-center py-2">
-          <span class="font-medium">Más popular</span>
-        </div>
-        <div class="p-8">
-          <h3 class="text-2xl font-bold text-gray-900 mb-2">Profesional</h3>
-          <p class="text-gray-600 mb-6">Ideal para instituciones medianas</p>
-          <div class="mb-6">
-            <span class="text-4xl font-bold text-gray-900">$99</span>
-            <span class="text-gray-500">/mes</span>
-          </div>
-          <ul class="space-y-3 mb-8">
-            <li class="flex items-center">
-              <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              <span class="text-gray-700">Hasta 500 estudiantes</span>
-            </li>
-            <li class="flex items-center">
-              <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              <span class="text-gray-700">Cursos ilimitados</span>
-            </li>
-            <li class="flex items-center">
-              <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              <span class="text-gray-700">Soporte prioritario</span>
-            </li>
-            <li class="flex items-center">
-              <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              <span class="text-gray-700">Analítica avanzada</span>
-            </li>
-            <li class="flex items-center">
-              <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              <span class="text-gray-700">Integraciones API</span>
-            </li>
-          </ul>
-          <a href="{% url 'registro' %}" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg text-center transition duration-300 transform hover:scale-105">
-            Comenzar
-          </a>
-        </div>
-      </div>
-
-      <!-- Plan Empresarial -->
-      <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 hover:border-blue-500 transition duration-300 transform hover:-translate-y-2">
-        <div class="p-8">
-          <h3 class="text-2xl font-bold text-gray-900 mb-2">Empresarial</h3>
-          <p class="text-gray-600 mb-6">Solución completa para grandes instituciones</p>
-          <div class="mb-6">
-            <span class="text-4xl font-bold text-gray-900">$299</span>
-            <span class="text-gray-500">/mes</span>
-          </div>
-          <ul class="space-y-3 mb-8">
-            <li class="flex items-center">
-              <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              <span class="text-gray-700">Estudiantes ilimitados</span>
-            </li>
-            <li class="flex items-center">
-              <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              <span class="text-gray-700">Soporte 24/7</span>
-            </li>
-            <li class="flex items-center">
-              <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              <span class="text-gray-700">Personalización completa</span>
-            </li>
-            <li class="flex items-center">
-              <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              <span class="text-gray-700">Entrenamiento dedicado</span>
-            </li>
-            <li class="flex items-center">
-              <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-              </svg>
-              <span class="text-gray-700">SSO y seguridad avanzada</span>
-            </li>
-          </ul>
-          <a href="{% url 'registro' %}" class="block w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-3 px-4 rounded-lg text-center transition duration-300">
-            Comenzar
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <div class="text-center mt-12">
-      <p class="text-gray-600">¿Necesitas un plan personalizado? <a href="#contacto" class="text-blue-600 font-medium hover:underline">Contáctanos</a></p>
-    </div>
-  </div>
-</section>
-
-<!-- Blog Section -->
-<section id="blog" class="py-20 bg-gray-50">
-  <div class="container mx-auto px-4">
-    <div class="text-center mb-16">
-      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Últimas del <span class="text-blue-600">Blog</span></h2>
-      <p class="text-xl text-gray-600 max-w-3xl mx-auto">Aprende sobre tendencias educativas y mejores prácticas</p>
-      <div class="w-20 h-1 bg-blue-600 mx-auto mt-4"></div>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <!-- Artículo 1 -->
-      <div class="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition duration-300">
-        <img src="{% static 'global/img/blog-1.jpg' %}" alt="Tendencias educativas" class="w-full h-48 object-cover">
-        <div class="p-6">
-          <div class="flex items-center text-sm text-gray-500 mb-3">
-            <span>15 Jun 2023</span>
-            <span class="mx-2">•</span>
-            <span>5 min lectura</span>
-          </div>
-          <h3 class="text-xl font-bold text-gray-900 mb-3">5 Tendencias que están transformando la educación</h3>
-          <p class="text-gray-600 mb-4">
-            Descubre las innovaciones tecnológicas y pedagógicas que están redefiniendo el aprendizaje en el siglo XXI.
-          </p>
-          <a href="#" class="text-blue-600 font-medium flex items-center gap-2">
-            Leer más <i class="fas fa-arrow-right"></i>
-          </a>
-        </div>
-      </div>
-
-      <!-- Artículo 2 -->
-      <div class="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition duration-300">
-        <img src="{% static 'global/img/blog-2.jpg' %}" alt="Gamificación" class="w-full h-48 object-cover">
-        <div class="p-6">
-          <div class="flex items-center text-sm text-gray-500 mb-3">
-            <span>2 Jun 2023</span>
-            <span class="mx-2">•</span>
-            <span>7 min lectura</span>
-          </div>
-          <h3 class="text-xl font-bold text-gray-900 mb-3">Cómo implementar gamificación en el aula virtual</h3>
-          <p class="text-gray-600 mb-4">
-            Guía práctica para aumentar el engagement de tus estudiantes mediante mecánicas de juego en la educación.
-          </p>
-          <a href="#" class="text-blue-600 font-medium flex items-center gap-2">
-            Leer más <i class="fas fa-arrow-right"></i>
-          </a>
-        </div>
-      </div>
-
-      <!-- Artículo 3 -->
-      <div class="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition duration-300">
-        <img src="{% static 'global/img/blog-3.jpg' %}" alt="Analítica educativa" class="w-full h-48 object-cover">
-        <div class="p-6">
-          <div class="flex items-center text-sm text-gray-500 mb-3">
-            <span>20 May 2023</span>
-            <span class="mx-2">•</span>
-            <span>4 min lectura</span>
-          </div>
-          <h3 class="text-xl font-bold text-gray-900 mb-3">El poder de los datos en la educación</h3>
-          <p class="text-gray-600 mb-4">
-            Cómo utilizar la analítica educativa para mejorar los resultados de aprendizaje y retención estudiantil.
-          </p>
-          <a href="#" class="text-blue-600 font-medium flex items-center gap-2">
-            Leer más <i class="fas fa-arrow-right"></i>
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <div class="text-center mt-12">
-      <a href="#" class="inline-flex items-center px-6 py-3 border border-blue-600 text-blue-600 font-medium rounded-lg hover:bg-blue-50 transition duration-300">
-        Ver todos los artículos <i class="fas fa-arrow-right ml-2"></i>
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- CTA Section -->
-<section class="py-20 bg-gradient-to-r from-blue-600 to-blue-800 text-white">
-  <div class="container mx-auto px-4 text-center">
-    <h2 class="text-3xl md:text-4xl font-bold mb-6">¿Listo para transformar tu experiencia educativa?</h2>
-    <p class="text-xl mb-8 max-w-3xl mx-auto">
-      Únete a miles de instituciones que ya están revolucionando la manera de enseñar y aprender.
-    </p>
-    <div class="flex flex-col sm:flex-row justify-center gap-4">
-      <a href="{% url 'registro' %}" class="bg-white text-blue-600 hover:bg-gray-100 font-medium py-3 px-8 rounded-lg transition duration-300 transform hover:scale-105 shadow-lg">
-        Comenzar ahora
-      </a>
-      <a href="#contacto" class="border border-white text-white hover:bg-white hover:text-blue-600 font-medium py-3 px-8 rounded-lg transition duration-300">
-        Contactar ventas
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- Contacto Section -->
-<section id="contacto" class="py-20 bg-white">
-  <div class="container mx-auto px-4">
-    <div class="text-center mb-16">
-      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Contáctanos</h2>
-      <p class="text-xl text-gray-600 max-w-3xl mx-auto">Estamos aquí para ayudarte en lo que necesites</p>
-      <div class="w-20 h-1 bg-blue-600 mx-auto mt-4"></div>
-    </div>
-
-    <div class="flex flex-col md:flex-row gap-12 max-w-6xl mx-auto">
-      <div class="md:w-1/2">
-        <form class="space-y-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label for="nombre" class="block text-gray-700 font-medium mb-2">Nombre</label>
-              <input type="text" id="nombre" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition duration-300">
-            </div>
-            <div>
-              <label for="email" class="block text-gray-700 font-medium mb-2">Correo electrónico</label>
-              <input type="email" id="email" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition duration-300">
-            </div>
-          </div>
-          <div>
-            <label for="asunto" class="block text-gray-700 font-medium mb-2">Asunto</label>
-            <input type="text" id="asunto" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition duration-300">
-          </div>
-          <div>
-            <label for="mensaje" class="block text-gray-700 font-medium mb-2">Mensaje</label>
-            <textarea id="mensaje" rows="5" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition duration-300"></textarea>
-          </div>
-          <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition duration-300 transform hover:scale-105">
-            Enviar mensaje
-          </button>
-        </form>
-      </div>
-
-      <div class="md:w-1/2">
-        <div class="bg-gray-50 p-8 rounded-xl h-full">
-          <h3 class="text-2xl font-bold text-gray-900 mb-6">Información de contacto</h3>
-
-          <div class="space-y-6">
-            <div class="flex items-start gap-4">
-              <div class="bg-blue-100 p-3 rounded-full">
-                <i class="fas fa-map-marker-alt text-blue-600"></i>
-              </div>
-              <div>
-                <h4 class="font-bold text-gray-900 mb-1">Dirección</h4>
-                <p class="text-gray-600">Carrera 45 #20-35, Guarne<br>Antioquia, Colombia</p>
-              </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-gray-50 p-8 rounded-xl">
+                <div class="flex items-center mb-6">
+                    <div class="text-yellow-400 flex gap-1">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+s                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                <p class="text-gray-700 italic mb-6 leading-relaxed">
+                    "Desde que implementamos Innovación Educativa, nuestros estudiantes han mostrado un aumento del 30% en sus resultados académicos. La plataforma es intuitiva y el soporte excelente."
+                </p>
+                <div class="flex items-center">
+                    <img src="{% static 'global/img/logo-r.png' %}" alt="María González" class="w-12 h-12 rounded-full object-cover mr-4 border-2 border-white shadow-sm">
+                    <div>
+                        <h4 class="font-semibold text-gray-900">María González</h4>
+                        <p class="text-gray-600 text-sm">Directora, Colegio San José</p>
+                    </div>
+                </div>
             </div>
 
-            <div class="flex items-start gap-4">
-              <div class="bg-blue-100 p-3 rounded-full">
-                <i class="fas fa-phone-alt text-blue-600"></i>
-              </div>
-              <div>
-                <h4 class="font-bold text-gray-900 mb-1">Teléfono</h4>
-                <p class="text-gray-600">+57 (4) 123-4567<br>Lun-Vie: 8:00 AM - 6:00 PM</p>
-              </div>
+            <div class="bg-gray-50 p-8 rounded-xl">
+                <div class="flex items-center mb-6">
+                    <div class="text-yellow-400 flex gap-1">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                <p class="text-gray-700 italic mb-6 leading-relaxed">
+                    "Los reportes de analítica nos permiten identificar rápidamente a los estudiantes que necesitan apoyo adicional. Ha revolucionado nuestra manera de enseñar."
+                </p>
+                <div class="flex items-center">
+                    <img src="{% static 'global/img/logo-r.png' %}" alt="Carlos Mendoza" class="w-12 h-12 rounded-full object-cover mr-4 border-2 border-white shadow-sm">
+                    <div>
+                        <h4 class="font-semibold text-gray-900">Carlos Mendoza</h4>
+                        <p class="text-gray-600 text-sm">Coordinador Académico</p>
+                    </div>
+                </div>
             </div>
 
-            <div class="flex items-start gap-4">
-              <div class="bg-blue-100 p-3 rounded-full">
-                <i class="fas fa-envelope text-blue-600"></i>
-              </div>
-              <div>
-                <h4 class="font-bold text-gray-900 mb-1">Correo electrónico</h4>
-                <p class="text-gray-600">info@innovacioneducativa.com<br>soporte@innovacioneducativa.com</p>
-              </div>
+            <div class="bg-gray-50 p-8 rounded-xl">
+                <div class="flex items-center mb-6">
+                    <div class="text-yellow-400 flex gap-1">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                </div>
+                <p class="text-gray-700 italic mb-6 leading-relaxed">
+                    "Como docente, valoro especialmente las herramientas de creación de contenido que me permiten diseñar lecciones interactivas en minutos."
+                </p>
+                <div class="flex items-center">
+                    <img src="{% static 'global/img/logo-r.png' %}" alt="Laura Ramírez" class="w-12 h-12 rounded-full object-cover mr-4 border-2 border-white shadow-sm">
+                    <div>
+                        <h4 class="font-semibold text-gray-900">Laura Ramírez</h4>
+                        <p class="text-gray-600 text-sm">Profesora de Ciencias</p>
+                    </div>
+                </div>
             </div>
-          </div>
-
-          <div class="mt-8">
-            <h4 class="font-bold text-gray-900 mb-4">Síguenos en redes</h4>
-            <div class="flex space-x-4">
-              <a href="#" class="social-icon w-10 h-10 flex items-center justify-center bg-blue-600 rounded-full text-white hover:bg-blue-700 transition duration-300">
-                <i class="fab fa-facebook-f"></i>
-              </a>
-              <a href="#" class="social-icon w-10 h-10 flex items-center justify-center bg-blue-400 rounded-full text-white hover:bg-blue-500 transition duration-300">
-                <i class="fab fa-twitter"></i>
-              </a>
-              <a href="#" class="social-icon w-10 h-10 flex items-center justify-center bg-pink-600 rounded-full text-white hover:bg-pink-700 transition duration-300">
-                <i class="fab fa-instagram"></i>
-              </a>
-              <a href="#" class="social-icon w-10 h-10 flex items-center justify-center bg-blue-700 rounded-full text-white hover:bg-blue-800 transition duration-300">
-                <i class="fab fa-linkedin-in"></i>
-              </a>
-            </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
 </section>
 
 <!-- FAQs Section -->
-<section class="py-20 bg-gray-50">
-  <div class="container mx-auto px-4">
-    <div class="text-center mb-16">
-      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Preguntas <span class="text-blue-600">frecuentes</span></h2>
-      <p class="text-xl text-gray-600 max-w-3xl mx-auto">Encuentra respuestas a las preguntas más comunes</p>
-      <div class="w-20 h-1 bg-blue-600 mx-auto mt-4"></div>
+<section id="faqs" class="py-24 bg-gray-50">
+    <div class="container mx-auto px-6 lg:px-12">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Preguntas <span class="text-blue-600">frecuentes</span></h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">Encuentra respuestas a las preguntas más comunes</p>
+            <div class="w-16 h-1 bg-blue-600 mx-auto mt-6"></div>
+        </div>
+
+        <div class="max-w-3xl mx-auto">
+            <div class="space-y-4">
+                <!-- Pregunta 1 -->
+                <div class="bg-white p-6 rounded-xl shadow-sm">
+                    <button class="flex items-center justify-between w-full text-left">
+                        <h3 class="text-lg font-medium text-gray-900">¿Cómo puedo registrarme en la plataforma?</h3>
+                        <svg class="w-5 h-5 text-blue-600 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div class="mt-4 text-gray-600 hidden">
+                        <p>El registro es muy sencillo. Solo haz clic en el botón "Regístrate gratis" en la esquina superior derecha de nuestra página web y completa el formulario con tus datos básicos. Recibirás un correo electrónico de confirmación y podrás acceder inmediatamente a tu cuenta.</p>
+                    </div>
+                </div>
+
+                <!-- Pregunta 2 -->
+                <div class="bg-white p-6 rounded-xl shadow-sm">
+                    <button class="flex items-center justify-between w-full text-left">
+                        <h3 class="text-lg font-medium text-gray-900">¿Qué métodos de pago aceptan?</h3>
+                        <svg class="w-5 h-5 text-blue-600 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div class="mt-4 text-gray-600 hidden">
+                        <p>Aceptamos todas las tarjetas de crédito y débito principales (Visa, MasterCard, American Express), transferencias bancarias y PayPal. También ofrecemos facturación para instituciones educativas que requieran procesos de pago especiales.</p>
+                    </div>
+                </div>
+
+                <!-- Pregunta 3 -->
+                <div class="bg-white p-6 rounded-xl shadow-sm">
+                    <button class="flex items-center justify-between w-full text-left">
+                        <h3 class="text-lg font-medium text-gray-900">¿Ofrecen descuentos para instituciones educativas?</h3>
+                        <svg class="w-5 h-5 text-blue-600 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div class="mt-4 text-gray-600 hidden">
+                        <p>Sí, ofrecemos descuentos especiales para instituciones educativas según el número de estudiantes y la duración del contrato. Contáctanos directamente para que podamos preparar una cotización personalizada según tus necesidades específicas.</p>
+                    </div>
+                </div>
+
+                <!-- Pregunta 4 -->
+                <div class="bg-white p-6 rounded-xl shadow-sm">
+                    <button class="flex items-center justify-between w-full text-left">
+                        <h3 class="text-lg font-medium text-gray-900">¿Es posible integrar la plataforma con nuestros sistemas existentes?</h3>
+                        <svg class="w-5 h-5 text-blue-600 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div class="mt-4 text-gray-600 hidden">
+                        <p>Absolutamente. Nuestra plataforma ofrece API robustas para integrarse con sistemas de gestión escolar (SIS), herramientas de videoconferencia, sistemas de autenticación (como LDAP o SAML), y más. Nuestro equipo de soporte técnico puede ayudarte con la implementación.</p>
+                    </div>
+                </div>
+
+                <!-- Pregunta 5 -->
+                <div class="bg-white p-6 rounded-xl shadow-sm">
+                    <button class="flex items-center justify-between w-full text-left">
+                        <h3 class="text-lg font-medium text-gray-900">¿Qué tipo de soporte técnico ofrecen?</h3>
+                        <svg class="w-5 h-5 text-blue-600 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div class="mt-4 text-gray-600 hidden">
+                        <p>Ofrecemos múltiples canales de soporte según tu plan: correo electrónico, chat en vivo y teléfono (para planes superiores). También tenemos una extensa base de conocimientos y documentación técnica disponible las 24 horas, así como webinars de capacitación semanales.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-12">
+                <p class="text-gray-600">¿No encontraste lo que buscabas? <a href="#contacto" class="text-blue-600 font-medium hover:underline">Contáctanos directamente</a></p>
+            </div>
+        </div>
     </div>
-
-    <div class="max-w-3xl mx-auto">
-      <div class="space-y-4">
-        <!-- Pregunta 1 -->
-        <div class="bg-white p-6 rounded-xl shadow-md">
-          <button class="flex items-center justify-between w-full text-left">
-            <h3 class="text-lg font-medium text-gray-900">¿Cómo puedo registrarme en la plataforma?</h3>
-            <svg class="w-5 h-5 text-blue-600 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-            </svg>
-          </button>
-          <div class="mt-4 text-gray-600 hidden">
-            <p>El registro es muy sencillo. Solo haz clic en el botón "Regístrate gratis" en la esquina superior derecha de nuestra página web y completa el formulario con tus datos básicos. Recibirás un correo electrónico de confirmación y podrás acceder inmediatamente a tu cuenta.</p>
-          </div>
-        </div>
-
-        <!-- Pregunta 2 -->
-        <div class="bg-white p-6 rounded-xl shadow-md">
-          <button class="flex items-center justify-between w-full text-left">
-            <h3 class="text-lg font-medium text-gray-900">¿Qué métodos de pago aceptan?</h3>
-            <svg class="w-5 h-5 text-blue-600 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-            </svg>
-          </button>
-          <div class="mt-4 text-gray-600 hidden">
-            <p>Aceptamos todas las tarjetas de crédito y débito principales (Visa, MasterCard, American Express), transferencias bancarias y PayPal. También ofrecemos facturación para instituciones educativas que requieran procesos de pago especiales.</p>
-          </div>
-        </div>
-
-        <!-- Pregunta 3 -->
-        <div class="bg-white p-6 rounded-xl shadow-md">
-          <button class="flex items-center justify-between w-full text-left">
-            <h3 class="text-lg font-medium text-gray-900">¿Ofrecen descuentos para instituciones educativas?</h3>
-            <svg class="w-5 h-5 text-blue-600 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-            </svg>
-          </button>
-          <div class="mt-4 text-gray-600 hidden">
-            <p>Sí, ofrecemos descuentos especiales para instituciones educativas según el número de estudiantes y la duración del contrato. Contáctanos directamente para que podamos preparar una cotización personalizada según tus necesidades específicas.</p>
-          </div>
-        </div>
-
-        <!-- Pregunta 4 -->
-        <div class="bg-white p-6 rounded-xl shadow-md">
-          <button class="flex items-center justify-between w-full text-left">
-            <h3 class="text-lg font-medium text-gray-900">¿Es posible integrar la plataforma con nuestros sistemas existentes?</h3>
-            <svg class="w-5 h-5 text-blue-600 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-            </svg>
-          </button>
-          <div class="mt-4 text-gray-600 hidden">
-            <p>Absolutamente. Nuestra plataforma ofrece API robustas para integrarse con sistemas de gestión escolar (SIS), herramientas de videoconferencia, sistemas de autenticación (como LDAP o SAML), y más. Nuestro equipo de soporte técnico puede ayudarte con la implementación.</p>
-          </div>
-        </div>
-
-        <!-- Pregunta 5 -->
-        <div class="bg-white p-6 rounded-xl shadow-md">
-          <button class="flex items-center justify-between w-full text-left">
-            <h3 class="text-lg font-medium text-gray-900">¿Qué tipo de soporte técnico ofrecen?</h3>
-            <svg class="w-5 h-5 text-blue-600 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-            </svg>
-          </button>
-          <div class="mt-4 text-gray-600 hidden">
-            <p>Ofrecemos múltiples canales de soporte según tu plan: correo electrónico, chat en vivo y teléfono (para planes superiores). También tenemos una extensa base de conocimientos y documentación técnica disponible las 24 horas, así como webinars de capacitación semanales.</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="text-center mt-12">
-        <p class="text-gray-600">¿No encontraste lo que buscabas? <a href="#contacto" class="text-blue-600 font-medium hover:underline">Contáctanos directamente</a></p>
-      </div>
-    </div>
-  </div>
 </section>
+
+<!-- CTA Section -->
+<section class="py-24 bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+    <div class="container mx-auto px-6 lg:px-12 text-center">
+        <div class="max-w-4xl mx-auto space-y-8">
+            <h2 class="text-3xl md:text-5xl font-bold">¿Listo para transformar tu experiencia educativa?</h2>
+            <p class="text-xl opacity-90 leading-relaxed">
+                Únete a miles de instituciones que ya están revolucionando la manera de enseñar y aprender.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-6">
+                <a href="{% url 'registro' %}" class="bg-white text-blue-600 hover:bg-gray-100 font-semibold py-4 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                    Comenzar ahora
+                </a>
+                <a href="#contacto" class="border-2 border-white text-white hover:bg-white hover:text-blue-600 font-semibold py-4 px-8 rounded-lg transition-all duration-200">
+                    Contactar ventas
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contacto Section -->
+<section id="contacto" class="py-24 bg-gray-50">
+    <div class="container mx-auto px-6 lg:px-12">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Contáctanos</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">Estamos aquí para ayudarte en lo que necesites</p>
+            <div class="w-16 h-1 bg-blue-600 mx-auto mt-6"></div>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-16 max-w-6xl mx-auto">
+            <div class="md:w-1/2">
+                <form class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="nombre" class="block text-gray-700 font-medium mb-2">Nombre</label>
+                            <input type="text" id="nombre" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200">
+                        </div>
+                        <div>
+                            <label for="email" class="block text-gray-700 font-medium mb-2">Correo electrónico</label>
+                            <input type="email" id="email" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="asunto" class="block text-gray-700 font-medium mb-2">Asunto</label>
+                        <input type="text" id="asunto" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200">
+                    </div>
+                    <div>
+                        <label for="mensaje" class="block text-gray-700 font-medium mb-2">Mensaje</label>
+                        <textarea id="mensaje" rows="6" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all duration-200"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                        Enviar mensaje
+                    </button>
+                </form>
+            </div>
+
+            <div class="md:w-1/2">
+                <div class="bg-white p-8 rounded-xl shadow-sm h-full">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-8">Información de contacto</h3>
+
+                    <div class="space-y-6">
+                        <div class="flex items-start gap-4">
+                            <div class="bg-blue-100 p-3 rounded-full">
+                                <i class="fas fa-map-marker-alt text-blue-600 text-lg"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900 mb-1">Dirección</h4>
+                                <p class="text-gray-600">Carrera 45 #20-35, Guarne<br>Antioquia, Colombia</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <div class="bg-blue-100 p-3 rounded-full">
+                                <i class="fas fa-phone-alt text-blue-600 text-lg"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900 mb-1">Teléfono</h4>
+                                <p class="text-gray-600">+57 (4) 123-4567<br>Lun-Vie: 8:00 AM - 6:00 PM</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <div class="bg-blue-100 p-3 rounded-full">
+                                <i class="fas fa-envelope text-blue-600 text-lg"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900 mb-1">Correo electrónico</h4>
+                                <p class="text-gray-600">info@innovacioneducativa.com<br>soporte@innovacioneducativa.com</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8">
+                        <h4 class="font-semibold text-gray-900 mb-4">Síguenos en redes</h4>
+                        <div class="flex space-x-4">
+                            <a href="#" class="w-10 h-10 flex items-center justify-center bg-blue-600 rounded-full text-white hover:bg-blue-700 transition-all duration-200">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 flex items-center justify-center bg-blue-400 rounded-full text-white hover:bg-blue-500 transition-all duration-200">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 flex items-center justify-center bg-pink-600 rounded-full text-white hover:bg-pink-700 transition-all duration-200">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 flex items-center justify-center bg-blue-700 rounded-full text-white hover:bg-blue-800 transition-all duration-200">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const menuButton = document.querySelector('button[type="button"]');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    menuButton.addEventListener('click', function() {
+        mobileMenu.classList.toggle('hidden');
+    });
+
+    // Close menu when clicking on a link
+    const menuLinks = mobileMenu.querySelectorAll('a');
+    menuLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            mobileMenu.classList.add('hidden');
+        });
+    });
+});
+</script>
 
 {% endblock content %}
 
 {% block footer %}
+<footer class="bg-gray-900 text-gray-300 mt-16">
+    <div class="container mx-auto px-6 lg:px-12 pt-16 pb-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+            <div class="space-y-4">
+                <div class="flex items-center gap-3">
+                    <img src="{% static 'global/img/logo-r.png' %}" alt="Logo" class="h-10 w-auto">
+                    <span class="text-xl font-bold text-white">Innovación Educativa</span>
+                </div>
+                <p class="text-gray-400 leading-relaxed">
+                    Transformando la educación a través de la innovación y la tecnología para crear un futuro mejor.
+                </p>
+                <div class="flex items-center gap-2 text-gray-400">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Guarne, Antioquia, Colombia</span>
+                </div>
+            </div>
 
-<footer class="footer-enhanced text-bl-50 mt-16">
-  <div class="container mx-auto px-4 pt-16 pb-8">
-    <!-- Sección principal del footer -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-      <!-- Información de la empresa -->
-      <div class="space-y-4">
-        <div class="flex items-center gap-3">
-          <img src="{% static 'global/img/logo-r.png' %}" alt="Logo" class="h-10 w-auto bg-blue-100 rounded-full">
-          <span class="text-xl font-bold text-blue">Innovación Educativa</span>
+            <div class="space-y-4">
+                <h3 class="text-lg font-semibold text-white">Enlaces Rápidos</h3>
+                <ul class="space-y-2">
+                    <li><a href="#nosotros" class="text-gray-400 hover:text-white transition-colors duration-200">Nosotros</a></li>
+                    <li><a href="#servicios" class="text-gray-400 hover:text-white transition-colors duration-200">Servicios</a></li>
+                    <li><a href="#precios" class="text-gray-400 hover:text-white transition-colors duration-200">Precios</a></li>
+                    <li><a href="#testimonios" class="text-gray-400 hover:text-white transition-colors duration-200">Testimonios</a></li>
+                    <li><a href="#faqs" class="text-gray-400 hover:text-white transition-colors duration-200">FAQ</a></li>
+                    <li><a href="#contacto" class="text-gray-400 hover:text-white transition-colors duration-200">Contacto</a></li>
+                </ul>
+            </div>
+
+            <div class="space-y-4">
+                <h3 class="text-lg font-semibold text-white">Contacto</h3>
+                <ul class="space-y-2 text-gray-400">
+                    <li class="flex items-center gap-2">
+                        <i class="fas fa-phone"></i>
+                        <span>+57 (4) 123-4567</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <i class="fas fa-envelope"></i>
+                        <span>info@innovacioneducativa.com</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <i class="fas fa-clock"></i>
+                        <span>Lun - Vie: 8:00 AM - 6:00 PM</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="space-y-4">
+                <h3 class="text-lg font-semibold text-white">Newsletter</h3>
+                <p class="text-gray-400 text-sm">
+                    Suscríbete para recibir las últimas novedades y actualizaciones.
+                </p>
+                <form class="space-y-3">
+                    <input type="email" placeholder="Tu correo electrónico"
+                           class="w-full px-4 py-2 rounded-lg bg-gray-800 text-white placeholder-gray-400 border border-gray-700 focus:border-blue-500 focus:outline-none transition-colors duration-200">
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200">
+                        <i class="fas fa-paper-plane mr-2"></i>
+                        Suscribirse
+                    </button>
+                </form>
+            </div>
         </div>
-        <p class="text-blue-400 leading-relaxed">
-          Transformando la educación a través de la innovación y la tecnología para crear un futuro mejor.
-        </p>
-        <div class="flex items-center gap-2 text-red-300">
-          <i class="fas fa-map-marker-alt"></i>
-          <span>Guarne, Antioquia, Colombia</span>
+
+        <div class="border-t border-gray-800 pt-8 pb-4">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex justify-center space-x-4">
+                    <a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-full text-blue-400 hover:text-white transition-all duration-200">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-full text-blue-400 hover:text-white transition-all duration-200">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-full text-blue-400 hover:text-white transition-all duration-200">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-full text-blue-400 hover:text-white transition-all duration-200">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-full text-blue-400 hover:text-white transition-all duration-200">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-full text-blue-400 hover:text-white transition-all duration-200">
+                        <i class="fab fa-github"></i>
+                    </a>
+                </div>
+
+                <div class="text-center md:text-right">
+                    <p class="text-gray-500 text-sm">
+                        © 2025 Innovación Educativa. Todos los derechos reservados.
+                    </p>
+                    <p class="text-gray-600 text-xs mt-1">
+                        Desarrollado con ❤️ por <a href="https://www.gluoneros.com/" class="text-blue-400 hover:text-blue-300">Gluoneros</a>
+                    </p>
+                </div>
+            </div>
         </div>
-      </div>
-
-      <!-- Enlaces rápidos -->
-      <div class="space-y-4">
-        <h3 class="text-lg font-semibold text-blue">Enlaces Rápidos</h3>
-        <ul class="space-y-2">
-          <li><a href="#nosotros" class="text-gray-500 hover:text-blue-400 transition-colors duration-300">Nosotros</a></li>
-          <li><a href="#servicios" class="text-gray-500 hover:text-blue-400 transition-colors duration-300">Servicios</a></li>
-          <li><a href="#blog" class="text-gray-500 hover:text-blue-400 transition-colors duration-300">Blog</a></li>
-          <li><a href="#blog" class="text-gray-500 hover:text-blue-400 transition-colors duration-300">Docs</a></li>
-          <li><a href="#contacto" class="text-gray-500 hover:text-blue-400 transition-colors duration-300">Contacto</a></li>
-        </ul>
-      </div>
-
-      <!-- Contacto -->
-      <div class="space-y-4">
-        <h3 class="text-lg font-semibold text-blue">Contacto</h3>
-        <ul class="space-y-2 text-gray-500">
-          <li class="flex items-center gap-2">
-            <i class="fas fa-phone"></i>
-            <span>+57 (4) 123-4567</span>
-          </li>
-          <li class="flex items-center gap-2">
-            <i class="fas fa-envelope"></i>
-            <span>info@innovacioneducativa.com</span>
-          </li>
-          <li class="flex items-center gap-2">
-            <i class="fas fa-clock"></i>
-            <span>Lun - Vie: 8:00 AM - 6:00 PM</span>
-          </li>
-        </ul>
-      </div>
-
-      <!-- Newsletter -->
-      <div class="space-y-4">
-        <h3 class="text-lg font-semibold text-blue">Newsletter</h3>
-        <p class="text-blue-400 text-sm">
-          Suscríbete para recibir las últimas novedades y actualizaciones.
-        </p>
-        <form class="space-y-3">
-          <input type="email" placeholder="Tu correo electrónico"
-                 class="w-full px-4 py-2 rounded-lg bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:border-blue-500 focus:outline-none transition-colors duration-300">
-          <button type="submit" class="w-full btn btn-primary">
-            <i class="fas fa-paper-plane mr-2"></i>
-            Suscribirse
-          </button>
-        </form>
-      </div>
     </div>
-
-    <!-- Redes sociales -->
-    <div class="border-t border-gray-600 pt-8 pb-4">
-      <div class="flex flex-col md:flex-row justify-between items-center gap-6">
-        <!-- Iconos sociales -->
-        <div class="flex justify-center space-x-4">
-        <a href="#" class="social-icon w-10 h-10 flex items-center justify-center bg-gray-700 rounded-full text-blue-400 hover:text-red-300 transition-all duration-300">
-            <i class="fab fa-facebook-f"></i>
-        </a>
-          <a href="#" class="social-icon w-10 h-10 flex items-center justify-center bg-gray-700 rounded-full text-blue-400 hover:text-red-300 transition-all duration-300">
-            <i class="fab fa-twitter"></i>
-          </a>
-          <a href="#" class="social-icon w-10 h-10 flex items-center justify-center bg-gray-700 rounded-full text-blue-400 hover:text-red-300 transition-all duration-300">
-            <i class="fab fa-instagram"></i>
-          </a>
-          <a href="#" class="social-icon w-10 h-10 flex items-center justify-center bg-gray-700 rounded-full text-blue-400 hover:text-red-300 transition-all duration-300">
-            <i class="fab fa-linkedin-in"></i>
-          </a>
-          <a href="#" class="social-icon w-10 h-10 flex items-center justify-center bg-gray-700 rounded-full text-blue-400 hover:text-red-300 transition-all duration-300">
-            <i class="fab fa-youtube"></i>
-          </a>
-          <a href="#" class="social-icon w-10 h-10 flex items-center justify-center bg-gray-700 rounded-full text-blue-400 hover:text-red-300 transition-all duration-300">
-            <i class="fab fa-github"></i>
-          </a>
-        </div>
-
-        <!-- Copyright -->
-        <div class="text-center md:text-right">
-          <p class="text-gray-400 text-sm">
-            © 2025 Innovación Educativa. Todos los derechos reservados.
-          </p>
-          <p class="text-gray-500 text-xs mt-1">
-            Desarrollado con ❤️ por <a href="https://www.gluoneros.com/" class="text-blue-400 hover:text-blue-300">Gluoneros</a>
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
 </footer>
-
 {% endblock %}

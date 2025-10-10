@@ -22,10 +22,11 @@ urlpatterns = [
     # path('escalas/', views.lista_escalas, name='lista_escalas'),
     # path('escalas/crear/', views.crear_escala, name='crear_escala'),
     #path('escalas/<int:pk>/editar/', views.editar_escala, name='editar_escala'),
-    
+
     # Años escolares
-    
     path('anios/crear/', views.AnioEscolarCreateView.as_view(), name='crear_anio'),
+    path('anios/', views.AnioEscolarListView.as_view(), name='lista_anios'),
+
 
     # Grados
     path('grados/', views.lista_grados, name='lista_grados'),
@@ -47,6 +48,7 @@ urlpatterns = [
     path('notas/<int:pk>/eliminar/', views.eliminar_nota, name='eliminar_nota'),
     path('notas/importar/', views.importar_notas, name='importar_notas'),
 
+
     # Informes finales
     path('informes/', views.lista_informes_finales, name='lista_informes'),
     path('informes/crear/', views.crear_informe_final, name='crear_informe'),
@@ -55,17 +57,6 @@ urlpatterns = [
     # Gestión de cursos por directivo
     path('cursos-directivo/', views.cursos_directivo, name='cursos_directivo'),
 
-    # AJAX endpoints
-    path('ajax/crear-anio/', views.crear_anio_escolar_ajax, name='crear_anio_ajax'),
-    path('ajax/crear-grado/', views.crear_grado_ajax, name='crear_grado_ajax'),
-    path('ajax/crear-materia/', views.crear_materia_ajax, name='crear_materia_ajax'),
-    path('ajax/crear-escala/', views.crear_escala_ajax, name='crear_escala_ajax'),
-    path('ajax/obtener-datos-anio/<int:anio_id>/', views.obtener_datos_anio, name='obtener_datos_anio'),
-    path('ajax/editar-materia/<int:materia_id>/', views.editar_materia_ajax, name='editar_materia_ajax'),
-    path('ajax/eliminar-materia/<int:materia_id>/', views.eliminar_materia_ajax, name='eliminar_materia_ajax'),
-    path('ajax/obtener-materia/<int:materia_id>/', views.obtener_materia_ajax, name='obtener_materia_ajax'),
-    path('ajax/activar-anio/<int:anio_id>/', views.activar_anio_escolar, name='activar_anio'),
-    path('ajax/crear-periodo/', views.crear_periodo_ajax, name='crear_periodo_ajax'),
-    path('ajax/estadisticas-anio/<int:anio_id>/', views.obtener_estadisticas_anio, name='estadisticas_anio'),
+
     
 ]
