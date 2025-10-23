@@ -25,6 +25,7 @@ urlpatterns = [
 
     # Años escolares
     path('anios/crear/', views.AnioEscolarCreateView.as_view(), name='crear_anio'),
+    path('anios/crear-ajax/', views.crear_anio_escolar_ajax, name='crear_anio_ajax'),
     path('anios/', views.AnioEscolarListView.as_view(), name='lista_anios'),
 
 

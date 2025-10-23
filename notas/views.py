@@ -67,6 +67,60 @@ class EscalaNotaListView(LoginRequiredMixin, ListView):
 
 
 
+@login_required
+def crear_anio_escolar_ajax(request):
+    """Crear año escolar vía AJAX"""
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            anio = data.get('anio')
+            escala_id = data.get('escala_id')
+            numero_periodos = int(data.get('numero_periodos', 2))
+            activo = data.get('activo', False)
+
+            # Validar que el año no existe
+            if AnioEscolar.objects.filter(anio=anio).exists():
+                return JsonResponse({
+                    'success': False,
+                    'errors': {'anio': ['El año ya existe']}
+                })
+
+            # Validar escala
+            try:
+                escala = EscalaNota.objects.get(id=escala_id)
+            except EscalaNota.DoesNotExist:
+                return JsonResponse({
+                    'success': False,
+                    'errors': {'escala': ['Escala no válida']}
+                })
+
+            # Crear el año escolar y periodos
+            with transaction.atomic():
+                anio_escolar = AnioEscolar.objects.create(
+                    anio=anio,
+                    escala=escala,
+                    activo=activo
+                )
+
+                # Crear los periodos
+                porcentaje_por_periodo = 100 / numero_periodos
+                for i in range(1, numero_periodos + 1):
+                    Periodo.objects.create(
+                        anio_escolar=anio_escolar,
+                        nombre=f"Periodo {i}",
+                        porcentaje=round(porcentaje_por_periodo, 2)
+                    )
+
+            return JsonResponse({
+                'success': True,
+                'message': f'Año escolar {anio_escolar.anio} creado exitosamente'
+            })
+
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+
+    return JsonResponse({'success': False, 'error': 'Método no permitido'})
+
 class AnioEscolarCreateView(LoginRequiredMixin, CreateView):
     model = AnioEscolar
     form_class = AnioEscolarForm
@@ -102,6 +156,11 @@ class AnioEscolarListView(LoginRequiredMixin, ListView):
     template_name = 'notas/anios/lista.html'
     context_object_name = 'anios'
     ordering = ['-anio']
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['escalas'] = EscalaNota.objects.all()
+        return context
 
 
 

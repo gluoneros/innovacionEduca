@@ -1,7 +1,7 @@
 from django.urls import path
 from django.shortcuts import render
 from django.contrib.auth.views import LoginView, LogoutView
-from .views import registro_view, registro_exitoso_view, CustomLoginView
+from .views import registro_view, registro_exitoso_view, CustomLoginView, dashboard
 from .views import dashboard_estudiante, cursos_estudiante, notas_estudiante, boletin_estudiante, tareas_estudiante, perfil_estudiante
 from .views import dashboard_profesor, cursos_profesor, calificaciones_profesor, estudiantes_profesor, tareas_profesor, perfil_profesor
 from .views import dashboard_directivo, usuarios_directivo, cursos_directivo, horarios_directivo, reportes_directivo, perfil_directivo
@@ -13,6 +13,8 @@ urlpatterns = [
     path('login/', CustomLoginView.as_view(template_name="users/login.html"), name="login"),
     path('logout/', LogoutView.as_view(next_page="landing"), name="logout"),
 
+    # Dashboard genérico
+    path('dashboard/', dashboard, name='dashboard'),
 
     path('registro-exitoso/', registro_exitoso_view, name='registro_exitoso'),
 

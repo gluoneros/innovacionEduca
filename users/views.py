@@ -44,6 +44,21 @@ class CustomLoginView(LoginView):
             return reverse_lazy("dashboard_acudiente")
         return reverse_lazy("dashboard")
 
+@login_required
+def dashboard(request):
+    """Vista de dashboard genérico que redirige según el tipo de usuario"""
+    user = request.user
+    if user.tipo_usuario == "estudiante":
+        return redirect("dashboard_estudiante")
+    elif user.tipo_usuario == "profesor":
+        return redirect("dashboard_profesor")
+    elif user.tipo_usuario == "directivo":
+        return redirect("dashboard_directivo")
+    elif user.tipo_usuario == "acudiente":
+        return redirect("dashboard_acudiente")
+    # Si no tiene tipo de usuario definido, redirigir al login
+    return redirect("login")
+
 #estudiantes----------------------------------------------
 @login_required
 def dashboard_estudiante(request):
