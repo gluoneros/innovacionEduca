@@ -24,7 +24,7 @@ class EscalaNotaForm(forms.ModelForm):
 
 class AnioEscolarForm(forms.ModelForm):
     numero_periodos = forms.ChoiceField(
-        choices=[(2, '2 periodos'), (3, '3 periodos'), (4, '4 periodos'), (5, '5 periodos')],
+        choices=[(1, '1 periodo'), (2, '2 periodos'), (3, '3 periodos'), (4, '4 periodos'), (5, '5 periodos')],
         widget=forms.Select(attrs={'class': 'form-select'}),
         label="Número de periodos académicos"
     )
@@ -35,7 +35,7 @@ class AnioEscolarForm(forms.ModelForm):
         widgets = {
             'anio': forms.NumberInput(attrs={
                 'class': 'form-control',
-                'min': '2020',
+                'min': '2000',
                 'max': '2030'
             }),
             'activo': forms.CheckboxInput(attrs={
