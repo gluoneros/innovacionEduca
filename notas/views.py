@@ -48,6 +48,41 @@ class EscalaNotaDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'notas/escalas/confirmar_eliminar.html'
     success_url = reverse_lazy('escala_lista')
 
+# Vista para editar solo el estado activo de un año escolar
+@login_required
+def editar_estado_anio(request, pk):
+    anio = get_object_or_404(AnioEscolar, pk=pk)
+    
+    if request.method == 'POST':
+        # Solo actualizar el campo activo
+        nuevo_estado = request.POST.get('activo') == 'on'
+        
+        # Validación: Solo puede haber un año activo a la vez
+        if nuevo_estado:
+            # Verificar si ya existe otro año activo
+            anio_activo_existente = AnioEscolar.objects.filter(activo=True).exclude(pk=pk).first()
+            
+            if anio_activo_existente:
+                messages.error(request, 
+                    f'No se puede activar el año {anio.anio} porque ya existe el año {anio_activo_existente.anio} activo. '
+                    f'Solo puede haber un año escolar activo a la vez. '
+                    f'Primero desactiva el año {anio_activo_existente.anio} si deseas activar este año.'
+                )
+                return render(request, 'notas/anios/editar_estado.html', {'anio': anio})
+        
+        # Si llegamos aquí, es seguro actualizar
+        anio.activo = nuevo_estado
+        anio.save()
+        
+        if nuevo_estado:
+            messages.success(request, f'El año {anio.anio} ha sido activado correctamente.')
+        else:
+            messages.success(request, f'El año {anio.anio} ha sido desactivado correctamente.')
+        
+        return redirect('notas:lista_anios')
+    
+    return render(request, 'notas/anios/editar_estado.html', {'anio': anio})
+
 
 class EscalaNotaListView(LoginRequiredMixin, ListView):
     model = EscalaNota
@@ -94,6 +129,16 @@ def crear_anio_escolar_ajax(request):
                     'errors': {'escala': ['Escala no válida']}
                 })
 
+            # Validación: Solo puede haber un año activo a la vez
+            if activo:
+                anio_activo_existente = AnioEscolar.objects.filter(activo=True).first()
+                
+                if anio_activo_existente:
+                    return JsonResponse({
+                        'success': False,
+                        'errors': {'activo': [f'No se puede crear un año escolar activo porque ya existe el año {anio_activo_existente.anio} activo. Solo puede haber un año escolar activo a la vez.']}
+                    })
+
             # Crear el año escolar y periodos
             with transaction.atomic():
                 anio_escolar = AnioEscolar.objects.create(
@@ -130,6 +175,18 @@ class AnioEscolarCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         numero_periodos = int(form.cleaned_data['numero_periodos'])
         porcentaje_por_periodo = 100 / numero_periodos  # Distribución equitativa
+        
+        # Validación: Solo puede haber un año activo a la vez
+        if form.cleaned_data.get('activo', False):
+            anio_activo_existente = AnioEscolar.objects.filter(activo=True).first()
+            
+            if anio_activo_existente:
+                messages.error(self.request, 
+                    f'No se puede crear un año escolar activo porque ya existe el año {anio_activo_existente.anio} activo. '
+                    f'Solo puede haber un año escolar activo a la vez. '
+                    f'Primero desactiva el año {anio_activo_existente.anio} o crea este año como inactivo.'
+                )
+                return self.form_invalid(form)
 
         try:
             with transaction.atomic():
@@ -144,7 +201,10 @@ class AnioEscolarCreateView(LoginRequiredMixin, CreateView):
                         porcentaje=round(porcentaje_por_periodo, 2)
                     )
 
-            messages.success(self.request, f'Año escolar {anio_escolar.anio} creado con {numero_periodos} periodos.')
+            if anio_escolar.activo:
+                messages.success(self.request, f'Año escolar {anio_escolar.anio} creado y activado con {numero_periodos} periodos.')
+            else:
+                messages.success(self.request, f'Año escolar {anio_escolar.anio} creado como inactivo con {numero_periodos} periodos.')
             return super().form_valid(form)
 
         except Exception as e:

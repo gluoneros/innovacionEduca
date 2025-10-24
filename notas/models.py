@@ -27,6 +27,23 @@ class AnioEscolar(models.Model):
     activo = models.BooleanField(default=True)
     escala = models.ForeignKey(EscalaNota, on_delete=models.PROTECT, related_name="anios_escolares")
 
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        
+        # Validación: Solo puede haber un año activo a la vez
+        if self.activo:
+            anio_activo_existente = AnioEscolar.objects.filter(activo=True).exclude(pk=self.pk).first()
+            
+            if anio_activo_existente:
+                raise ValidationError(
+                    f'No se puede activar el año {self.anio} porque ya existe el año {anio_activo_existente.anio} activo. '
+                    f'Solo puede haber un año escolar activo a la vez.'
+                )
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return str(self.anio)   
 

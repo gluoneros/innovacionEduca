@@ -4,6 +4,22 @@
 {% block title %}Años Escolares - Sistema de Notas{% endblock %}
 
 {% block content %}
+<!-- Advertencia de riesgo -->
+<div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-r-lg shadow-sm">
+    <div class="flex items-start">
+        <svg class="w-6 h-6 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+        </svg>
+        <div>
+            <p class="font-bold">Advertencia importante:</p>
+            <p class="mt-1 text-sm">
+                La modificación de los parámetros del sistema (como años escolares, escalas de notas o períodos académicos) puede afectar de forma irreversible el funcionamiento del sistema de notas y los datos históricos.
+                <strong>Realice estos cambios con extrema precaución y solo si está completamente seguro de sus consecuencias.</strong>
+            </p>
+        </div>
+    </div>
+</div>
+
 <div class="container mx-auto px-4 py-6">
     <!-- Breadcrumb -->
     <nav class="flex mb-6" aria-label="Breadcrumb">
@@ -58,7 +74,7 @@
                     <div id="anioError" class="text-red-600 text-sm mt-1 hidden"></div>
                 </div>
 
-                <!-- Escala -->
+                <!-- Escala -->     
                 <div>
                     <label for="id_escala" class="block text-sm font-medium text-gray-700 mb-1">Escala de Notas</label>
                     <select name="escala" id="id_escala" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
@@ -283,7 +299,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                     </svg>
                                 </a>
-                                <a href="#" onclick="editarAnio({{ anio.id }})" class="text-green-600 hover:text-green-900 transition duration-150" title="Editar">
+                                <a href="{% url 'notas:editar_estado_anio' anio.pk %}" class="text-green-600 hover:text-green-900 transition duration-150" title="Editar Estado">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                     </svg>
@@ -446,9 +462,8 @@ function filterTable() {
 
 // Edit functionality
 function editarAnio(anioId) {
-    // For now, redirect to edit page or implement inline editing
-    // This could be enhanced with a modal for inline editing
-    alert('Funcionalidad de edición próximamente disponible. ID: ' + anioId);
+    // Redirect to edit page
+    window.location.href = `/notas/anios/${anioId}/editar-estado/`;
 }
 
 // Delete functionality

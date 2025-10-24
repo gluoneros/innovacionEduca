@@ -27,6 +27,7 @@ urlpatterns = [
     path('anios/crear/', views.AnioEscolarCreateView.as_view(), name='crear_anio'),
     path('anios/crear-ajax/', views.crear_anio_escolar_ajax, name='crear_anio_ajax'),
     path('anios/', views.AnioEscolarListView.as_view(), name='lista_anios'),
+    path('anios/<int:pk>/editar-estado/', views.editar_estado_anio, name='editar_estado_anio'),
 
 
     # Grados
