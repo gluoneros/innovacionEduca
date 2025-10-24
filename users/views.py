@@ -10,7 +10,7 @@ from notas.models import AnioEscolar
 def generar_id():
     return random.randint(100000, 999999)
 
-
+# Vista para el registro de usuarios generales
 def registro_view(request):
     if request.method == 'POST':
         form = RegistroGeneralForm(request.POST)
@@ -29,6 +29,7 @@ def registro_exitoso_view(request):
     }
     return render(request, 'users/registro_exitoso.html', context)
 
+# Vista personalizada de login para redirigir según el tipo de usuario
 class CustomLoginView(LoginView):
     template_name = "users/login.html"
 

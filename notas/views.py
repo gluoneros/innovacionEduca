@@ -761,6 +761,64 @@ def obtener_estadisticas_anio(request, anio_id):
         return JsonResponse({'success': False, 'error': str(e)})
 
 
+@login_required
+def eliminar_anio_escolar_ajax(request, anio_id):
+    """Eliminar año escolar vía AJAX con validaciones"""
+    if request.method == 'DELETE':
+        try:
+            anio = get_object_or_404(AnioEscolar, id=anio_id)
+
+            # Validar que no sea el año activo
+            if anio.activo:
+                return JsonResponse({
+                    'success': False,
+                    'error': 'No se puede eliminar el año escolar activo. Primero debe activar otro año.'
+                })
+
+            # Verificar dependencias
+            grados_count = Grado.objects.filter(anio=anio).count()
+            periodos_count = Periodo.objects.filter(anio_escolar=anio).count()
+            informes_count = InformeFinal.objects.filter(anio_escolar=anio).count()
+
+            if grados_count > 0 or periodos_count > 0 or informes_count > 0:
+                return JsonResponse({
+                    'success': False,
+                    'error': f'No se puede eliminar el año escolar porque tiene dependencias: {grados_count} grados, {periodos_count} períodos, {informes_count} informes finales.'
+                })
+
+            # Verificar si hay notas asociadas a través de períodos
+            notas_count = Nota.objects.filter(periodo__anio_escolar=anio).count()
+            if notas_count > 0:
+                return JsonResponse({
+                    'success': False,
+                    'error': f'No se puede eliminar el año escolar porque tiene {notas_count} notas asociadas.'
+                })
+
+            # Guardar información para el mensaje
+            anio_valor = anio.anio
+
+            # Eliminar el año escolar
+            anio.delete()
+
+            return JsonResponse({
+                'success': True,
+                'message': f'Año escolar {anio_valor} eliminado exitosamente.'
+            })
+
+        except AnioEscolar.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'error': 'El año escolar no existe.'
+            })
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'error': f'Error al eliminar el año escolar: {str(e)}'
+            })
+
+    return JsonResponse({'success': False, 'error': 'Método no permitido'})
+
+
 # Agregar estas funciones adicionales a tu views.py
 
 @login_required

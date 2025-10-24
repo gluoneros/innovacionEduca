@@ -81,7 +81,7 @@
 <!-- Menú Lateral -->
 <div class="flex">
     <!-- Menú Lateral -->
-    <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-40 w-64 bg-white shadow-lg transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col justify-between">
+    <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-40 w-64 bg-white shadow-lg transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col">
         <!-- Header del sidebar -->
 
         <!-- Contenido del menú -->
@@ -98,13 +98,13 @@
                         <i class="fas fa-tachometer-alt mr-3 text-purple-500 w-5"></i>
                         <span class="text-sm sm:text-base">Dashboard Principal</span>
                     </a>
-                    <a href='{% url 'usuarios_directivo' %}' class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-blue-500">
-                        <i class="fas fa-users mr-3 text-blue-500 w-5"></i>
-                        <span class="text-sm sm:text-base">Gestión de Usuarios</span>
-                    </a>
                     <a href='{% url 'cursos_directivo' %}' class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-green-500">
                         <i class="fas fa-book mr-3 text-green-500 w-5"></i>
                         <span class="text-sm sm:text-base">Gestión de Cursos</span>
+                    </a>                    
+                    <a href='{% url 'usuarios_directivo' %}' class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-blue-500">
+                        <i class="fas fa-users mr-3 text-blue-500 w-5"></i>
+                        <span class="text-sm sm:text-base">Gestión de Usuarios</span>
                     </a>
                     <a href='{% url 'horarios_directivo' %}' class="nav-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 border-l-4 border-transparent hover:border-orange-500">
                         <i class="fas fa-calendar-alt mr-3 text-orange-500 w-5"></i>
@@ -229,7 +229,7 @@
         </div>
 
         <!-- Botón Cerrar Sesión pegado abajo -->
-        <div class="p-4 border-t border-slate-200">
+        <div class="p-4 border-t border-slate-200 flex-shrink-0 sticky bottom-0 bg-white">
             <form action="{% url 'logout' %}" method="post" class="w-full">
                 {% csrf_token %}
                 <button type="submit" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors text-left">

@@ -58,6 +58,8 @@ urlpatterns = [
     # Gestión de cursos por directivo
     path('cursos-directivo/', views.cursos_directivo, name='cursos_directivo'),
 
+    # Eliminación de años escolares
+    path('anios/<int:anio_id>/eliminar-ajax/', views.eliminar_anio_escolar_ajax, name='eliminar_anio_ajax'),
 
-    
+
 ]

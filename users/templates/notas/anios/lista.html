@@ -32,7 +32,7 @@
         <div class="flex flex-col md:flex-row md:items-center md:justify-between">
             <div class="mb-4 md:mb-0">
                 <h1 class="text-3xl font-bold text-gray-800 mb-2">Gestión de Años Escolares</h1>
-                <p class="text-gray-600">Administra los años académicos del sistema educativo</p>
+                <p class="text-gray-600">Administra los años académicos del centro educativo</p>
             </div>
             <div class="flex space-x-3">
                 <button onclick="toggleCreateForm()" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition duration-150 ease-in-out shadow-sm">
@@ -288,7 +288,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                     </svg>
                                 </a>
-                                <button onclick="confirmarEliminacion('{{ anio.anio }}')" class="text-red-600 hover:text-red-900 transition duration-150" title="Eliminar">
+                                <button onclick="confirmarEliminacion('{{ anio.anio }}', {{ anio.id }})" class="text-red-600 hover:text-red-900 transition duration-150" title="Eliminar">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                     </svg>
@@ -433,8 +433,8 @@ function filterTable() {
 
         const matchesSearch = anio.includes(searchTerm);
         const matchesEstado = estadoFilter === '' ||
-                             (estadoFilter === 'activo' && estado === 'activo') ||
-                             (estadoFilter === 'inactivo' && estado === 'inactivo');
+                                (estadoFilter === 'activo' && estado === 'activo') ||
+                                (estadoFilter === 'inactivo' && estado === 'inactivo');
 
         if (matchesSearch && matchesEstado) {
             row.style.display = '';
@@ -452,8 +452,9 @@ function editarAnio(anioId) {
 }
 
 // Delete functionality
-function confirmarEliminacion(anio) {
+function confirmarEliminacion(anio, anioId) {
     document.getElementById('anioEliminar').textContent = anio;
+    document.getElementById('anioEliminar').dataset.anioId = anioId;
     document.getElementById('modalEliminar').classList.remove('hidden');
 }
 
@@ -462,9 +463,99 @@ function cerrarModal() {
 }
 
 function eliminarAnio() {
-    // Implement delete functionality via AJAX
-    console.log('Delete year:', document.getElementById('anioEliminar').textContent);
-    cerrarModal();
+    const anioTexto = document.getElementById('anioEliminar').textContent;
+    const anioId = document.getElementById('anioEliminar').dataset.anioId;
+
+    if (!anioId) {
+        alert('Error: No se pudo identificar el año escolar a eliminar.');
+        cerrarModal();
+        return;
+    }
+
+    // Mostrar indicador de carga
+    const eliminarBtn = document.querySelector('#modalEliminar button:last-child');
+    const originalText = eliminarBtn.textContent;
+    eliminarBtn.textContent = 'Eliminando...';
+    eliminarBtn.disabled = true;
+
+    fetch(`/notas/anios/${anioId}/eliminar-ajax/`, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Mostrar mensaje de éxito
+            mostrarMensaje(data.message, 'success');
+
+            // Cerrar modal
+            cerrarModal();
+
+            // Recargar la página para actualizar la lista
+            setTimeout(() => {
+                location.reload();
+            }, 1500);
+        } else {
+            // Mostrar mensaje de error
+            mostrarMensaje(data.error, 'error');
+
+            // Restaurar botón
+            eliminarBtn.textContent = originalText;
+            eliminarBtn.disabled = false;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        mostrarMensaje('Error al eliminar el año escolar. Intente nuevamente.', 'error');
+
+        // Restaurar botón
+        eliminarBtn.textContent = originalText;
+        eliminarBtn.disabled = false;
+    });
+}
+
+// Función para mostrar mensajes de feedback
+function mostrarMensaje(mensaje, tipo) {
+    // Crear elemento de mensaje
+    const mensajeDiv = document.createElement('div');
+    mensajeDiv.className = `fixed top-4 right-4 z-50 p-4 rounded-md shadow-lg transition-all duration-300 transform translate-x-full`;
+
+    if (tipo === 'success') {
+        mensajeDiv.className += ' bg-green-100 border-green-400 text-green-700 border-l-4';
+    } else if (tipo === 'error') {
+        mensajeDiv.className += ' bg-red-100 border-red-400 text-red-700 border-l-4';
+    } else {
+        mensajeDiv.className += ' bg-blue-100 border-blue-400 text-blue-700 border-l-4';
+    }
+
+    mensajeDiv.innerHTML = `
+        <div class="flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+            </svg>
+            <p class="font-medium">${mensaje}</p>
+        </div>
+    `;
+
+    document.body.appendChild(mensajeDiv);
+
+    // Animar entrada
+    setTimeout(() => {
+        mensajeDiv.classList.remove('translate-x-full');
+    }, 100);
+
+    // Auto-remover después de 5 segundos
+    setTimeout(() => {
+        mensajeDiv.classList.add('translate-x-full');
+        setTimeout(() => {
+            if (mensajeDiv.parentNode) {
+                mensajeDiv.parentNode.removeChild(mensajeDiv);
+            }
+        }, 300);
+    }, 5000);
 }
 
 // Cerrar modal al hacer clic fuera de él
