@@ -72,6 +72,10 @@ class Periodo(models.Model):
         if total + self.porcentaje > 100:
             raise ValidationError("La suma de los porcentajes de los periodos no puede superar 100%.")
 
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
+
     class Meta:
         unique_together = ("anio_escolar", "nombre")
     

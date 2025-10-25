@@ -1,5 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django.forms import formset_factory, inlineformset_factory
 from .models import EscalaNota, AnioEscolar, Grado, Materia, Periodo, Nota, InformeFinal
 from users.models import Profesor, Estudiante
 
@@ -22,13 +23,31 @@ class EscalaNotaForm(forms.ModelForm):
 #==========================================================================================
 
 
-class AnioEscolarForm(forms.ModelForm):
-    numero_periodos = forms.ChoiceField(
-        choices=[(1, '1 periodo'), (2, '2 periodos'), (3, '3 periodos'), (4, '4 periodos'), (5, '5 periodos')],
-        widget=forms.Select(attrs={'class': 'form-select'}),
-        label="Número de periodos académicos"
-    )
+class PeriodoForm(forms.ModelForm):
+    class Meta:
+        model = Periodo
+        fields = ['nombre', 'porcentaje']
+        widgets = {
+            'nombre': forms.TextInput(attrs={
+                'class': 'form-control periodo-nombre',
+                'placeholder': 'Ej: Primer Período'
+            }),
+            'porcentaje': forms.NumberInput(attrs={
+                'class': 'form-control periodo-porcentaje',
+                'step': '0.01',
+                'min': '0',
+                'max': '100'
+            })
+        }
 
+    def clean_porcentaje(self):
+        porcentaje = self.cleaned_data.get('porcentaje')
+        if porcentaje and (porcentaje < 0 or porcentaje > 100):
+            raise ValidationError('El porcentaje debe estar entre 0 y 100.')
+        return porcentaje
+
+
+class AnioEscolarForm(forms.ModelForm):
     class Meta:
         model = AnioEscolar
         fields = ['anio', 'activo', 'escala']
@@ -58,20 +77,18 @@ class AnioEscolarForm(forms.ModelForm):
         # Solo escalas existentes
         self.fields['escala'].queryset = EscalaNota.objects.all()
 
-class PeriodoForm(forms.ModelForm):
+# Formulario para periodos individuales (usado en formsets)
+class PeriodoInlineForm(forms.ModelForm):
     class Meta:
         model = Periodo
-        fields = ['anio_escolar', 'nombre', 'porcentaje']
+        fields = ['nombre', 'porcentaje']
         widgets = {
-            'anio_escolar': forms.Select(attrs={
-                'class': 'form-select'
-            }),
             'nombre': forms.TextInput(attrs={
-                'class': 'form-control',
+                'class': 'form-control periodo-nombre',
                 'placeholder': 'Ej: Primer Período'
             }),
             'porcentaje': forms.NumberInput(attrs={
-                'class': 'form-control',
+                'class': 'form-control periodo-porcentaje',
                 'step': '0.01',
                 'min': '0',
                 'max': '100'
@@ -83,6 +100,18 @@ class PeriodoForm(forms.ModelForm):
         if porcentaje and (porcentaje < 0 or porcentaje > 100):
             raise ValidationError('El porcentaje debe estar entre 0 y 100.')
         return porcentaje
+
+
+# Formset para periodos
+PeriodoFormSet = inlineformset_factory(
+    AnioEscolar,
+    Periodo,
+    form=PeriodoInlineForm,
+    extra=2,  # Número de formularios extra por defecto
+    can_delete=True,
+    min_num=1,
+    validate_min=True
+)
 
 
 

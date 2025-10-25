@@ -85,17 +85,24 @@
                     <div id="escalaError" class="text-red-600 text-sm mt-1 hidden"></div>
                 </div>
 
-                <!-- Número de periodos -->
-                <div>
-                    <label for="id_numero_periodos" class="block text-sm font-medium text-gray-700 mb-1">Número de periodos académicos</label>
-                    <select name="numero_periodos" id="id_numero_periodos" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
-                        <option value="1">1 periodo</option>
-                        <option value="2">2 periodos</option>
-                        <option value="3">3 periodos</option>
-                        <option value="4">4 periodos</option>
-                        <option value="5">5 periodos</option>
-                    </select>
-                    <div id="numeroPeriodosError" class="text-red-600 text-sm mt-1 hidden"></div>
+                <!-- Periodos -->
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Periodos Académicos</label>
+                    <div id="periodosContainerAjax" class="space-y-3">
+                        <div class="periodo-item flex space-x-3">
+                            <input type="text" name="periodos[0][nombre]" class="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Nombre del periodo" required>
+                            <input type="number" name="periodos[0][porcentaje]" step="0.01" min="0" max="100" class="w-24 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="%" required>
+                            <button type="button" class="remove-periodo px-3 py-2 text-red-600 hover:text-red-800">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="button" id="addPeriodoAjax" class="mt-3 px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                        Agregar Periodo
+                    </button>
+                    <div id="periodosError" class="text-red-600 text-sm mt-1 hidden"></div>
                 </div>
 
                 <!-- Activo -->
@@ -393,10 +400,25 @@ document.getElementById('createAnioForm').addEventListener('submit', function(e)
     e.preventDefault();
 
     const formData = new FormData(this);
+
+    // Collect periodos data
+    const periodos = [];
+    const periodoItems = document.querySelectorAll('#periodosContainerAjax .periodo-item');
+    periodoItems.forEach((item, index) => {
+        const nombre = item.querySelector('input[name*="nombre"]').value;
+        const porcentaje = item.querySelector('input[name*="porcentaje"]').value;
+        if (nombre && porcentaje) {
+            periodos.push({
+                nombre: nombre,
+                porcentaje: parseFloat(porcentaje)
+            });
+        }
+    });
+
     const data = {
         anio: formData.get('anio'),
         escala_id: formData.get('escala'),
-        numero_periodos: formData.get('numero_periodos'),
+        periodos: periodos,
         activo: formData.get('activo') === 'on'
     };
 
@@ -578,6 +600,42 @@ function mostrarMensaje(mensaje, tipo) {
 document.getElementById('modalEliminar').addEventListener('click', function(e) {
     if (e.target === this) {
         cerrarModal();
+    }
+});
+
+// Funcionalidad para agregar/remover periodos en el formulario AJAX
+document.addEventListener('DOMContentLoaded', function() {
+    const addPeriodoBtn = document.getElementById('addPeriodoAjax');
+    const periodosContainer = document.getElementById('periodosContainerAjax');
+
+    if (addPeriodoBtn && periodosContainer) {
+        addPeriodoBtn.addEventListener('click', function() {
+            const periodoCount = periodosContainer.querySelectorAll('.periodo-item').length;
+            const newPeriodoItem = document.createElement('div');
+            newPeriodoItem.className = 'periodo-item flex space-x-3';
+            newPeriodoItem.innerHTML = `
+                <input type="text" name="periodos[${periodoCount}][nombre]" class="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Nombre del periodo" required>
+                <input type="number" name="periodos[${periodoCount}][porcentaje]" step="0.01" min="0" max="100" class="w-24 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="%" required>
+                <button type="button" class="remove-periodo px-3 py-2 text-red-600 hover:text-red-800">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                </button>
+            `;
+            periodosContainer.appendChild(newPeriodoItem);
+
+            // Agregar event listener al botón de remover
+            newPeriodoItem.querySelector('.remove-periodo').addEventListener('click', function() {
+                newPeriodoItem.remove();
+            });
+        });
+
+        // Event listeners para botones de remover existentes
+        periodosContainer.addEventListener('click', function(e) {
+            if (e.target.closest('.remove-periodo')) {
+                e.target.closest('.periodo-item').remove();
+            }
+        });
     }
 });
 </script>

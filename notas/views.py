@@ -14,9 +14,9 @@ import json
 
 
 from .forms import (
-    EscalaNotaForm, AnioEscolarForm, GradoForm, MateriaForm, 
-    PeriodoForm, NotaForm, InformeFinalForm, BuscarEstudianteForm, 
-    BuscarNotaForm, ImportarNotasForm
+    EscalaNotaForm, AnioEscolarForm, GradoForm, MateriaForm,
+    PeriodoForm, NotaForm, InformeFinalForm, BuscarEstudianteForm,
+    BuscarNotaForm, ImportarNotasForm, PeriodoFormSet
 )
 #---------------------========================Qwen==mas escalable y legible======================================0
 #============================0====VISTA BASADA EN CLASES======================================================
@@ -110,7 +110,7 @@ def crear_anio_escolar_ajax(request):
             data = json.loads(request.body)
             anio = data.get('anio')
             escala_id = data.get('escala_id')
-            numero_periodos = int(data.get('numero_periodos', 2))
+            periodos = data.get('periodos', [])
             activo = data.get('activo', False)
 
             # Validar que el año no existe
@@ -129,10 +129,25 @@ def crear_anio_escolar_ajax(request):
                     'errors': {'escala': ['Escala no válida']}
                 })
 
+            # Validar periodos
+            if not periodos or len(periodos) == 0:
+                return JsonResponse({
+                    'success': False,
+                    'errors': {'periodos': ['Debe especificar al menos un periodo']}
+                })
+
+            # Validar suma de porcentajes
+            total_porcentaje = sum(float(p.get('porcentaje', 0)) for p in periodos)
+            if abs(total_porcentaje - 100) > 0.01:  # Tolerancia para decimales
+                return JsonResponse({
+                    'success': False,
+                    'errors': {'periodos': [f'La suma de los porcentajes debe ser 100%. Actualmente es {total_porcentaje}%']}
+                })
+
             # Validación: Solo puede haber un año activo a la vez
             if activo:
                 anio_activo_existente = AnioEscolar.objects.filter(activo=True).first()
-                
+
                 if anio_activo_existente:
                     return JsonResponse({
                         'success': False,
@@ -148,17 +163,16 @@ def crear_anio_escolar_ajax(request):
                 )
 
                 # Crear los periodos
-                porcentaje_por_periodo = 100 / numero_periodos
-                for i in range(1, numero_periodos + 1):
+                for periodo_data in periodos:
                     Periodo.objects.create(
                         anio_escolar=anio_escolar,
-                        nombre=f"Periodo {i}",
-                        porcentaje=round(porcentaje_por_periodo, 2)
+                        nombre=periodo_data.get('nombre'),
+                        porcentaje=float(periodo_data.get('porcentaje'))
                     )
 
             return JsonResponse({
                 'success': True,
-                'message': f'Año escolar {anio_escolar.anio} creado exitosamente'
+                'message': f'Año escolar {anio_escolar.anio} creado exitosamente con {len(periodos)} periodos'
             })
 
         except Exception as e:
@@ -172,43 +186,50 @@ class AnioEscolarCreateView(LoginRequiredMixin, CreateView):
     template_name = 'notas/anios/crear.html'
     success_url = reverse_lazy('notas:lista_anios')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            context['periodo_formset'] = PeriodoFormSet(self.request.POST, instance=self.object)
+        else:
+            context['periodo_formset'] = PeriodoFormSet(instance=self.object)
+        return context
+
     def form_valid(self, form):
-        numero_periodos = int(form.cleaned_data['numero_periodos'])
-        porcentaje_por_periodo = 100 / numero_periodos  # Distribución equitativa
-        
+        context = self.get_context_data()
+        periodo_formset = context['periodo_formset']
+
         # Validación: Solo puede haber un año activo a la vez
         if form.cleaned_data.get('activo', False):
             anio_activo_existente = AnioEscolar.objects.filter(activo=True).first()
-            
+
             if anio_activo_existente:
-                messages.error(self.request, 
+                messages.error(self.request,
                     f'No se puede crear un año escolar activo porque ya existe el año {anio_activo_existente.anio} activo. '
                     f'Solo puede haber un año escolar activo a la vez. '
                     f'Primero desactiva el año {anio_activo_existente.anio} o crea este año como inactivo.'
                 )
                 return self.form_invalid(form)
 
-        try:
-            with transaction.atomic():
-                # Guardar el año escolar
-                anio_escolar = form.save()
+        if periodo_formset.is_valid():
+            try:
+                with transaction.atomic():
+                    # Guardar el año escolar
+                    self.object = form.save()
 
-                # Crear los periodos
-                for i in range(1, numero_periodos + 1):
-                    Periodo.objects.create(
-                        anio_escolar=anio_escolar,
-                        nombre=f"Periodo {i}",
-                        porcentaje=round(porcentaje_por_periodo, 2)
-                    )
+                    # Guardar los periodos
+                    periodo_formset.instance = self.object
+                    periodo_formset.save()
 
-            if anio_escolar.activo:
-                messages.success(self.request, f'Año escolar {anio_escolar.anio} creado y activado con {numero_periodos} periodos.')
-            else:
-                messages.success(self.request, f'Año escolar {anio_escolar.anio} creado como inactivo con {numero_periodos} periodos.')
-            return super().form_valid(form)
+                if self.object.activo:
+                    messages.success(self.request, f'Año escolar {self.object.anio} creado y activado con {periodo_formset.forms} periodos.')
+                else:
+                    messages.success(self.request, f'Año escolar {self.object.anio} creado como inactivo con periodos.')
+                return super().form_valid(form)
 
-        except Exception as e:
-            messages.error(self.request, f'Error al crear el año escolar: {str(e)}')
+            except Exception as e:
+                messages.error(self.request, f'Error al crear el año escolar: {str(e)}')
+                return self.form_invalid(form)
+        else:
             return self.form_invalid(form)
 
 class AnioEscolarListView(LoginRequiredMixin, ListView):
