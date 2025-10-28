@@ -25,9 +25,9 @@ urlpatterns = [
 
     # Años escolares
     path('anios/crear/', views.AnioEscolarCreateView.as_view(), name='crear_anio'),
-    path('anios/crear-ajax/', views.crear_anio_escolar_ajax, name='crear_anio_ajax'),
-    path('anios/', views.AnioEscolarListView.as_view(), name='lista_anios'),
+    path('anios/', views.gestionar_anios_periodos, name='lista_anios'),
     path('anios/<int:pk>/editar-estado/', views.editar_estado_anio, name='editar_estado_anio'),
+    path('anios/<int:pk>/eliminar/', views.eliminar_anio_escolar, name='eliminar_anio'),
 
 
     # Grados
@@ -59,8 +59,6 @@ urlpatterns = [
     # Gestión de cursos por directivo
     path('cursos-directivo/', views.cursos_directivo, name='cursos_directivo'),
 
-    # Eliminación de años escolares
-    path('anios/<int:anio_id>/eliminar-ajax/', views.eliminar_anio_escolar_ajax, name='eliminar_anio_ajax'),
 
 
 ]

@@ -20,7 +20,7 @@ from .forms import (
 )
 #---------------------========================Qwen==mas escalable y legible======================================0
 #============================0====VISTA BASADA EN CLASES======================================================
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, TemplateView
 from django.urls import reverse_lazy
 
 from .forms import EscalaNotaForm
@@ -102,83 +102,6 @@ class EscalaNotaListView(LoginRequiredMixin, ListView):
 
 
 
-@login_required
-def crear_anio_escolar_ajax(request):
-    """Crear año escolar vía AJAX"""
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            anio = data.get('anio')
-            escala_id = data.get('escala_id')
-            periodos = data.get('periodos', [])
-            activo = data.get('activo', False)
-
-            # Validar que el año no existe
-            if AnioEscolar.objects.filter(anio=anio).exists():
-                return JsonResponse({
-                    'success': False,
-                    'errors': {'anio': ['El año ya existe']}
-                })
-
-            # Validar escala
-            try:
-                escala = EscalaNota.objects.get(id=escala_id)
-            except EscalaNota.DoesNotExist:
-                return JsonResponse({
-                    'success': False,
-                    'errors': {'escala': ['Escala no válida']}
-                })
-
-            # Validar periodos
-            if not periodos or len(periodos) == 0:
-                return JsonResponse({
-                    'success': False,
-                    'errors': {'periodos': ['Debe especificar al menos un periodo']}
-                })
-
-            # Validar suma de porcentajes
-            total_porcentaje = sum(float(p.get('porcentaje', 0)) for p in periodos)
-            if abs(total_porcentaje - 100) > 0.01:  # Tolerancia para decimales
-                return JsonResponse({
-                    'success': False,
-                    'errors': {'periodos': [f'La suma de los porcentajes debe ser 100%. Actualmente es {total_porcentaje}%']}
-                })
-
-            # Validación: Solo puede haber un año activo a la vez
-            if activo:
-                anio_activo_existente = AnioEscolar.objects.filter(activo=True).first()
-
-                if anio_activo_existente:
-                    return JsonResponse({
-                        'success': False,
-                        'errors': {'activo': [f'No se puede crear un año escolar activo porque ya existe el año {anio_activo_existente.anio} activo. Solo puede haber un año escolar activo a la vez.']}
-                    })
-
-            # Crear el año escolar y periodos
-            with transaction.atomic():
-                anio_escolar = AnioEscolar.objects.create(
-                    anio=anio,
-                    escala=escala,
-                    activo=activo
-                )
-
-                # Crear los periodos
-                for periodo_data in periodos:
-                    Periodo.objects.create(
-                        anio_escolar=anio_escolar,
-                        nombre=periodo_data.get('nombre'),
-                        porcentaje=float(periodo_data.get('porcentaje'))
-                    )
-
-            return JsonResponse({
-                'success': True,
-                'message': f'Año escolar {anio_escolar.anio} creado exitosamente con {len(periodos)} periodos'
-            })
-
-        except Exception as e:
-            return JsonResponse({'success': False, 'error': str(e)})
-
-    return JsonResponse({'success': False, 'error': 'Método no permitido'})
 
 class AnioEscolarCreateView(LoginRequiredMixin, CreateView):
     model = AnioEscolar
@@ -232,16 +155,140 @@ class AnioEscolarCreateView(LoginRequiredMixin, CreateView):
         else:
             return self.form_invalid(form)
 
-class AnioEscolarListView(LoginRequiredMixin, ListView):
-    model = AnioEscolar
-    template_name = 'notas/anios/lista.html'
-    context_object_name = 'anios'
-    ordering = ['-anio']
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['escalas'] = EscalaNota.objects.all()
-        return context
+@login_required
+def gestionar_anios_periodos(request):
+    anios = (
+        AnioEscolar.objects
+        .prefetch_related('periodos', 'grados')
+        .select_related('escala')
+        .order_by('-anio')
+    )
+
+    anio_form = AnioEscolarForm()
+    periodo_form = PeriodoForm()
+
+    if request.method == 'POST':
+        form_type = request.POST.get('form_type')
+
+        if form_type == 'anio':
+            anio_form = AnioEscolarForm(request.POST)
+            periodo_form = PeriodoForm()
+
+            if anio_form.is_valid():
+                try:
+                    nuevo_anio = anio_form.save()
+                except ValidationError as error:
+                    if hasattr(error, 'message_dict'):
+                        for field, mensajes in error.message_dict.items():
+                            destino = None if field in (None, '__all__') else field
+                            for mensaje in mensajes:
+                                anio_form.add_error(destino, mensaje)
+                    else:
+                        for mensaje in getattr(error, 'messages', [str(error)]):
+                            anio_form.add_error(None, mensaje)
+                else:
+                    messages.success(
+                        request,
+                        f'Año escolar {nuevo_anio.anio} creado correctamente.'
+                    )
+                    return redirect('notas:lista_anios')
+            if anio_form.errors:
+                messages.error(
+                    request,
+                    'Hay errores en el formulario de creación de año escolar.'
+                )
+
+        elif form_type == 'periodo':
+            periodo_form = PeriodoForm(request.POST)
+            anio_form = AnioEscolarForm()
+
+            if periodo_form.is_valid():
+                try:
+                    periodo = periodo_form.save()
+                except ValidationError as error:
+                    if hasattr(error, 'message_dict'):
+                        for field, mensajes in error.message_dict.items():
+                            destino = None if field in (None, '__all__') else field
+                            for mensaje in mensajes:
+                                periodo_form.add_error(destino, mensaje)
+                    else:
+                        for mensaje in getattr(error, 'messages', [str(error)]):
+                            periodo_form.add_error(None, mensaje)
+                else:
+                    messages.success(
+                        request,
+                        f'Período {periodo.nombre} creado para el año {periodo.anio_escolar.anio}.'
+                    )
+                    return redirect('notas:lista_anios')
+            if periodo_form.errors:
+                messages.error(
+                    request,
+                    'Hay errores en el formulario de creación de período.'
+                )
+        else:
+            messages.error(request, 'La acción solicitada no es válida.')
+            return redirect('notas:lista_anios')
+
+    anio_activo = anios.filter(activo=True).first()
+    escalas_usadas = (
+        EscalaNota.objects
+        .filter(anios_escolares__in=anios)
+        .distinct()
+        .count()
+    )
+
+    context = {
+        'anios': anios,
+        'anio_form': anio_form,
+        'periodo_form': periodo_form,
+        'anio_activo': anio_activo,
+        'estadisticas': {
+            'total_anios': anios.count(),
+            'anio_activo': anio_activo.anio if anio_activo else None,
+            'escalas_usadas': escalas_usadas,
+        },
+    }
+    return render(request, 'notas/anios/lista.html', context)
+
+@login_required
+def eliminar_anio_escolar(request, pk):
+    anio = get_object_or_404(AnioEscolar, pk=pk)
+
+    if request.method != 'POST':
+        messages.error(
+            request,
+            'Debe confirmar la eliminación del año escolar mediante un formulario válido.'
+        )
+        return redirect('notas:lista_anios')
+
+    if anio.activo:
+        messages.error(
+            request,
+            'No se puede eliminar un año escolar activo. Desactívelo antes de eliminarlo.'
+        )
+        return redirect('notas:lista_anios')
+
+    grados_count = anio.grados.count()
+    periodos_count = anio.periodos.count()
+    informes_count = InformeFinal.objects.filter(anio_escolar=anio).count()
+    notas_count = Nota.objects.filter(periodo__anio_escolar=anio).count()
+
+    if grados_count or periodos_count or informes_count or notas_count:
+        messages.error(
+            request,
+            (
+                'No se puede eliminar el año escolar porque tiene dependencias registradas: '
+                f'{grados_count} grado(s), {periodos_count} período(s), '
+                f'{informes_count} informe(s) final(es) y {notas_count} nota(s).'
+            )
+        )
+        return redirect('notas:lista_anios')
+
+    anio_valor = anio.anio
+    anio.delete()
+    messages.success(request, f'Año escolar {anio_valor} eliminado correctamente.')
+    return redirect('notas:lista_anios')
 
 
 

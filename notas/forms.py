@@ -1,13 +1,16 @@
+from decimal import Decimal
+
 from django import forms
 from django.core.exceptions import ValidationError
+from django.db.models import Sum
 from django.forms import formset_factory, inlineformset_factory
+
 from .models import EscalaNota, AnioEscolar, Grado, Materia, Periodo, Nota, InformeFinal
 from users.models import Profesor, Estudiante
 
 #==============================================================QWEN==================================
 #==============================================================QWEN======================================
 
-from .models import EscalaNota
 
 class EscalaNotaForm(forms.ModelForm):
     class Meta:
@@ -26,8 +29,11 @@ class EscalaNotaForm(forms.ModelForm):
 class PeriodoForm(forms.ModelForm):
     class Meta:
         model = Periodo
-        fields = ['nombre', 'porcentaje']
+        fields = ['anio_escolar', 'nombre', 'porcentaje']
         widgets = {
+            'anio_escolar': forms.Select(attrs={
+                'class': 'form-select periodo-anio'
+            }),
             'nombre': forms.TextInput(attrs={
                 'class': 'form-control periodo-nombre',
                 'placeholder': 'Ej: Primer Período'
@@ -39,6 +45,32 @@ class PeriodoForm(forms.ModelForm):
                 'max': '100'
             })
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['anio_escolar'].queryset = AnioEscolar.objects.order_by('-anio')
+
+    def clean(self):
+        cleaned_data = super().clean()
+        anio = cleaned_data.get('anio_escolar')
+        porcentaje = cleaned_data.get('porcentaje')
+
+        if anio is not None and porcentaje is not None:
+            total_existente = anio.periodos.exclude(pk=self.instance.pk).aggregate(
+                suma=Sum('porcentaje')
+            )['suma'] or Decimal('0')
+
+            suma_total = total_existente + porcentaje
+            if suma_total > Decimal('100'):
+                self.add_error(
+                    'porcentaje',
+                    (
+                        f'La suma de los porcentajes para el año {anio.anio} no puede superar 100 %. '
+                        f'Con este período alcanzaría {suma_total} %.'
+                    )
+                )
+
+        return cleaned_data
 
     def clean_porcentaje(self):
         porcentaje = self.cleaned_data.get('porcentaje')
