@@ -312,6 +312,30 @@ def crear_grado(request):
 
 
 @login_required
+def editar_grado(request, pk):
+    grado = get_object_or_404(Grado, pk=pk)
+    if request.method == 'POST':
+        form = GradoForm(request.POST, instance=grado)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Grado actualizado exitosamente.')
+            return redirect('notas:lista_grados')
+    else:
+        form = GradoForm(instance=grado)
+    return render(request, 'notas/grados/editar.html', {'form': form, 'grado': grado})
+
+
+@login_required
+def eliminar_grado(request, pk):
+    grado = get_object_or_404(Grado, pk=pk)
+    if request.method == 'POST':
+        grado.delete()
+        messages.success(request, 'Grado eliminado exitosamente.')
+        return redirect('notas:lista_grados')
+    return render(request, 'notas/grados/eliminar.html', {'grado': grado})
+
+
+@login_required
 def lista_materias(request):
     materias = Materia.objects.select_related('grado', 'profesor').all()
     

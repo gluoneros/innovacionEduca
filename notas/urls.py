@@ -33,6 +33,8 @@ urlpatterns = [
     # Grados
     path('grados/', views.lista_grados, name='lista_grados'),
     path('grados/crear/', views.crear_grado, name='crear_grado'),
+    path('grados/<int:pk>/editar/', views.editar_grado, name='editar_grado'),
+    path('grados/<int:pk>/eliminar/', views.eliminar_grado, name='eliminar_grado'),
 
     # Materias
     path('materias/', views.lista_materias, name='lista_materias'),

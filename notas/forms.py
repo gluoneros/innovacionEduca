@@ -150,7 +150,7 @@ PeriodoFormSet = inlineformset_factory(
 class GradoForm(forms.ModelForm):
     class Meta:
         model = Grado
-        fields = ['nombre', 'anio']
+        fields = ['nombre', 'anio', 'periodo']
         widgets = {
             'nombre': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -158,9 +158,19 @@ class GradoForm(forms.ModelForm):
             }),
             'anio': forms.Select(attrs={
                 'class': 'form-select'
+            }),
+            'periodo': forms.SelectMultiple(attrs={
+                'class': 'form-select',
+                'multiple': True,
+                'size': 10
             })
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['periodo'].queryset = Periodo.objects.all()
+        self.fields['anio'].queryset = AnioEscolar.objects.all()
+        
 
 class MateriaForm(forms.ModelForm):
     class Meta:
