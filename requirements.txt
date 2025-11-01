@@ -1,6 +1,8 @@
-asgiref
-crispy-tailwind
-Django
-django-crispy-forms
-psycopg2-binary
-sqlparse
+asgiref==3.10.0
+crispy-tailwind==1.0.3
+Django==5.2.7
+django-crispy-forms==2.4
+psycopg2-binary==2.9.11
+setuptools==80.9.0
+sqlparse==0.5.3
+wheel==0.45.1
