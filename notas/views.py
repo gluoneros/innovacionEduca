@@ -294,8 +294,20 @@ def eliminar_anio_escolar(request, pk):
 
 @login_required
 def lista_grados(request):
-    grados = Grado.objects.all().order_by('nombre')
-    return render(request, 'notas/grados/lista.html', {'grados': grados})
+    grados = Grado.objects.select_related('anio').prefetch_related('periodo', 'materias').all().order_by('nombre')
+    
+    # Calcular estadísticas
+    total_grados = grados.count()
+    grados_con_anio = sum(1 for grado in grados if grado.anio)
+    total_materias = sum(grado.materias.count() for grado in grados)
+    
+    context = {
+        'grados': grados,
+        'total_grados': total_grados,
+        'grados_con_anio': grados_con_anio,
+        'total_materias': total_materias,
+    }
+    return render(request, 'notas/grados/lista.html', context)
 
 
 @login_required
