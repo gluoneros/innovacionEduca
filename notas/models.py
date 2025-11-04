@@ -86,7 +86,7 @@ class Periodo(models.Model):
 class Grado(models.Model):
     nombre = models.CharField(max_length=100, unique=True)
     anio = models.ForeignKey(AnioEscolar, on_delete=models.SET_NULL, null=True, blank=True, related_name='grados')
-    periodo = models.ManyToManyField(Periodo, related_name='grados')
+    periodo = models.ForeignKey(Periodo, on_delete=models.SET_NULL, null=True, blank=True, related_name='grados')
 
     def __str__(self):
         return self.nombre

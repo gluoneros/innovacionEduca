@@ -157,19 +157,26 @@ class GradoForm(forms.ModelForm):
                 'placeholder': 'Ej: Grado 11°'
             }),
             'anio': forms.Select(attrs={
-                'class': 'form-select'
-            }),
-            'periodo': forms.SelectMultiple(attrs={
                 'class': 'form-select',
-                'multiple': True,
-                'size': 10
+                'id': 'id_anio'
+            }),
+            'periodo': forms.Select(attrs={
+                'class': 'form-select',
+                'id': 'id_periodo'
             })
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['periodo'].queryset = Periodo.objects.all()
-        self.fields['anio'].queryset = AnioEscolar.objects.all()
+        self.fields['anio'].queryset = AnioEscolar.objects.all().order_by('-anio')
+        self.fields['periodo'].queryset = Periodo.objects.all().order_by('anio_escolar__anio', 'nombre')
+        self.fields['periodo'].required = False
+        
+        # Si hay una instancia con año escolar, filtrar los periodos
+        if self.instance and self.instance.anio:
+            self.fields['periodo'].queryset = Periodo.objects.filter(
+                anio_escolar=self.instance.anio
+            ).order_by('nombre')
         
 
 class MateriaForm(forms.ModelForm):

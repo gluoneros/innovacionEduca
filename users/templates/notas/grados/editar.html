@@ -76,14 +76,14 @@
                     {% endif %}
                 </div>
 
-                <!-- Períodos -->
+                <!-- Período -->
                 <div>
-                    <label for="id_periodo" class="block text-sm font-medium text-gray-700 mb-1">Períodos Académicos</label>
+                    <label for="id_periodo" class="block text-sm font-medium text-gray-700 mb-1">Período Académico</label>
                     {{ form.periodo }}
                     {% if form.periodo.errors %}
                         <p class="text-red-600 text-sm mt-1">{{ form.periodo.errors }}</p>
                     {% endif %}
-                    <p class="text-xs text-gray-500 mt-1">Mantenga presionada la tecla Ctrl (Cmd en Mac) para seleccionar múltiples períodos.</p>
+                    <p class="text-xs text-gray-500 mt-1">Seleccione el período académico para este grado. El período debe pertenecer al año escolar seleccionado.</p>
                 </div>
             </div>
 
@@ -99,5 +99,45 @@
         </form>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const anioSelect = document.getElementById('id_anio');
+    const periodoSelect = document.getElementById('id_periodo');
+    
+    if (anioSelect && periodoSelect) {
+        // Función para filtrar periodos
+        function filterPeriodos() {
+            const selectedAnio = anioSelect.value;
+            
+            if (!selectedAnio) {
+                return;
+            }
+            
+            // Hacer petición AJAX para obtener periodos del año
+            fetch(`/notas/api/periodos-por-anio/${selectedAnio}/`)
+                .then(response => response.json())
+                .then(data => {
+                    const currentValue = periodoSelect.value;
+                    periodoSelect.innerHTML = '<option value="">---------</option>';
+                    
+                    data.periodos.forEach(periodo => {
+                        const option = new Option(periodo.nombre, periodo.id);
+                        if (periodo.id == currentValue) {
+                            option.selected = true;
+                        }
+                        periodoSelect.add(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error al cargar periodos:', error);
+                });
+        }
+        
+        // Evento cuando cambia el año
+        anioSelect.addEventListener('change', filterPeriodos);
+    }
+});
+</script>
 {% endblock %}
 

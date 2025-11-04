@@ -294,7 +294,7 @@ def eliminar_anio_escolar(request, pk):
 
 @login_required
 def lista_grados(request):
-    grados = Grado.objects.select_related('anio').prefetch_related('periodo', 'materias').all().order_by('nombre')
+    grados = Grado.objects.select_related('anio', 'periodo').prefetch_related('materias').all().order_by('nombre')
     
     # Calcular estadísticas
     total_grados = grados.count()
@@ -547,7 +547,7 @@ def cursos_directivo(request):
 
     return render(request, 'notas/cursos_directivo.html', context)
 
-
+'''
 @login_required
 def crear_anio_escolar_ajax(request):
     """Crear año escolar vía AJAX"""
@@ -712,8 +712,8 @@ def crear_escala_ajax(request):
             return JsonResponse({'success': False, 'error': str(e)})
 
     return JsonResponse({'success': False, 'error': 'Método no permitido'})
-
-
+'''
+'''
 @login_required
 def obtener_datos_anio(request, anio_id):
     """Obtener grados y materias de un año específico"""
@@ -776,7 +776,7 @@ def eliminar_materia_ajax(request, materia_id):
             return JsonResponse({'success': False, 'error': str(e)})
 
     return JsonResponse({'success': False, 'error': 'Método no permitido'})
-
+'''
 
 @login_required
 def activar_anio_escolar(request, anio_id):
@@ -802,7 +802,7 @@ def activar_anio_escolar(request, anio_id):
 
     return JsonResponse({'success': False, 'error': 'Método no permitido'})
 
-
+'''
 @login_required
 def obtener_materia_ajax(request, materia_id):
     """Obtener datos de una materia específica para edición"""
@@ -874,7 +874,7 @@ def crear_periodo_ajax(request):
             return JsonResponse({'success': False, 'error': str(e)})
 
     return JsonResponse({'success': False, 'error': 'Método no permitido'})
-
+'''
 
 @login_required
 def obtener_estadisticas_anio(request, anio_id):
@@ -924,7 +924,7 @@ def obtener_estadisticas_anio(request, anio_id):
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
 
-
+'''
 @login_required
 def eliminar_anio_escolar_ajax(request, anio_id):
     """Eliminar año escolar vía AJAX con validaciones"""
@@ -1055,7 +1055,7 @@ def eliminar_materia_ajax(request, materia_id):
             return JsonResponse({'success': False, 'error': str(e)})
 
     return JsonResponse({'success': False, 'error': 'Método no permitido'})
-
+'''
 
 @login_required
 def activar_anio_escolar(request, anio_id):
@@ -1081,6 +1081,7 @@ def activar_anio_escolar(request, anio_id):
 
     return JsonResponse({'success': False, 'error': 'Método no permitido'})
 
+'''
 @login_required
 def crear_periodo_ajax(request):
     """Crear período vía AJAX"""
@@ -1130,7 +1131,7 @@ def crear_periodo_ajax(request):
             return JsonResponse({'success': False, 'error': str(e)})
 
     return JsonResponse({'success': False, 'error': 'Método no permitido'})
-
+'''
 
 @login_required
 def obtener_estadisticas_anio(request, anio_id):
@@ -1177,5 +1178,25 @@ def obtener_estadisticas_anio(request, anio_id):
             }
         })
 
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+@login_required
+def obtener_periodos_por_anio(request, anio_id):
+    """Obtener periodos de un año escolar específico para filtrado dinámico"""
+    try:
+        anio = get_object_or_404(AnioEscolar, id=anio_id)
+        periodos = Periodo.objects.filter(anio_escolar=anio).order_by('nombre')
+        
+        periodos_data = [{
+            'id': p.id,
+            'nombre': p.nombre,
+            'porcentaje': float(p.porcentaje)
+        } for p in periodos]
+        
+        return JsonResponse({
+            'success': True,
+            'periodos': periodos_data
+        })
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})

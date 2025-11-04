@@ -61,6 +61,7 @@ urlpatterns = [
     # Gestión de cursos por directivo
     path('cursos-directivo/', views.cursos_directivo, name='cursos_directivo'),
 
-
+    # API para filtrado dinámico
+    path('api/periodos-por-anio/<int:anio_id>/', views.obtener_periodos_por_anio, name='api_periodos_por_anio'),
 
 ]
