@@ -140,3 +140,4 @@ class InformeFinal(models.Model):
 
     def __str__(self):
         return f"Informe {self.estudiante} - {self.materia} ({self.anio_escolar.anio})"
+
