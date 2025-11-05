@@ -11,15 +11,12 @@ from django.http import JsonResponse
 from django.core.exceptions import ValidationError
 import json
 
-
-
 from .forms import (
     EscalaNotaForm, AnioEscolarForm, GradoForm, MateriaForm,
     PeriodoForm, NotaForm, InformeFinalForm, BuscarEstudianteForm,
     BuscarNotaForm, ImportarNotasForm, PeriodoFormSet
 )
-#---------------------========================Qwen==mas escalable y legible======================================0
-#============================0====VISTA BASADA EN CLASES======================================================
+
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, TemplateView
 from django.urls import reverse_lazy
 
@@ -27,7 +24,12 @@ from .forms import EscalaNotaForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import EscalaNota, ESCALAS_PREDEFINIDAS
 
+from django.views import View
 
+
+
+#==============================================Escalas de notas==============================================
+#------------------------------------------------------------------------------------------------------------
 # Crear nueva escala
 class EscalaNotaCreateView(LoginRequiredMixin, CreateView):
     model = EscalaNota
@@ -48,40 +50,6 @@ class EscalaNotaDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'notas/escalas/confirmar_eliminar.html'
     success_url = reverse_lazy('escala_lista')
 
-# Vista para editar solo el estado activo de un año escolar
-@login_required
-def editar_estado_anio(request, pk):
-    anio = get_object_or_404(AnioEscolar, pk=pk)
-    
-    if request.method == 'POST':
-        # Solo actualizar el campo activo
-        nuevo_estado = request.POST.get('activo') == 'on'
-        
-        # Validación: Solo puede haber un año activo a la vez
-        if nuevo_estado:
-            # Verificar si ya existe otro año activo
-            anio_activo_existente = AnioEscolar.objects.filter(activo=True).exclude(pk=pk).first()
-            
-            if anio_activo_existente:
-                messages.error(request, 
-                    f'No se puede activar el año {anio.anio} porque ya existe el año {anio_activo_existente.anio} activo. '
-                    f'Solo puede haber un año escolar activo a la vez. '
-                    f'Primero desactiva el año {anio_activo_existente.anio} si deseas activar este año.'
-                )
-                return render(request, 'notas/anios/editar_estado.html', {'anio': anio})
-        
-        # Si llegamos aquí, es seguro actualizar
-        anio.activo = nuevo_estado
-        anio.save()
-        
-        if nuevo_estado:
-            messages.success(request, f'El año {anio.anio} ha sido activado correctamente.')
-        else:
-            messages.success(request, f'El año {anio.anio} ha sido desactivado correctamente.')
-        
-        return redirect('notas:lista_anios')
-    
-    return render(request, 'notas/anios/editar_estado.html', {'anio': anio})
 
 
 class EscalaNotaListView(LoginRequiredMixin, ListView):
@@ -97,12 +65,11 @@ class EscalaNotaListView(LoginRequiredMixin, ListView):
                 ddefaults={'minimo': min_val, 'maximo': max_val, 'paso': 0.01, 'es_predefinida': True}
             )
         return super().get_queryset()
-#===========================================0menos escalable==========================================00=======
-#====================================VISTA BASADA EN FUNCIONES=====================================================0
 
 
 
-
+#==============================================Años escolares================================================
+#------------------------------------------------------------------------------------------------------------
 class AnioEscolarCreateView(LoginRequiredMixin, CreateView):
     model = AnioEscolar
     form_class = AnioEscolarForm
@@ -155,6 +122,81 @@ class AnioEscolarCreateView(LoginRequiredMixin, CreateView):
         else:
             return self.form_invalid(form)
 
+# Vista para editar solo el estado activo de un año escolar
+@login_required
+def editar_estado_anio(request, pk):
+    anio = get_object_or_404(AnioEscolar, pk=pk)
+    
+    if request.method == 'POST':
+        # Solo actualizar el campo activo
+        nuevo_estado = request.POST.get('activo') == 'on'
+        
+        # Validación: Solo puede haber un año activo a la vez
+        if nuevo_estado:
+            # Verificar si ya existe otro año activo
+            anio_activo_existente = AnioEscolar.objects.filter(activo=True).exclude(pk=pk).first()
+            
+            if anio_activo_existente:
+                messages.error(request, 
+                    f'No se puede activar el año {anio.anio} porque ya existe el año {anio_activo_existente.anio} activo. '
+                    f'Solo puede haber un año escolar activo a la vez. '
+                    f'Primero desactiva el año {anio_activo_existente.anio} si deseas activar este año.'
+                )
+                return render(request, 'notas/anios/editar_estado.html', {'anio': anio})
+        
+        # Si llegamos aquí, es seguro actualizar
+        anio.activo = nuevo_estado
+        anio.save()
+        
+        if nuevo_estado:
+            messages.success(request, f'El año {anio.anio} ha sido activado correctamente.')
+        else:
+            messages.success(request, f'El año {anio.anio} ha sido desactivado correctamente.')
+        
+        return redirect('notas:lista_anios')
+    
+    return render(request, 'notas/anios/editar_estado.html', {'anio': anio})
+
+
+
+class EliminarAnioEscolarView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        anio = get_object_or_404(AnioEscolar, pk=pk)
+
+        # Validación: no permitir eliminar si no es POST (aunque al usar post(), esto ya está cubierto)
+        # pero mantenemos coherencia con la lógica original
+
+        if anio.activo:
+            messages.error(
+                request,
+                'No se puede eliminar un año escolar activo. Desactívelo antes de eliminarlo.'
+            )
+            return redirect('notas:lista_anios')
+
+        grados_count = anio.grados.count()
+        periodos_count = anio.periodos.count()
+        informes_count = InformeFinal.objects.filter(anio_escolar=anio).count()
+        notas_count = Nota.objects.filter(periodo__anio_escolar=anio).count()
+
+        if grados_count or periodos_count or informes_count or notas_count:
+            messages.error(
+                request,
+                (
+                    'No se puede eliminar el año escolar porque tiene dependencias registradas: '
+                    f'{grados_count} grado(s), {periodos_count} período(s), '
+                    f'{informes_count} informe(s) final(es) y {notas_count} nota(s).'
+                )
+            )
+            return redirect('notas:lista_anios')
+
+        anio_valor = anio.anio
+        anio.delete()
+        messages.success(request, f'Año escolar {anio_valor} eliminado correctamente.')
+        return redirect('notas:lista_anios')
+
+
+#==============================================Períodos========================================================
+#--------------------------------------------------------------------------------------------------------------
 
 @login_required
 def gestionar_anios_periodos(request):
@@ -251,102 +293,92 @@ def gestionar_anios_periodos(request):
     }
     return render(request, 'notas/anios/lista.html', context)
 
+
 @login_required
-def eliminar_anio_escolar(request, pk):
-    anio = get_object_or_404(AnioEscolar, pk=pk)
-
-    if request.method != 'POST':
-        messages.error(
-            request,
-            'Debe confirmar la eliminación del año escolar mediante un formulario válido.'
-        )
-        return redirect('notas:lista_anios')
-
-    if anio.activo:
-        messages.error(
-            request,
-            'No se puede eliminar un año escolar activo. Desactívelo antes de eliminarlo.'
-        )
-        return redirect('notas:lista_anios')
-
-    grados_count = anio.grados.count()
-    periodos_count = anio.periodos.count()
-    informes_count = InformeFinal.objects.filter(anio_escolar=anio).count()
-    notas_count = Nota.objects.filter(periodo__anio_escolar=anio).count()
-
-    if grados_count or periodos_count or informes_count or notas_count:
-        messages.error(
-            request,
-            (
-                'No se puede eliminar el año escolar porque tiene dependencias registradas: '
-                f'{grados_count} grado(s), {periodos_count} período(s), '
-                f'{informes_count} informe(s) final(es) y {notas_count} nota(s).'
-            )
-        )
-        return redirect('notas:lista_anios')
-
-    anio_valor = anio.anio
-    anio.delete()
-    messages.success(request, f'Año escolar {anio_valor} eliminado correctamente.')
-    return redirect('notas:lista_anios')
-
+def lista_periodos(request):
+    periodos = Periodo.objects.select_related('anio_escolar').all().order_by('anio_escolar__anio', 'nombre')
+    return render(request, 'notas/periodos/lista.html', {'periodos': periodos})
 
 
 @login_required
-def lista_grados(request):
-    grados = Grado.objects.select_related('anio', 'periodo').prefetch_related('materias').all().order_by('nombre')
-    
-    # Calcular estadísticas
-    total_grados = grados.count()
-    grados_con_anio = sum(1 for grado in grados if grado.anio)
-    total_materias = sum(grado.materias.count() for grado in grados)
-    
-    context = {
-        'grados': grados,
-        'total_grados': total_grados,
-        'grados_con_anio': grados_con_anio,
-        'total_materias': total_materias,
-    }
-    return render(request, 'notas/grados/lista.html', context)
-
-
-@login_required
-def crear_grado(request):
+def crear_periodo(request):
     if request.method == 'POST':
-        form = GradoForm(request.POST)
+        form = PeriodoForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Grado creado exitosamente.')
-            return redirect('notas:lista_grados')
+            messages.success(request, 'Período creado exitosamente.')
+            return redirect('notas:lista_periodos')
     else:
-        form = GradoForm()
-    return render(request, 'notas/grados/crear.html', {'form': form})
+        form = PeriodoForm()
+    return render(request, 'notas/periodos/crear.html', {'form': form})
 
 
-@login_required
-def editar_grado(request, pk):
-    grado = get_object_or_404(Grado, pk=pk)
-    if request.method == 'POST':
-        form = GradoForm(request.POST, instance=grado)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Grado actualizado exitosamente.')
-            return redirect('notas:lista_grados')
-    else:
-        form = GradoForm(instance=grado)
-    return render(request, 'notas/grados/editar.html', {'form': form, 'grado': grado})
+
+#==============================================Grados========================================================
+#------------------------------------------------------------------------------------------------------------
+class ListaGradosView(LoginRequiredMixin, ListView):
+    model = Grado
+    template_name = 'notas/grados/lista.html'
+    context_object_name = 'grados'
+    ordering = ['nombre']
+
+    def get_queryset(self):
+        return Grado.objects.select_related('anio', 'periodo').prefetch_related('materias').all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        grados = self.get_queryset()
+        total_grados = grados.count()
+        grados_con_anio = sum(1 for grado in grados if grado.anio)
+        total_materias = sum(grado.materias.count() for grado in grados)
+
+        context.update({
+            'total_grados': total_grados,
+            'grados_con_anio': grados_con_anio,
+            'total_materias': total_materias,
+        })
+        return context
 
 
-@login_required
-def eliminar_grado(request, pk):
-    grado = get_object_or_404(Grado, pk=pk)
-    if request.method == 'POST':
-        grado.delete()
+class CrearGradoView(LoginRequiredMixin, CreateView):
+    model = Grado
+    form_class = GradoForm
+    template_name = 'notas/grados/crear.html'
+    success_url = reverse_lazy('notas:lista_grados')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Grado creado exitosamente.')
+        return super().form_valid(form)
+
+
+from django.views.generic import UpdateView
+
+class EditarGradoView(LoginRequiredMixin, UpdateView):
+    model = Grado
+    form_class = GradoForm
+    template_name = 'notas/grados/editar.html'
+    success_url = reverse_lazy('notas:lista_grados')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Grado actualizado exitosamente.')
+        return super().form_valid(form)
+
+from django.views.generic import DeleteView
+
+
+class EliminarGradoView(LoginRequiredMixin, DeleteView):
+    model = Grado
+    template_name = 'notas/grados/eliminar.html'
+    success_url = reverse_lazy('notas:lista_grados')
+
+    def delete(self, request, *args, **kwargs):
         messages.success(request, 'Grado eliminado exitosamente.')
-        return redirect('notas:lista_grados')
-    return render(request, 'notas/grados/eliminar.html', {'grado': grado})
+        return super().delete(request, *args, **kwargs)
 
 
+
+#==============================================Materias========================================================
+#--------------------------------------------------------------------------------------------------------------
 @login_required
 def lista_materias(request):
     materias = Materia.objects.select_related('grado', 'profesor').all()
@@ -398,24 +430,6 @@ def editar_materia(request, pk):
         form = MateriaForm(instance=materia)
     return render(request, 'notas/materias/editar.html', {'form': form, 'materia': materia})
 
-
-@login_required
-def lista_periodos(request):
-    periodos = Periodo.objects.select_related('anio_escolar').all().order_by('anio_escolar__anio', 'nombre')
-    return render(request, 'notas/periodos/lista.html', {'periodos': periodos})
-
-
-@login_required
-def crear_periodo(request):
-    if request.method == 'POST':
-        form = PeriodoForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Período creado exitosamente.')
-            return redirect('notas:lista_periodos')
-    else:
-        form = PeriodoForm()
-    return render(request, 'notas/periodos/crear.html', {'form': form})
 
 
 @login_required
@@ -547,6 +561,8 @@ def cursos_directivo(request):
 
     return render(request, 'notas/cursos_directivo.html', context)
 
+
+#--------------------------------------------------------------AJAXs para manejo masivo de notas sonet----
 '''
 @login_required
 def crear_anio_escolar_ajax(request):
