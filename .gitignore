@@ -223,4 +223,7 @@ GitHub.sublime-settings
 .history
 
 .idea/
+.idea
+.iml
+*.idea
 .vscode/
