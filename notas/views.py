@@ -27,7 +27,6 @@ from .models import EscalaNota, ESCALAS_PREDEFINIDAS
 from django.views import View
 
 
-
 #==============================================Escalas de notas==============================================
 #------------------------------------------------------------------------------------------------------------
 # Crear nueva escala
@@ -50,8 +49,7 @@ class EscalaNotaDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'notas/escalas/confirmar_eliminar.html'
     success_url = reverse_lazy('escala_lista')
 
-
-
+# Listar escalas
 class EscalaNotaListView(LoginRequiredMixin, ListView):
     model = EscalaNota
     template_name = 'notas/escala/lista.html'
@@ -123,41 +121,39 @@ class AnioEscolarCreateView(LoginRequiredMixin, CreateView):
             return self.form_invalid(form)
 
 # Vista para editar solo el estado activo de un año escolar
-@login_required
-def editar_estado_anio(request, pk):
-    anio = get_object_or_404(AnioEscolar, pk=pk)
-    
-    if request.method == 'POST':
-        # Solo actualizar el campo activo
+class EditarEstadoAnioView(LoginRequiredMixin, View):
+    template_name = 'notas/anios/editar_estado.html'
+
+    def get(self, request, pk):
+        anio = get_object_or_404(AnioEscolar, pk=pk)
+        return render(request, self.template_name, {'anio': anio})
+
+    def post(self, request, pk):
+        anio = get_object_or_404(AnioEscolar, pk=pk)
         nuevo_estado = request.POST.get('activo') == 'on'
         
         # Validación: Solo puede haber un año activo a la vez
         if nuevo_estado:
-            # Verificar si ya existe otro año activo
             anio_activo_existente = AnioEscolar.objects.filter(activo=True).exclude(pk=pk).first()
-            
             if anio_activo_existente:
-                messages.error(request, 
+                messages.error(
+                    request,
                     f'No se puede activar el año {anio.anio} porque ya existe el año {anio_activo_existente.anio} activo. '
                     f'Solo puede haber un año escolar activo a la vez. '
                     f'Primero desactiva el año {anio_activo_existente.anio} si deseas activar este año.'
                 )
-                return render(request, 'notas/anios/editar_estado.html', {'anio': anio})
-        
-        # Si llegamos aquí, es seguro actualizar
+                return render(request, self.template_name, {'anio': anio})
+
+        # Actualizar el estado
         anio.activo = nuevo_estado
         anio.save()
-        
+
         if nuevo_estado:
             messages.success(request, f'El año {anio.anio} ha sido activado correctamente.')
         else:
             messages.success(request, f'El año {anio.anio} ha sido desactivado correctamente.')
-        
+
         return redirect('notas:lista_anios')
-    
-    return render(request, 'notas/anios/editar_estado.html', {'anio': anio})
-
-
 
 class EliminarAnioEscolarView(LoginRequiredMixin, View):
     def post(self, request, pk):
@@ -197,44 +193,78 @@ class EliminarAnioEscolarView(LoginRequiredMixin, View):
 
 #==============================================Períodos========================================================
 #--------------------------------------------------------------------------------------------------------------
+class CrearPeriodoView(LoginRequiredMixin, CreateView):
+    model = Periodo
+    form_class = PeriodoForm
+    template_name = 'notas/periodos/crear.html'
+    success_url = reverse_lazy('notas:lista_periodos')
 
-@login_required
-def gestionar_anios_periodos(request):
-    anios = (
-        AnioEscolar.objects
-        .prefetch_related('periodos', 'grados')
-        .select_related('escala')
-        .order_by('-anio')
-    )
+    def form_valid(self, form):
+        messages.success(self.request, 'Período creado exitosamente.')
+        return super().form_valid(form)
 
-    anio_form = AnioEscolarForm()
-    periodo_form = PeriodoForm()
+class ListaPeriodosView(LoginRequiredMixin, ListView):
+    model = Periodo
+    template_name = 'notas/periodos/lista.html'
+    context_object_name = 'periodos'
+    ordering = ['anio_escolar__anio', 'nombre']
 
-    if request.method == 'POST':
+class GestionarAniosPeriodosView(LoginRequiredMixin, View):
+    template_name = 'notas/anios/lista.html'
+
+    def get(self, request):
+        anios = (
+            AnioEscolar.objects
+            .prefetch_related('periodos', 'grados')
+            .select_related('escala')
+            .order_by('-anio')
+        )
+        anio_activo = anios.filter(activo=True).first()
+        escalas_usadas = (
+            EscalaNota.objects
+            .filter(anios_escolares__in=anios)
+            .distinct()
+            .count()
+        )
+
+        context = {
+            'anios': anios,
+            'anio_form': AnioEscolarForm(),
+            'periodo_form': PeriodoForm(),
+            'anio_activo': anio_activo,
+            'estadisticas': {
+                'total_anios': anios.count(),
+                'anio_activo': anio_activo.anio if anio_activo else None,
+                'escalas_usadas': escalas_usadas,
+            },
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+        anios = (
+            AnioEscolar.objects
+            .prefetch_related('periodos', 'grados')
+            .select_related('escala')
+            .order_by('-anio')
+        )
+        anio_form = AnioEscolarForm()
+        periodo_form = PeriodoForm()
         form_type = request.POST.get('form_type')
 
         if form_type == 'anio':
             anio_form = AnioEscolarForm(request.POST)
-            periodo_form = PeriodoForm()
+            periodo_form = PeriodoForm()  # Reset periodo_form
 
             if anio_form.is_valid():
                 try:
                     nuevo_anio = anio_form.save()
-                except ValidationError as error:
-                    if hasattr(error, 'message_dict'):
-                        for field, mensajes in error.message_dict.items():
-                            destino = None if field in (None, '__all__') else field
-                            for mensaje in mensajes:
-                                anio_form.add_error(destino, mensaje)
-                    else:
-                        for mensaje in getattr(error, 'messages', [str(error)]):
-                            anio_form.add_error(None, mensaje)
-                else:
                     messages.success(
                         request,
                         f'Año escolar {nuevo_anio.anio} creado correctamente.'
                     )
                     return redirect('notas:lista_anios')
+                except ValidationError as error:
+                    self._agregar_errores_formulario(anio_form, error)
             if anio_form.errors:
                 messages.error(
                     request,
@@ -243,26 +273,18 @@ def gestionar_anios_periodos(request):
 
         elif form_type == 'periodo':
             periodo_form = PeriodoForm(request.POST)
-            anio_form = AnioEscolarForm()
+            anio_form = AnioEscolarForm()  # Reset anio_form
 
             if periodo_form.is_valid():
                 try:
                     periodo = periodo_form.save()
-                except ValidationError as error:
-                    if hasattr(error, 'message_dict'):
-                        for field, mensajes in error.message_dict.items():
-                            destino = None if field in (None, '__all__') else field
-                            for mensaje in mensajes:
-                                periodo_form.add_error(destino, mensaje)
-                    else:
-                        for mensaje in getattr(error, 'messages', [str(error)]):
-                            periodo_form.add_error(None, mensaje)
-                else:
                     messages.success(
                         request,
                         f'Período {periodo.nombre} creado para el año {periodo.anio_escolar.anio}.'
                     )
                     return redirect('notas:lista_anios')
+                except ValidationError as error:
+                    self._agregar_errores_formulario(periodo_form, error)
             if periodo_form.errors:
                 messages.error(
                     request,
@@ -272,46 +294,61 @@ def gestionar_anios_periodos(request):
             messages.error(request, 'La acción solicitada no es válida.')
             return redirect('notas:lista_anios')
 
-    anio_activo = anios.filter(activo=True).first()
-    escalas_usadas = (
-        EscalaNota.objects
-        .filter(anios_escolares__in=anios)
-        .distinct()
-        .count()
-    )
+        # Si llegamos aquí, hubo errores o formularios inválidos
+        anio_activo = anios.filter(activo=True).first()
+        escalas_usadas = (
+            EscalaNota.objects
+            .filter(anios_escolares__in=anios)
+            .distinct()
+            .count()
+        )
 
-    context = {
-        'anios': anios,
-        'anio_form': anio_form,
-        'periodo_form': periodo_form,
-        'anio_activo': anio_activo,
-        'estadisticas': {
-            'total_anios': anios.count(),
-            'anio_activo': anio_activo.anio if anio_activo else None,
-            'escalas_usadas': escalas_usadas,
-        },
-    }
-    return render(request, 'notas/anios/lista.html', context)
+        context = {
+            'anios': anios,
+            'anio_form': anio_form,
+            'periodo_form': periodo_form,
+            'anio_activo': anio_activo,
+            'estadisticas': {
+                'total_anios': anios.count(),
+                'anio_activo': anio_activo.anio if anio_activo else None,
+                'escalas_usadas': escalas_usadas,
+            },
+        }
+        return render(request, self.template_name, context)
 
-
+    def _agregar_errores_formulario(self, form, error):
+        """
+        Método auxiliar para agregar errores de ValidationError a un formulario.
+        """
+        if hasattr(error, 'message_dict'):
+            for field, mensajes in error.message_dict.items():
+                destino = None if field in (None, '__all__') else field
+                for mensaje in mensajes:
+                    form.add_error(destino, mensaje)
+        else:
+            for mensaje in getattr(error, 'messages', [str(error)]):
+                form.add_error(None, mensaje)
+                
+                
 @login_required
-def lista_periodos(request):
-    periodos = Periodo.objects.select_related('anio_escolar').all().order_by('anio_escolar__anio', 'nombre')
-    return render(request, 'notas/periodos/lista.html', {'periodos': periodos})
-
-
-@login_required
-def crear_periodo(request):
-    if request.method == 'POST':
-        form = PeriodoForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Período creado exitosamente.')
-            return redirect('notas:lista_periodos')
-    else:
-        form = PeriodoForm()
-    return render(request, 'notas/periodos/crear.html', {'form': form})
-
+def obtener_periodos_por_anio(request, anio_id):
+    """Obtener periodos de un año escolar específico para filtrado dinámico"""
+    try:
+        anio = get_object_or_404(AnioEscolar, id=anio_id)
+        periodos = Periodo.objects.filter(anio_escolar=anio).order_by('nombre')
+        
+        periodos_data = [{
+            'id': p.id,
+            'nombre': p.nombre,
+            'porcentaje': float(p.porcentaje)
+        } for p in periodos]
+        
+        return JsonResponse({
+            'success': True,
+            'periodos': periodos_data
+        })
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
 
 
 #==============================================Grados========================================================
@@ -431,7 +468,8 @@ def editar_materia(request, pk):
     return render(request, 'notas/materias/editar.html', {'form': form, 'materia': materia})
 
 
-
+#==============================================Notas===========================================================
+#--------------------------------------------------------------------------------------------------------------
 @login_required
 def lista_notas(request):
     notas = Nota.objects.select_related('estudiante', 'materia', 'periodo').all()
@@ -511,6 +549,8 @@ def importar_notas(request):
     return render(request, 'notas/notas/importar.html', {'form': form})
 
 
+#==============================================Informes finales================================================
+#--------------------------------------------------------------------------------------------------------------
 @login_required
 def lista_informes_finales(request):
     informes = InformeFinal.objects.select_related('estudiante', 'materia', 'anio_escolar').all()
@@ -529,690 +569,9 @@ def crear_informe_final(request):
         form = InformeFinalForm()
     return render(request, 'notas/informes/crear.html', {'form': form})
 
-#--------------------------------------------------------------Extras para manejo masivo de notas sonet----
-# Agregar esta vista a tu views.py existente
 
-from django.http import JsonResponse
-from django.db import transaction
-import json
 
+#==============================================Estadísticas========================================================
+#------------------------------------------------------------------------------------------------------------------
 
-@login_required
-def cursos_directivo(request):
-    """Vista principal para la gestión de cursos por el directivo"""
-    # Obtener datos iniciales
-    anios_escolares = AnioEscolar.objects.all().order_by('-anio')
-    escalas = EscalaNota.objects.all()
-    grados = Grado.objects.all().order_by('nombre')
-    materias = Materia.objects.select_related('grado', 'profesor').all()
-    profesores = Profesor.objects.filter(user__is_active=True)
 
-    # Año escolar activo por defecto
-    anio_activo = anios_escolares.filter(activo=True).first()
-
-    context = {
-        'anios_escolares': anios_escolares,
-        'escalas': escalas,
-        'grados': grados,
-        'materias': materias,
-        'profesores': profesores,
-        'anio_activo': anio_activo,
-    }
-
-    return render(request, 'notas/cursos_directivo.html', context)
-
-
-#--------------------------------------------------------------AJAXs para manejo masivo de notas sonet----
-'''
-@login_required
-def crear_anio_escolar_ajax(request):
-    """Crear año escolar vía AJAX"""
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            anio = data.get('anio')
-            escala_id = data.get('escala_id')
-            activo = data.get('activo', False)
-
-            # Validar que el año no existe
-            if AnioEscolar.objects.filter(anio=anio).exists():
-                return JsonResponse({
-                    'success': False,
-                    'error': f'El año {anio} ya existe'
-                })
-
-            # Crear el año escolar
-            anio_escolar = AnioEscolar.objects.create(
-                anio=anio,
-                escala_id=escala_id,
-                activo=activo
-            )
-
-            return JsonResponse({
-                'success': True,
-                'anio_escolar': {
-                    'id': anio_escolar.id,
-                    'anio': anio_escolar.anio,
-                    'activo': anio_escolar.activo,
-                    'escala_nombre': anio_escolar.escala.nombre
-                }
-            })
-
-        except Exception as e:
-            return JsonResponse({'success': False, 'error': str(e)})
-
-    return JsonResponse({'success': False, 'error': 'Método no permitido'})
-
-
-@login_required
-def crear_grado_ajax(request):
-    """Crear grado vía AJAX"""
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            nombre = data.get('nombre')
-            anio_id = data.get('anio_id')
-
-            # Validar que el grado no existe para ese año
-            if Grado.objects.filter(nombre=nombre, anio_id=anio_id).exists():
-                return JsonResponse({
-                    'success': False,
-                    'error': f'El grado {nombre} ya existe para este año'
-                })
-
-            # Crear el grado
-            grado = Grado.objects.create(
-                nombre=nombre,
-                anio_id=anio_id if anio_id else None
-            )
-
-            return JsonResponse({
-                'success': True,
-                'grado': {
-                    'id': grado.id,
-                    'nombre': grado.nombre,
-                    'anio': grado.anio.anio if grado.anio else None
-                }
-            })
-
-        except Exception as e:
-            return JsonResponse({'success': False, 'error': str(e)})
-
-    return JsonResponse({'success': False, 'error': 'Método no permitido'})
-
-
-@login_required
-def crear_materia_ajax(request):
-    """Crear materia vía AJAX"""
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            nombre = data.get('nombre')
-            grado_id = data.get('grado_id')
-            profesor_id = data.get('profesor_id')
-
-            # Validar que la materia no existe para ese grado
-            if Materia.objects.filter(nombre=nombre, grado_id=grado_id).exists():
-                return JsonResponse({
-                    'success': False,
-                    'error': f'La materia {nombre} ya existe para este grado'
-                })
-
-            # Crear la materia
-            materia = Materia.objects.create(
-                nombre=nombre,
-                grado_id=grado_id if grado_id else None,
-                profesor_id=profesor_id if profesor_id else None
-            )
-
-            return JsonResponse({
-                'success': True,
-                'materia': {
-                    'id': materia.id,
-                    'nombre': materia.nombre,
-                    'grado': materia.grado.nombre if materia.grado else None,
-                    'profesor': f"{materia.profesor.user.first_name} {materia.profesor.user.last_name}" if materia.profesor else None
-                }
-            })
-
-        except Exception as e:
-            return JsonResponse({'success': False, 'error': str(e)})
-
-    return JsonResponse({'success': False, 'error': 'Método no permitido'})
-
-
-@login_required
-def crear_escala_ajax(request):
-    """Crear escala de notas vía AJAX"""
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            nombre = data.get('nombre')
-            minimo = float(data.get('minimo'))
-            maximo = float(data.get('maximo'))
-            paso = float(data.get('paso', 0.1))
-
-            # Validaciones
-            if minimo >= maximo:
-                return JsonResponse({
-                    'success': False,
-                    'error': 'El valor mínimo debe ser menor que el máximo'
-                })
-
-            if EscalaNota.objects.filter(nombre=nombre).exists():
-                return JsonResponse({
-                    'success': False,
-                    'error': f'La escala {nombre} ya existe'
-                })
-
-            # Crear la escala
-            escala = EscalaNota.objects.create(
-                nombre=nombre,
-                minimo=minimo,
-                maximo=maximo,
-                paso=paso
-            )
-
-            return JsonResponse({
-                'success': True,
-                'escala': {
-                    'id': escala.id,
-                    'nombre': escala.nombre,
-                    'minimo': float(escala.minimo),
-                    'maximo': float(escala.maximo),
-                    'paso': float(escala.paso)
-                }
-            })
-
-        except Exception as e:
-            return JsonResponse({'success': False, 'error': str(e)})
-
-    return JsonResponse({'success': False, 'error': 'Método no permitido'})
-'''
-'''
-@login_required
-def obtener_datos_anio(request, anio_id):
-    """Obtener grados y materias de un año específico"""
-    try:
-        anio = get_object_or_404(AnioEscolar, id=anio_id)
-        grados = Grado.objects.filter(anio=anio)
-        materias = Materia.objects.filter(grado__anio=anio).select_related('grado', 'profesor')
-
-        grados_data = [{'id': g.id, 'nombre': g.nombre} for g in grados]
-        materias_data = [{
-            'id': m.id,
-            'nombre': m.nombre,
-            'grado': m.grado.nombre if m.grado else None,
-            'grado_id': m.grado.id if m.grado else None,
-            'profesor': f"{m.profesor.user.first_name} {m.profesor.user.last_name}" if m.profesor else None,
-            'profesor_id': m.profesor.id if m.profesor else None
-        } for m in materias]
-
-        return JsonResponse({
-            'success': True,
-            'anio': {
-                'id': anio.id,
-                'anio': anio.anio,
-                'escala': anio.escala.nombre
-            },
-            'grados': grados_data,
-            'materias': materias_data
-        })
-
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)})
-
-
-# Agregar estas funciones adicionales a tu views.py
-
-
-@login_required
-def eliminar_materia_ajax(request, materia_id):
-    """Eliminar materia vía AJAX"""
-    if request.method == 'DELETE':
-        try:
-            materia = get_object_or_404(Materia, id=materia_id)
-
-            # Verificar si la materia tiene notas asociadas
-            if materia.notas.exists():
-                return JsonResponse({
-                    'success': False,
-                    'error': 'No se puede eliminar la materia porque tiene notas asociadas'
-                })
-
-            nombre_materia = materia.nombre
-            materia.delete()
-
-            return JsonResponse({
-                'success': True,
-                'message': f'Materia {nombre_materia} eliminada exitosamente'
-            })
-
-        except Exception as e:
-            return JsonResponse({'success': False, 'error': str(e)})
-
-    return JsonResponse({'success': False, 'error': 'Método no permitido'})
-'''
-
-@login_required
-def activar_anio_escolar(request, anio_id):
-    """Activar un año escolar específico"""
-    if request.method == 'POST':
-        try:
-            with transaction.atomic():
-                # Desactivar todos los años
-                AnioEscolar.objects.all().update(activo=False)
-
-                # Activar el año seleccionado
-                anio = get_object_or_404(AnioEscolar, id=anio_id)
-                anio.activo = True
-                anio.save()
-
-                return JsonResponse({
-                    'success': True,
-                    'message': f'Año {anio.anio} activado exitosamente'
-                })
-
-        except Exception as e:
-            return JsonResponse({'success': False, 'error': str(e)})
-
-    return JsonResponse({'success': False, 'error': 'Método no permitido'})
-
-'''
-@login_required
-def obtener_materia_ajax(request, materia_id):
-    """Obtener datos de una materia específica para edición"""
-    try:
-        materia = get_object_or_404(Materia, id=materia_id)
-
-        return JsonResponse({
-            'success': True,
-            'materia': {
-                'id': materia.id,
-                'nombre': materia.nombre,
-                'grado_id': materia.grado.id if materia.grado else None,
-                'grado_nombre': materia.grado.nombre if materia.grado else None,
-                'profesor_id': materia.profesor.id if materia.profesor else None,
-                'profesor_nombre': f"{materia.profesor.user.first_name} {materia.profesor.user.last_name}" if materia.profesor else None
-            }
-        })
-
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)})
-
-
-@login_required
-def crear_periodo_ajax(request):
-    """Crear período vía AJAX"""
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            anio_escolar_id = data.get('anio_escolar_id')
-            nombre = data.get('nombre')
-            porcentaje = float(data.get('porcentaje'))
-
-            # Validar que el período no exista
-            if Periodo.objects.filter(anio_escolar_id=anio_escolar_id, nombre=nombre).exists():
-                return JsonResponse({
-                    'success': False,
-                    'error': f'El período {nombre} ya existe para este año'
-                })
-
-            # Validar suma de porcentajes
-            total_porcentajes = Periodo.objects.filter(
-                anio_escolar_id=anio_escolar_id
-            ).aggregate(suma=Sum('porcentaje'))['suma'] or 0
-
-            if total_porcentajes + porcentaje > 100:
-                return JsonResponse({
-                    'success': False,
-                    'error': 'La suma de los porcentajes no puede superar 100%'
-                })
-
-            # Crear el período
-            periodo = Periodo.objects.create(
-                anio_escolar_id=anio_escolar_id,
-                nombre=nombre,
-                porcentaje=porcentaje
-            )
-
-            return JsonResponse({
-                'success': True,
-                'periodo': {
-                    'id': periodo.id,
-                    'nombre': periodo.nombre,
-                    'porcentaje': float(periodo.porcentaje),
-                    'anio_escolar': periodo.anio_escolar.anio
-                }
-            })
-
-        except Exception as e:
-            return JsonResponse({'success': False, 'error': str(e)})
-
-    return JsonResponse({'success': False, 'error': 'Método no permitido'})
-'''
-
-@login_required
-def obtener_estadisticas_anio(request, anio_id):
-    """Obtener estadísticas del año escolar"""
-    try:
-        anio = get_object_or_404(AnioEscolar, id=anio_id)
-
-        # Contar grados
-        total_grados = Grado.objects.filter(anio=anio).count()
-
-        # Contar materias
-        total_materias = Materia.objects.filter(grado__anio=anio).count()
-
-        # Contar estudiantes matriculados en el año
-        total_estudiantes = Estudiante.objects.filter(
-            user__is_active=True,
-            # Aquí puedes agregar filtro por matrícula si tienes ese modelo
-        ).count()
-
-        # Contar profesores asignados
-        profesores_asignados = Materia.objects.filter(
-            grado__anio=anio,
-            profesor__isnull=False
-        ).values('profesor').distinct().count()
-
-        # Contar períodos
-        total_periodos = Periodo.objects.filter(anio_escolar=anio).count()
-        suma_porcentajes = Periodo.objects.filter(anio_escolar=anio).aggregate(
-            suma=Sum('porcentaje')
-        )['suma'] or 0
-
-        return JsonResponse({
-            'success': True,
-            'estadisticas': {
-                'anio': anio.anio,
-                'escala': anio.escala.nombre,
-                'total_grados': total_grados,
-                'total_materias': total_materias,
-                'total_estudiantes': total_estudiantes,
-                'profesores_asignados': profesores_asignados,
-                'total_periodos': total_periodos,
-                'suma_porcentajes': float(suma_porcentajes),
-                'porcentajes_completos': suma_porcentajes == 100
-            }
-        })
-
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)})
-
-'''
-@login_required
-def eliminar_anio_escolar_ajax(request, anio_id):
-    """Eliminar año escolar vía AJAX con validaciones"""
-    if request.method == 'DELETE':
-        try:
-            anio = get_object_or_404(AnioEscolar, id=anio_id)
-
-            # Validar que no sea el año activo
-            if anio.activo:
-                return JsonResponse({
-                    'success': False,
-                    'error': 'No se puede eliminar el año escolar activo. Primero debe activar otro año.'
-                })
-
-            # Verificar dependencias
-            grados_count = Grado.objects.filter(anio=anio).count()
-            periodos_count = Periodo.objects.filter(anio_escolar=anio).count()
-            informes_count = InformeFinal.objects.filter(anio_escolar=anio).count()
-
-            if grados_count > 0 or periodos_count > 0 or informes_count > 0:
-                return JsonResponse({
-                    'success': False,
-                    'error': f'No se puede eliminar el año escolar porque tiene dependencias: {grados_count} grados, {periodos_count} períodos, {informes_count} informes finales.'
-                })
-
-            # Verificar si hay notas asociadas a través de períodos
-            notas_count = Nota.objects.filter(periodo__anio_escolar=anio).count()
-            if notas_count > 0:
-                return JsonResponse({
-                    'success': False,
-                    'error': f'No se puede eliminar el año escolar porque tiene {notas_count} notas asociadas.'
-                })
-
-            # Guardar información para el mensaje
-            anio_valor = anio.anio
-
-            # Eliminar el año escolar
-            anio.delete()
-
-            return JsonResponse({
-                'success': True,
-                'message': f'Año escolar {anio_valor} eliminado exitosamente.'
-            })
-
-        except AnioEscolar.DoesNotExist:
-            return JsonResponse({
-                'success': False,
-                'error': 'El año escolar no existe.'
-            })
-        except Exception as e:
-            return JsonResponse({
-                'success': False,
-                'error': f'Error al eliminar el año escolar: {str(e)}'
-            })
-
-    return JsonResponse({'success': False, 'error': 'Método no permitido'})
-
-
-# Agregar estas funciones adicionales a tu views.py
-
-@login_required
-def editar_materia_ajax(request, materia_id):
-    """Editar materia vía AJAX"""
-    if request.method == 'POST':
-        try:
-            materia = get_object_or_404(Materia, id=materia_id)
-            data = json.loads(request.body)
-
-            nombre = data.get('nombre')
-            grado_id = data.get('grado_id')
-            profesor_id = data.get('profesor_id')
-
-            # Validar que no exista otra materia con el mismo nombre en el mismo grado
-            if Materia.objects.filter(
-                    nombre=nombre,
-                    grado_id=grado_id
-            ).exclude(id=materia_id).exists():
-                return JsonResponse({
-                    'success': False,
-                    'error': f'La materia {nombre} ya existe para este grado'
-                })
-
-            # Actualizar la materia
-            materia.nombre = nombre
-            materia.grado_id = grado_id if grado_id else None
-            materia.profesor_id = profesor_id if profesor_id else None
-            materia.save()
-
-            return JsonResponse({
-                'success': True,
-                'materia': {
-                    'id': materia.id,
-                    'nombre': materia.nombre,
-                    'grado': materia.grado.nombre if materia.grado else None,
-                    'profesor': f"{materia.profesor.user.first_name} {materia.profesor.user.last_name}" if materia.profesor else None
-                }
-            })
-
-        except Exception as e:
-            return JsonResponse({'success': False, 'error': str(e)})
-
-    return JsonResponse({'success': False, 'error': 'Método no permitido'})
-
-
-@login_required
-def eliminar_materia_ajax(request, materia_id):
-    """Eliminar materia vía AJAX"""
-    if request.method == 'DELETE':
-        try:
-            materia = get_object_or_404(Materia, id=materia_id)
-
-            # Verificar si la materia tiene notas asociadas
-            if materia.notas.exists():
-                return JsonResponse({
-                    'success': False,
-                    'error': 'No se puede eliminar la materia porque tiene notas asociadas'
-                })
-
-            nombre_materia = materia.nombre
-            materia.delete()
-
-            return JsonResponse({
-                'success': True,
-                'message': f'Materia {nombre_materia} eliminada exitosamente'
-            })
-
-        except Exception as e:
-            return JsonResponse({'success': False, 'error': str(e)})
-
-    return JsonResponse({'success': False, 'error': 'Método no permitido'})
-'''
-
-@login_required
-def activar_anio_escolar(request, anio_id):
-    """Activar un año escolar específico"""
-    if request.method == 'POST':
-        try:
-            with transaction.atomic():
-                # Desactivar todos los años
-                AnioEscolar.objects.all().update(activo=False)
-
-                # Activar el año seleccionado
-                anio = get_object_or_404(AnioEscolar, id=anio_id)
-                anio.activo = True
-                anio.save()
-
-                return JsonResponse({
-                    'success': True,
-                    'message': f'Año {anio.anio} activado exitosamente'
-                })
-
-        except Exception as e:
-            return JsonResponse({'success': False, 'error': str(e)})
-
-    return JsonResponse({'success': False, 'error': 'Método no permitido'})
-
-'''
-@login_required
-def crear_periodo_ajax(request):
-    """Crear período vía AJAX"""
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            anio_escolar_id = data.get('anio_escolar_id')
-            nombre = data.get('nombre')
-            porcentaje = float(data.get('porcentaje'))
-
-            # Validar que el período no exista
-            if Periodo.objects.filter(anio_escolar_id=anio_escolar_id, nombre=nombre).exists():
-                return JsonResponse({
-                    'success': False,
-                    'error': f'El período {nombre} ya existe para este año'
-                })
-
-            # Validar suma de porcentajes
-            total_porcentajes = Periodo.objects.filter(
-                anio_escolar_id=anio_escolar_id
-            ).aggregate(suma=Sum('porcentaje'))['suma'] or 0
-
-            if total_porcentajes + porcentaje > 100:
-                return JsonResponse({
-                    'success': False,
-                    'error': 'La suma de los porcentajes no puede superar 100%'
-                })
-
-            # Crear el período
-            periodo = Periodo.objects.create(
-                anio_escolar_id=anio_escolar_id,
-                nombre=nombre,
-                porcentaje=porcentaje
-            )
-
-            return JsonResponse({
-                'success': True,
-                'periodo': {
-                    'id': periodo.id,
-                    'nombre': periodo.nombre,
-                    'porcentaje': float(periodo.porcentaje),
-                    'anio_escolar': periodo.anio_escolar.anio
-                }
-            })
-
-        except Exception as e:
-            return JsonResponse({'success': False, 'error': str(e)})
-
-    return JsonResponse({'success': False, 'error': 'Método no permitido'})
-'''
-
-@login_required
-def obtener_estadisticas_anio(request, anio_id):
-    """Obtener estadísticas del año escolar"""
-    try:
-        anio = get_object_or_404(AnioEscolar, id=anio_id)
-
-        # Contar grados
-        total_grados = Grado.objects.filter(anio=anio).count()
-
-        # Contar materias
-        total_materias = Materia.objects.filter(grado__anio=anio).count()
-
-        # Contar estudiantes matriculados en el año
-        total_estudiantes = Estudiante.objects.filter(
-            user__is_active=True,
-            # Aquí puedes agregar filtro por matrícula si tienes ese modelo
-        ).count()
-
-        # Contar profesores asignados
-        profesores_asignados = Materia.objects.filter(
-            grado__anio=anio,
-            profesor__isnull=False
-        ).values('profesor').distinct().count()
-
-        # Contar períodos
-        total_periodos = Periodo.objects.filter(anio_escolar=anio).count()
-        suma_porcentajes = Periodo.objects.filter(anio_escolar=anio).aggregate(
-            suma=Sum('porcentaje')
-        )['suma'] or 0
-
-        return JsonResponse({
-            'success': True,
-            'estadisticas': {
-                'anio': anio.anio,
-                'escala': anio.escala.nombre,
-                'total_grados': total_grados,
-                'total_materias': total_materias,
-                'total_estudiantes': total_estudiantes,
-                'profesores_asignados': profesores_asignados,
-                'total_periodos': total_periodos,
-                'suma_porcentajes': float(suma_porcentajes),
-                'porcentajes_completos': suma_porcentajes == 100
-            }
-        })
-
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)})
-
-@login_required
-def obtener_periodos_por_anio(request, anio_id):
-    """Obtener periodos de un año escolar específico para filtrado dinámico"""
-    try:
-        anio = get_object_or_404(AnioEscolar, id=anio_id)
-        periodos = Periodo.objects.filter(anio_escolar=anio).order_by('nombre')
-        
-        periodos_data = [{
-            'id': p.id,
-            'nombre': p.nombre,
-            'porcentaje': float(p.porcentaje)
-        } for p in periodos]
-        
-        return JsonResponse({
-            'success': True,
-            'periodos': periodos_data
-        })
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)})

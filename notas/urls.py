@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
-from .views import (ListaGradosView, CrearGradoView, EditarGradoView, EliminarGradoView)
+from .views import (ListaGradosView, CrearGradoView, EditarGradoView, EliminarGradoView, EditarEstadoAnioView, 
+                    GestionarAniosPeriodosView)     
 
 app_name = 'notas'
 
@@ -14,16 +15,17 @@ urlpatterns = [
 
     # Años escolares
     path('anios/crear/', views.AnioEscolarCreateView.as_view(), name='crear_anio'),
-    path('anios/', views.gestionar_anios_periodos, name='lista_anios'),
-    path('anios/<int:pk>/editar-estado/', views.editar_estado_anio, name='editar_estado_anio'),
-    #path('anios/<int:pk>/eliminar/', views.eliminar_anio_escolar, name='eliminar_anio'),
+    #path('anios/', views.gestionar_anios_periodos, name='lista_anios'),
+    #path('anios/<int:pk>/editar-estado/', views.editar_estado_anio, name='editar_estado_anio'),
+    path('anio-escolar/editar-estado/<int:pk>/', EditarEstadoAnioView.as_view(), name='editar_estado_anio'),
     path('anio-escolar/eliminar/<int:pk>/', views.EliminarAnioEscolarView.as_view(), name='eliminar_anio'),
     
     # Períodos
-    path('periodos/', views.lista_periodos, name='lista_periodos'),
-    path('periodos/crear/', views.crear_periodo, name='crear_periodo'),
+    path('periodos/', views.ListaPeriodosView.as_view(), name='lista_periodos'),
+    path('periodos/crear/', views.CrearPeriodoView.as_view(), name='crear_periodo'),
+    #path('anios-periodos/', GestionarAniosPeriodosView.as_view(), name='lista_anios'),
     # API para filtrado dinámico
-    path('api/periodos-por-anio/<int:anio_id>/', views.obtener_periodos_por_anio, name='api_periodos_por_anio'),
+    path('anios-periodos/', views.GestionarAniosPeriodosView.as_view(), name='lista_anios'),
 
     # Grados
     path('grados/', ListaGradosView.as_view(), name='lista_grados'),
