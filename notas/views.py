@@ -328,27 +328,37 @@ class GestionarAniosPeriodosView(LoginRequiredMixin, View):
         else:
             for mensaje in getattr(error, 'messages', [str(error)]):
                 form.add_error(None, mensaje)
-                
-                
-@login_required
-def obtener_periodos_por_anio(request, anio_id):
-    """Obtener periodos de un año escolar específico para filtrado dinámico"""
-    try:
-        anio = get_object_or_404(AnioEscolar, id=anio_id)
-        periodos = Periodo.objects.filter(anio_escolar=anio).order_by('nombre')
-        
-        periodos_data = [{
-            'id': p.id,
-            'nombre': p.nombre,
-            'porcentaje': float(p.porcentaje)
-        } for p in periodos]
-        
-        return JsonResponse({
-            'success': True,
-            'periodos': periodos_data
-        })
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)})
+
+class ObtenerPeriodosPorAnioView(LoginRequiredMixin, View):
+    def get(self, request, anio_id):
+        try:
+            anio = get_object_or_404(AnioEscolar, id=anio_id)
+            periodos = Periodo.objects.filter(anio_escolar=anio).order_by('nombre')
+            
+            periodos_data = [
+                {
+                    'id': p.id,
+                    'nombre': p.nombre,
+                    'porcentaje': float(p.porcentaje)
+                }
+                for p in periodos
+            ]
+            
+            return JsonResponse({
+                'success': True,
+                'periodos': periodos_data
+            })
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    
+class EliminarPeriodoView(LoginRequiredMixin, DeleteView):
+    model = Periodo
+    template_name = 'notas/periodos/eliminar.html'
+    success_url = reverse_lazy('notas:lista_periodos')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, 'Período eliminado exitosamente.')
+        return super().delete(request, *args, **kwargs)
 
 
 #==============================================Grados========================================================

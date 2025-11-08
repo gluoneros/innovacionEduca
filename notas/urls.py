@@ -19,13 +19,16 @@ urlpatterns = [
     #path('anios/<int:pk>/editar-estado/', views.editar_estado_anio, name='editar_estado_anio'),
     path('anio-escolar/editar-estado/<int:pk>/', EditarEstadoAnioView.as_view(), name='editar_estado_anio'),
     path('anio-escolar/eliminar/<int:pk>/', views.EliminarAnioEscolarView.as_view(), name='eliminar_anio'),
+    path('anios-periodos/', views.GestionarAniosPeriodosView.as_view(), name='lista_anios'),
     
     # Períodos
     path('periodos/', views.ListaPeriodosView.as_view(), name='lista_periodos'),
     path('periodos/crear/', views.CrearPeriodoView.as_view(), name='crear_periodo'),
+    path('periodos/eliminar/<int:pk>/', views.EliminarPeriodoView.as_view(), name='eliminar_periodo'),
     #path('anios-periodos/', GestionarAniosPeriodosView.as_view(), name='lista_anios'),
+    
     # API para filtrado dinámico
-    path('anios-periodos/', views.GestionarAniosPeriodosView.as_view(), name='lista_anios'),
+    path('api/periodos-por-anio/<int:anio_id>/', views.ObtenerPeriodosPorAnioView.as_view(), name='api_periodos_por_anio'),
 
     # Grados
     path('grados/', ListaGradosView.as_view(), name='lista_grados'),
