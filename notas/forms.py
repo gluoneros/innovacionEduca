@@ -8,8 +8,7 @@ from django.forms import formset_factory, inlineformset_factory
 from .models import EscalaNota, AnioEscolar, Grado, Materia, Periodo, Nota, InformeFinal
 from users.models import Profesor, Estudiante
 
-#==============================================================QWEN==================================
-#==============================================================QWEN======================================
+#===================================
 
 
 class EscalaNotaForm(forms.ModelForm):
@@ -22,8 +21,6 @@ class EscalaNotaForm(forms.ModelForm):
             'maximo': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
             'paso': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
         }
-##000000000000000000000==================================================================
-#==========================================================================================
 
 
 class EditarPeriodoForm(forms.ModelForm):
