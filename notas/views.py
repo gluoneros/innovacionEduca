@@ -14,7 +14,7 @@ import json
 from .forms import (
     EscalaNotaForm, AnioEscolarForm, GradoForm, MateriaForm,
     PeriodoForm, NotaForm, InformeFinalForm, BuscarEstudianteForm,
-    BuscarNotaForm, ImportarNotasForm, PeriodoFormSet
+    BuscarNotaForm, ImportarNotasForm, PeriodoFormSet, EditarPeriodoForm
 )
 
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, TemplateView
@@ -126,34 +126,95 @@ class EditarEstadoAnioView(LoginRequiredMixin, View):
 
     def get(self, request, pk):
         anio = get_object_or_404(AnioEscolar, pk=pk)
-        return render(request, self.template_name, {'anio': anio})
+        periodos = anio.periodos.all().order_by('nombre')
+        periodo_form = None
+        
+        # Si se está editando un periodo específico
+        periodo_id = request.GET.get('periodo_id')
+        if periodo_id:
+            periodo = get_object_or_404(Periodo, pk=periodo_id, anio_escolar=anio)
+            periodo_form = EditarPeriodoForm(instance=periodo, anio_escolar=anio)
+        
+        context = {
+            'anio': anio,
+            'periodos': periodos,
+            'periodo_form': periodo_form,
+            'editando_periodo_id': periodo_id
+        }
+        return render(request, self.template_name, context)
 
     def post(self, request, pk):
         anio = get_object_or_404(AnioEscolar, pk=pk)
-        nuevo_estado = request.POST.get('activo') == 'on'
+        action = request.POST.get('action')
         
-        # Validación: Solo puede haber un año activo a la vez
-        if nuevo_estado:
-            anio_activo_existente = AnioEscolar.objects.filter(activo=True).exclude(pk=pk).first()
-            if anio_activo_existente:
-                messages.error(
-                    request,
-                    f'No se puede activar el año {anio.anio} porque ya existe el año {anio_activo_existente.anio} activo. '
-                    f'Solo puede haber un año escolar activo a la vez. '
-                    f'Primero desactiva el año {anio_activo_existente.anio} si deseas activar este año.'
-                )
-                return render(request, self.template_name, {'anio': anio})
-
-        # Actualizar el estado
-        anio.activo = nuevo_estado
-        anio.save()
-
-        if nuevo_estado:
-            messages.success(request, f'El año {anio.anio} ha sido activado correctamente.')
+        # Manejar edición de periodo
+        if action == 'editar_periodo':
+            periodo_id = request.POST.get('periodo_id')
+            if periodo_id:
+                periodo = get_object_or_404(Periodo, pk=periodo_id, anio_escolar=anio)
+                periodo_form = EditarPeriodoForm(request.POST, instance=periodo, anio_escolar=anio)
+                
+                if periodo_form.is_valid():
+                    periodo_form.save()
+                    messages.success(request, f'Período "{periodo.nombre}" actualizado correctamente.')
+                    return redirect('notas:editar_estado_anio', pk=pk)
+                else:
+                    periodos = anio.periodos.all().order_by('nombre')
+                    context = {
+                        'anio': anio,
+                        'periodos': periodos,
+                        'periodo_form': periodo_form,
+                        'editando_periodo_id': periodo_id
+                    }
+                    return render(request, self.template_name, context)
+        
+        # Manejar eliminación de periodo
+        elif action == 'eliminar_periodo':
+            periodo_id = request.POST.get('periodo_id')
+            if periodo_id:
+                periodo = get_object_or_404(Periodo, pk=periodo_id, anio_escolar=anio)
+                
+                # Verificar si el periodo tiene notas asociadas
+                notas_count = Nota.objects.filter(periodo=periodo).count()
+                if notas_count > 0:
+                    messages.error(
+                        request,
+                        f'No se puede eliminar el período "{periodo.nombre}" porque tiene {notas_count} nota(s) asociada(s).'
+                    )
+                else:
+                    nombre_periodo = periodo.nombre
+                    periodo.delete()
+                    messages.success(request, f'Período "{nombre_periodo}" eliminado correctamente.')
+                
+                return redirect('notas:editar_estado_anio', pk=pk)
+        
+        # Manejar cambio de estado del año
         else:
-            messages.success(request, f'El año {anio.anio} ha sido desactivado correctamente.')
+            nuevo_estado = request.POST.get('activo') == 'on'
+            
+            # Validación: Solo puede haber un año activo a la vez
+            if nuevo_estado:
+                anio_activo_existente = AnioEscolar.objects.filter(activo=True).exclude(pk=pk).first()
+                if anio_activo_existente:
+                    messages.error(
+                        request,
+                        f'No se puede activar el año {anio.anio} porque ya existe el año {anio_activo_existente.anio} activo. '
+                        f'Solo puede haber un año escolar activo a la vez. '
+                        f'Primero desactiva el año {anio_activo_existente.anio} si deseas activar este año.'
+                    )
+                    periodos = anio.periodos.all().order_by('nombre')
+                    return render(request, self.template_name, {'anio': anio, 'periodos': periodos})
 
-        return redirect('notas:lista_anios')
+            # Actualizar el estado
+            anio.activo = nuevo_estado
+            anio.save()
+
+            if nuevo_estado:
+                messages.success(request, f'El año {anio.anio} ha sido activado correctamente.')
+            else:
+                messages.success(request, f'El año {anio.anio} ha sido desactivado correctamente.')
+
+            return redirect('notas:lista_anios')
 
 class EliminarAnioEscolarView(LoginRequiredMixin, View):
     def post(self, request, pk):

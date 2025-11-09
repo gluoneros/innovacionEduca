@@ -26,6 +26,59 @@ class EscalaNotaForm(forms.ModelForm):
 #==========================================================================================
 
 
+class EditarPeriodoForm(forms.ModelForm):
+    """Formulario para editar un periodo existente (sin cambiar el año escolar)"""
+    class Meta:
+        model = Periodo
+        fields = ['nombre', 'porcentaje']
+        widgets = {
+            'nombre': forms.TextInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500',
+                'placeholder': 'Ej: Primer Período'
+            }),
+            'porcentaje': forms.NumberInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500',
+                'step': '0.01',
+                'min': '0',
+                'max': '100'
+            })
+        }
+        labels = {
+            'nombre': 'Nombre del Período',
+            'porcentaje': 'Porcentaje (%)'
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.anio_escolar = kwargs.pop('anio_escolar', None)
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        porcentaje = cleaned_data.get('porcentaje')
+
+        if self.instance and self.instance.anio_escolar and porcentaje is not None:
+            # Calcular el total de porcentajes excluyendo el periodo actual
+            total_existente = self.instance.anio_escolar.periodos.exclude(
+                pk=self.instance.pk
+            ).aggregate(suma=Sum('porcentaje'))['suma'] or Decimal('0')
+
+            suma_total = total_existente + porcentaje
+            if suma_total > Decimal('100'):
+                self.add_error(
+                    'porcentaje',
+                    f'La suma de los porcentajes no puede superar 100%. '
+                    f'Con este cambio alcanzaría {suma_total}%.'
+                )
+
+        return cleaned_data
+
+    def clean_porcentaje(self):
+        porcentaje = self.cleaned_data.get('porcentaje')
+        if porcentaje and (porcentaje < 0 or porcentaje > 100):
+            raise ValidationError('El porcentaje debe estar entre 0 y 100.')
+        return porcentaje
+
+
 class PeriodoForm(forms.ModelForm):
     class Meta:
         model = Periodo

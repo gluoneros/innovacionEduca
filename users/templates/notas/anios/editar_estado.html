@@ -55,7 +55,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <h1 class="text-3xl font-bold text-gray-800 mb-2">Editar Estado del Año Escolar</h1>
-                <p class="text-gray-600">Modificar el estado activo/inactivo del año {{ anio.anio }}</p>
+                <p class="text-gray-600">Modificar el estado activo/inactivo del año {{ anio.anio }} y sus periodos</p>
             </div>
             <div class="flex items-center space-x-3">
                 <div class="text-right">
@@ -88,101 +88,247 @@
     {% endif %}
 
     <!-- Form Section -->
-    <div class="bg-white rounded-lg shadow-md p-6">
-        <div class="max-w-2xl mx-auto">
-            <!-- Información del año -->
-            <div class="bg-gray-50 rounded-lg p-6 mb-6">
-                <h3 class="text-lg font-semibold text-gray-800 mb-4">Información del Año Escolar</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-600">Año</label>
-                        <p class="text-lg font-semibold text-gray-900">{{ anio.anio }}</p>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-600">Escala de Notas</label>
-                        <p class="text-lg font-semibold text-gray-900">{{ anio.escala.nombre }}</p>
-                        <p class="text-sm text-gray-500">{{ anio.escala.minimo }} - {{ anio.escala.maximo }}</p>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-600">Períodos</label>
-                        <p class="text-lg font-semibold text-gray-900">{{ anio.periodos.count }} período{{ anio.periodos.count|pluralize }}</p>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-600">Grados</label>
-                        <p class="text-lg font-semibold text-gray-900">{{ anio.grados.count }} grado{{ anio.grados.count|pluralize }}</p>
-                    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- Información del año -->
+        <div class="bg-gray-50 rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Información del Año Escolar</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-600">Año</label>
+                    <p class="text-lg font-semibold text-gray-900">{{ anio.anio }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-600">Escala de Notas</label>
+                    <p class="text-lg font-semibold text-gray-900">{{ anio.escala.nombre }}</p>
+                    <p class="text-sm text-gray-500">{{ anio.escala.minimo }} - {{ anio.escala.maximo }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-600">Períodos</label>
+                    <p class="text-lg font-semibold text-gray-900">{{ anio.periodos.count }} período{{ anio.periodos.count|pluralize }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-600">Grados</label>
+                    <p class="text-lg font-semibold text-gray-900">{{ anio.grados.count }} grado{{ anio.grados.count|pluralize }}</p>
                 </div>
             </div>
+        </div>
 
-            <!-- Formulario de edición -->
+        <!-- Gestionar periodos -->
+        <div class="bg-gray-50 rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Gestionar Períodos</h3>
+            
+            {% if periodos %}
+                <!-- Selector de periodo -->
+                <div class="mb-4">
+                    <label for="periodo_selector" class="block text-sm font-medium text-gray-700 mb-2">
+                        Seleccionar Período
+                    </label>
+                    <select id="periodo_selector" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">-- Seleccione un período --</option>
+                        {% for periodo in periodos %}
+                            <option value="{{ periodo.id }}" 
+                                    data-nombre="{{ periodo.nombre }}" 
+                                    data-porcentaje="{{ periodo.porcentaje }}"
+                                    {% if editando_periodo_id and editando_periodo_id == periodo.id|stringformat:"s" %}selected{% endif %}>
+                                {{ periodo.nombre }} ({{ periodo.porcentaje }}%)
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Formulario de edición (se muestra cuando se selecciona un periodo) -->
+                <div id="form_editar_periodo" class="{% if not editando_periodo_id %}hidden{% endif %}">
+                    <form method="post" action="{% url 'notas:editar_estado_anio' anio.id %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="editar_periodo">
+                        <input type="hidden" name="periodo_id" id="periodo_id_input" value="{{ editando_periodo_id }}">
+                        
+                        <div class="space-y-4 mb-4">
+                            <div>
+                                <label for="id_nombre" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Nombre del Período
+                                </label>
+                                {% if periodo_form %}
+                                    {{ periodo_form.nombre }}
+                                    {% if periodo_form.nombre.errors %}
+                                        <p class="mt-1 text-sm text-red-600">{{ periodo_form.nombre.errors.0 }}</p>
+                                    {% endif %}
+                                {% else %}
+                                    <input type="text" name="nombre" id="id_nombre" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ej: Primer Período">
+                                {% endif %}
+                            </div>
+                            
+                            <div>
+                                <label for="id_porcentaje" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Porcentaje (%)
+                                </label>
+                                {% if periodo_form %}
+                                    {{ periodo_form.porcentaje }}
+                                    {% if periodo_form.porcentaje.errors %}
+                                        <p class="mt-1 text-sm text-red-600">{{ periodo_form.porcentaje.errors.0 }}</p>
+                                    {% endif %}
+                                {% else %}
+                                    <input type="number" name="porcentaje" id="id_porcentaje" step="0.01" min="0" max="100" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ej: 25.00">
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="flex gap-3">
+                            <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                Guardar Cambios
+                            </button>
+                            <button type="button" id="btn_cancelar_edicion" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                                Cancelar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Botón de eliminar (se muestra cuando se selecciona un periodo) -->
+                <div id="form_eliminar_periodo" class="{% if not editando_periodo_id %}hidden{% endif %} mt-4 pt-4 border-t border-gray-300">
+                    <form method="post" action="{% url 'notas:editar_estado_anio' anio.id %}" onsubmit="return confirm('¿Está seguro de que desea eliminar este período? Esta acción no se puede deshacer.');">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="eliminar_periodo">
+                        <input type="hidden" name="periodo_id" id="periodo_id_eliminar" value="{{ editando_periodo_id }}">
+                        
+                        <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                            Eliminar Período
+                        </button>
+                    </form>
+                </div>
+            {% else %}
+                <p class="text-gray-500 text-sm">No hay períodos registrados para este año escolar.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Formulario de edición -->
+    <div class="bg-white rounded-xl shadow-md p-6">
+        <div class="max-w-2xl mx-auto">
             <form method="post">
                 {% csrf_token %}
-                <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-lg mb-6">
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
-                            </svg>
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-lg mb-6">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <svg class="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-blue-700">
+                                    <strong>Importante:</strong> Solo puedes modificar el estado activo/inactivo del año escolar. 
+                                    <strong>Solo puede haber un año escolar activo a la vez.</strong> 
+                                    Si intentas activar este año y ya existe otro activo, recibirás una advertencia.
+                                </p>
+                            </div>
                         </div>
-                        <div class="ml-3">
-                            <p class="text-sm text-blue-700">
-                                <strong>Importante:</strong> Solo puedes modificar el estado activo/inactivo del año escolar. 
-                                <strong>Solo puede haber un año escolar activo a la vez.</strong> 
-                                Si intentas activar este año y ya existe otro activo, recibirás una advertencia.
+                    </div>
+
+                    <div class="space-y-6">
+                        <!-- Campo de estado -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Estado del Año Escolar</label>
+                            <div class="flex items-center space-x-4">
+                                <div class="flex items-center">
+                                    <input type="checkbox" 
+                                        name="activo" 
+                                        id="id_activo" 
+                                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                        {% if anio.activo %}checked{% endif %}>
+                                    <label for="id_activo" class="ml-2 block text-sm font-medium text-gray-700">
+                                        Año Escolar Activo
+                                    </label>
+                                </div>
+                            </div>
+                            <p class="mt-2 text-sm text-gray-500">
+                                {% if anio.activo %}
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        Actualmente Activo
+                                    </span>
+                                {% else %}
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        Actualmente Inactivo
+                                    </span>
+                                {% endif %}
                             </p>
                         </div>
                     </div>
-                </div>
 
-                <div class="space-y-6">
-                    <!-- Campo de estado -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-3">Estado del Año Escolar</label>
-                        <div class="flex items-center space-x-4">
-                            <div class="flex items-center">
-                                <input type="checkbox" 
-                                    name="activo" 
-                                    id="id_activo" 
-                                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                                    {% if anio.activo %}checked{% endif %}>
-                                <label for="id_activo" class="ml-2 block text-sm font-medium text-gray-700">
-                                    Año Escolar Activo
-                                </label>
-                            </div>
-                        </div>
-                        <p class="mt-2 text-sm text-gray-500">
-                            {% if anio.activo %}
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                                    </svg>
-                                    Actualmente Activo
-                                </span>
-                            {% else %}
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
-                                    </svg>
-                                    Actualmente Inactivo
-                                </span>
-                            {% endif %}
-                        </p>
+                    <!-- Botones de acción -->
+                    <div class="flex justify-end space-x-4 mt-8">
+                        <a href="{% url 'notas:lista_anios' %}" 
+                            class="px-6 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                            Cancelar
+                        </a>
+                        <button type="submit" 
+                                class="px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            Guardar Cambios
+                        </button>
                     </div>
-                </div>
-
-                <!-- Botones de acción -->
-                <div class="flex justify-end space-x-4 mt-8">
-                    <a href="{% url 'notas:lista_anios' %}" 
-                        class="px-6 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-                        Cancelar
-                    </a>
-                    <button type="submit" 
-                            class="px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        Guardar Cambios
-                    </button>
-                </div>
-            </form>
+                </form>
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const periodoSelector = document.getElementById('periodo_selector');
+    const formEditarPeriodo = document.getElementById('form_editar_periodo');
+    const formEliminarPeriodo = document.getElementById('form_eliminar_periodo');
+    const btnCancelar = document.getElementById('btn_cancelar_edicion');
+    const periodoIdInput = document.getElementById('periodo_id_input');
+    const periodoIdEliminar = document.getElementById('periodo_id_eliminar');
+    const nombreInput = document.getElementById('id_nombre');
+    const porcentajeInput = document.getElementById('id_porcentaje');
+
+    if (periodoSelector) {
+        // Manejar cambio en el selector
+        periodoSelector.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const periodoId = selectedOption.value;
+
+            if (periodoId) {
+                // Mostrar formularios
+                formEditarPeriodo.classList.remove('hidden');
+                formEliminarPeriodo.classList.remove('hidden');
+
+                // Actualizar valores de los campos hidden
+                periodoIdInput.value = periodoId;
+                periodoIdEliminar.value = periodoId;
+
+                // Llenar los campos del formulario con los datos del periodo seleccionado
+                const nombre = selectedOption.getAttribute('data-nombre');
+                const porcentaje = selectedOption.getAttribute('data-porcentaje');
+
+                if (nombreInput) nombreInput.value = nombre;
+                if (porcentajeInput) porcentajeInput.value = porcentaje;
+            } else {
+                // Ocultar formularios si no hay selección
+                formEditarPeriodo.classList.add('hidden');
+                formEliminarPeriodo.classList.add('hidden');
+            }
+        });
+
+        // Manejar botón cancelar
+        if (btnCancelar) {
+            btnCancelar.addEventListener('click', function() {
+                periodoSelector.value = '';
+                formEditarPeriodo.classList.add('hidden');
+                formEliminarPeriodo.classList.add('hidden');
+                
+                // Limpiar campos
+                if (nombreInput) nombreInput.value = '';
+                if (porcentajeInput) porcentajeInput.value = '';
+            });
+        }
+    }
+});
+</script>
+
 {% endblock %}
