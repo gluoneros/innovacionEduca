@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
-from .views import (ListaGradosView, CrearGradoView, EditarGradoView, EliminarGradoView, EditarEstadoAnioView, 
-                    GestionarAniosPeriodosView)     
+from .views import (ListaGradosView, CrearGradoView, EditarGradoView, EliminarGradoView, EditarEstadoAnioView,
+                    CrearMateriaView, EditarMateriaView, EliminarMateriaView, )     
 
 app_name = 'notas'
 
@@ -37,9 +37,10 @@ urlpatterns = [
     path('grados/eliminar/<int:pk>/', EliminarGradoView.as_view(), name='eliminar_grado'),
     
     # Materias
-    path('materias/', views.lista_materias, name='lista_materias'),
-    path('materias/crear/', views.crear_materia, name='crear_materia'),
-    path('materias/<int:pk>/editar/', views.editar_materia, name='editar_materia'),
+    path('materias/', views.ListaMateriasView.as_view(), name='lista_materias'),
+    path('materias/crear/', views.CrearMateriaView.as_view(), name='crear_materia'),
+    path('materias/<int:pk>/editar/', views.EditarMateriaView.as_view(), name='editar_materia'),
+    path('materias/<int:pk>/eliminar/', views.EliminarMateriaView.as_view(), name='eliminar_materia'),
 
     # Notas
     path('notas/', views.lista_notas, name='lista_notas'),

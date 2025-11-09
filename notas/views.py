@@ -487,56 +487,98 @@ class EliminarGradoView(LoginRequiredMixin, DeleteView):
 
 #==============================================Materias========================================================
 #--------------------------------------------------------------------------------------------------------------
-@login_required
-def lista_materias(request):
-    materias = Materia.objects.select_related('grado', 'profesor').all()
-    
-    # Filtros
-    form_busqueda = BuscarEstudianteForm(request.GET)
-    if form_busqueda.is_valid():
-        nombre = form_busqueda.cleaned_data.get('nombre')
-        grado = form_busqueda.cleaned_data.get('grado')
+
+
+class ListaMateriasView(LoginRequiredMixin, ListView):
+    model = Materia
+    template_name = 'notas/materias/lista.html'
+    context_object_name = 'materias'
+    ordering = ['nombre']
+
+    def get_queryset(self):
+        return Materia.objects.select_related('grado', 'profesor').all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        materias = self.get_queryset()
+        total_materias = materias.count()
+        materias_con_grado = sum(1 for materia in materias if materia.grado)
+        total_profesores = sum(materia.profesor is not None for materia in materias)
+
+        context.update({
+            'total_materias': total_materias,
+            'materias_con_grado': materias_con_grado,
+            'total_profesores': total_profesores,
+        })
+        return context
+
+    def get_paginated_response(self, data):
+        return Response(data)
+
+class CrearMateriaView(LoginRequiredMixin, CreateView):
+    model = Materia
+    form_class = MateriaForm
+    template_name = 'notas/materias/crear.html'
+    success_url = reverse_lazy('notas:lista_materias')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Materia creada exitosamente.')
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo'] = 'Crear Materia'
+        return context
+
+class EditarMateriaView(LoginRequiredMixin, UpdateView):
+    model = Materia
+    form_class = MateriaForm
+    template_name = 'notas/materias/editar.html'
+    success_url = reverse_lazy('notas:lista_materias')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Materia actualizada exitosamente.')
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo'] = 'Editar Materia'
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy('notas:lista_materias')
+
+    def get_object(self):
+        return get_object_or_404(Materia, pk=self.kwargs['pk'])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo'] = 'Editar Materia'
+        return context  
+
+    def get_object(self):
+        return get_object_or_404(Materia, pk=self.kwargs['pk'])
+
+class EliminarMateriaView(LoginRequiredMixin, DeleteView):
+    model = Materia
+    template_name = 'notas/materias/eliminar.html'
+    success_url = reverse_lazy('notas:lista_materias')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, 'Materia eliminada exitosamente.')
+        return super().delete(request, *args, **kwargs)
+
+    def get_object(self):
+        return get_object_or_404(Materia, pk=self.kwargs['pk'])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo'] = 'Eliminar Materia'
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy('notas:lista_materias') 
         
-        if nombre:
-            materias = materias.filter(nombre__icontains=nombre)
-        if grado:
-            materias = materias.filter(grado=grado)
-    
-    paginator = Paginator(materias, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    
-    return render(request, 'notas/materias/lista.html', {
-        'page_obj': page_obj,
-        'form_busqueda': form_busqueda
-    })
-
-
-@login_required
-def crear_materia(request):
-    if request.method == 'POST':
-        form = MateriaForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Materia creada exitosamente.')
-            return redirect('notas:lista_materias')
-    else:
-        form = MateriaForm()
-    return render(request, 'notas/materias/crear.html', {'form': form})
-
-
-@login_required
-def editar_materia(request, pk):
-    materia = get_object_or_404(Materia, pk=pk)
-    if request.method == 'POST':
-        form = MateriaForm(request.POST, instance=materia)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Materia actualizada exitosamente.')
-            return redirect('notas:lista_materias')
-    else:
-        form = MateriaForm(instance=materia)
-    return render(request, 'notas/materias/editar.html', {'form': form, 'materia': materia})
 
 
 #==============================================Notas===========================================================
