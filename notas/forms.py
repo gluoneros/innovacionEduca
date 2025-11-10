@@ -248,8 +248,8 @@ class MateriaForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Filtrar profesores activos
-        self.fields['profesor'].queryset = Profesor.objects.filter(user__is_active=True)
+        # Incluir todos los profesores registrados
+        self.fields['profesor'].queryset = Profesor.objects.all()
 
 
 class NotaForm(forms.ModelForm):
