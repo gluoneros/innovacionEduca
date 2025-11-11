@@ -97,6 +97,7 @@ class Materia(models.Model):
     nombre = models.CharField(max_length=100)
     grado = models.ForeignKey(Grado, on_delete=models.SET_NULL, null=True, blank=True, related_name='materias')
     profesor = models.ForeignKey(Profesor, on_delete=models.SET_NULL, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     # Evita duplicados por grado
     class Meta:

@@ -125,9 +125,12 @@ def usuarios_directivo(request):
 def cursos_directivo(request):
     anios = AnioEscolar.objects.select_related('escala').prefetch_related('periodos').order_by('-anio')
     grados = Grado.objects.select_related('anio').prefetch_related('periodo', 'materias').all().order_by('nombre')
+    from notas.models import Materia
+    materias = Materia.objects.select_related('grado', 'profesor__user').order_by('-updated_at')
     return render(request, 'users/directivo/cursos_directivo.html', {
         'anios': anios,
-        'grados': grados
+        'grados': grados,
+        'materias': materias
     })
 
 @login_required
