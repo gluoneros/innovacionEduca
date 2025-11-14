@@ -29,6 +29,7 @@ urlpatterns = [
     
     # API para filtrado dinámico
     path('api/periodos-por-anio/<int:anio_id>/', views.ObtenerPeriodosPorAnioView.as_view(), name='api_periodos_por_anio'),
+    path('api/materias-por-grado/<int:grado_id>/', views.ObtenerMateriasPorGradoView.as_view(), name='api_materias_por_grado'),
 
     # Grados
     path('grados/', ListaGradosView.as_view(), name='lista_grados'),

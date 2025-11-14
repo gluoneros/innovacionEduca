@@ -44,6 +44,8 @@ class Estudiante(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='estudiante_profile')
     acudiente = models.ForeignKey('Acudiente', on_delete=models.SET_NULL, null=True, blank=True, related_name='estudiantes')
     profesor = models.ForeignKey('Profesor', on_delete=models.SET_NULL, null=True, blank=True, related_name='estudiantes')
+    grado = models.ForeignKey('notas.Grado', on_delete=models.SET_NULL, null=True, blank=True, related_name='estudiantes')
+    materias = models.ManyToManyField('notas.Materia', blank=True, related_name='estudiantes')
 
     def __str__(self):
         return f"Estudiante: {self.user.first_name} {self.user.last_name}"

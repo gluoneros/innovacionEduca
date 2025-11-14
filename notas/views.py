@@ -422,6 +422,28 @@ class EliminarPeriodoView(LoginRequiredMixin, DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
+class ObtenerMateriasPorGradoView(LoginRequiredMixin, View):
+    def get(self, request, grado_id):
+        try:
+            grado = get_object_or_404(Grado, id=grado_id)
+            materias = Materia.objects.filter(grado=grado).order_by('nombre')
+
+            materias_data = [
+                {
+                    'id': m.id,
+                    'nombre': m.nombre
+                }
+                for m in materias
+            ]
+
+            return JsonResponse({
+                'success': True,
+                'materias': materias_data
+            })
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+
+
 #==============================================Grados========================================================
 #------------------------------------------------------------------------------------------------------------
 class ListaGradosView(LoginRequiredMixin, ListView):

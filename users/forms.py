@@ -1,6 +1,10 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
 from .models import CustomUser, Profesor, Estudiante, Directivo, Acudiente
+from notas.models import Grado, Materia
+from django.contrib.auth.forms import UserChangeForm
 
 
 class RegistroGeneralForm(UserCreationForm):
@@ -81,3 +85,143 @@ class RegistroGeneralForm(UserCreationForm):
             Acudiente.objects.create(user=user)
 
         return user
+
+
+class EstudianteCreationForm(UserCreationForm):
+    """
+    Formulario para crear un nuevo estudiante con grado y materias asignadas.
+    """
+    first_name = forms.CharField(
+        max_length=50,
+        required=True,
+        label="Nombre",
+        validators=[RegexValidator(r'^[a-zA-Z\s]+$', 'Solo letras y espacios permitidos.')],
+        widget=forms.TextInput(attrs={'class': 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'})
+    )
+    last_name = forms.CharField(
+        max_length=50,
+        required=True,
+        label="Apellido",
+        validators=[RegexValidator(r'^[a-zA-Z\s]+$', 'Solo letras y espacios permitidos.')],
+        widget=forms.TextInput(attrs={'class': 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'})
+    )
+    email = forms.EmailField(
+        required=True,
+        widget=forms.EmailInput(attrs={'class': 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'})
+    )
+    password1 = forms.CharField(
+        label="Contraseña",
+        widget=forms.PasswordInput(attrs={'class': 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'}),
+        help_text="Mínimo 8 caracteres."
+    )
+    password2 = forms.CharField(
+        label="Confirmar Contraseña",
+        widget=forms.PasswordInput(attrs={'class': 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'})
+    )
+    fecha_nacimiento = forms.DateField(
+        required=True,
+        label="Fecha de Nacimiento",
+        widget=forms.DateInput(attrs={'type': 'date', 'class': 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'})
+    )
+    grado = forms.ModelChoiceField(
+        queryset=Grado.objects.all(),
+        required=True,
+        label="Grado Académico",
+        widget=forms.Select(attrs={'class': 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'})
+    )
+    materias = forms.ModelMultipleChoiceField(
+        queryset=Materia.objects.none(),  # Se cargará dinámicamente
+        required=True,
+        label="Materias",
+        widget=forms.CheckboxSelectMultiple(attrs={'class': 'space-y-2'}),
+        help_text="Selecciona al menos una materia."
+    )
+
+    class Meta:
+        model = CustomUser
+        fields = ('first_name', 'last_name', 'email', 'password1', 'password2', 'fecha_nacimiento', 'grado', 'materias')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Fijar tipo_usuario a estudiante
+        self.instance.tipo_usuario = 'estudiante'
+        # Cargar grados disponibles
+        self.fields['grado'].queryset = Grado.objects.all().order_by('nombre')
+        # Materias inicialmente vacío, se cargará con AJAX
+        self.fields['materias'].queryset = Materia.objects.none()
+
+    def clean_password1(self):
+        password = self.cleaned_data.get('password1')
+        if len(password) < 8:
+            raise ValidationError('La contraseña debe tener al menos 8 caracteres.')
+        return password
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if CustomUser.objects.filter(email=email).exists():
+            raise ValidationError('Este email ya está registrado.')
+        return email
+
+    def clean(self):
+        cleaned_data = super().clean()
+        grado = cleaned_data.get('grado')
+        materias = cleaned_data.get('materias')
+        if grado and materias:
+            # Verificar que las materias pertenezcan al grado seleccionado
+            grado_materias = set(Materia.objects.filter(grado=grado).values_list('id', flat=True))
+            selected_materias = set(m.id for m in materias)
+            if not selected_materias.issubset(grado_materias):
+                raise ValidationError('Todas las materias seleccionadas deben pertenecer al grado elegido.')
+        return cleaned_data
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.tipo_usuario = 'estudiante'
+        user.fecha_nacimiento = self.cleaned_data.get('fecha_nacimiento')
+        # Generar username
+        base_username = f"{self.cleaned_data['first_name'].lower()}.{self.cleaned_data['last_name'].lower()}"
+        username = base_username
+        counter = 1
+        while CustomUser.objects.filter(username=username).exists():
+            username = f"{base_username}{counter}"
+            counter += 1
+        user.username = username
+
+        if commit:
+            user.save()
+            estudiante = Estudiante.objects.create(
+                user=user,
+                grado=self.cleaned_data.get('grado')
+            )
+            estudiante.materias.set(self.cleaned_data.get('materias'))
+        return user
+
+
+class CustomUserChangeForm(UserChangeForm):
+    """
+    Formulario para editar un usuario existente.
+    """
+    password = None  # No mostrar campo de contraseña
+
+    class Meta:
+        model = CustomUser
+        fields = ('first_name', 'last_name', 'email', 'tipo_usuario', 'is_active', 'telefono', 'direccion', 'fecha_nacimiento', 'nombre_colegio')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['first_name'].label = "Nombre"
+        self.fields['last_name'].label = "Apellido"
+        self.fields['tipo_usuario'].label = "Tipo de Usuario"
+        self.fields['is_active'].label = "Activo"
+        self.fields['telefono'].label = "Teléfono"
+        self.fields['direccion'].label = "Dirección"
+        self.fields['fecha_nacimiento'].label = "Fecha de Nacimiento"
+        self.fields['nombre_colegio'].label = "Nombre del Colegio"
+
+        for field_name, field in self.fields.items():
+            if field_name == 'fecha_nacimiento':
+                field.widget = forms.DateInput(attrs={'type': 'date', 'class': 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'})
+            else:
+                field.widget.attrs.update({
+                    'class': 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+                })

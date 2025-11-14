@@ -1,0 +1,127 @@
+{% extends "users/directivo/dashboard_directivo.html" %}
+{% load crispy_forms_tags %}
+
+{% block directivo_content %}
+<div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+    <!-- Encabezado de la sección -->
+    <div class="mb-6 border-b pb-4">
+        <h2 class="text-2xl font-bold text-gray-900">Editar Usuario</h2>
+        <p class="mt-1 text-sm text-gray-600">Modifica la información del usuario {{ user.first_name }} {{ user.last_name }}.</p>
+    </div>
+
+    <form method="post" aria-labelledby="form-title">
+        {% csrf_token %}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Nombre -->
+            <div>
+                <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    {{ form.first_name.label }}
+                </label>
+                {{ form.first_name }}
+                {% if form.first_name.errors %}
+                    <p class="mt-1 text-sm text-red-600" role="alert">{{ form.first_name.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Apellido -->
+            <div>
+                <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    {{ form.last_name.label }}
+                </label>
+                {{ form.last_name }}
+                {% if form.last_name.errors %}
+                    <p class="mt-1 text-sm text-red-600" role="alert">{{ form.last_name.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Email -->
+            <div>
+                <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    {{ form.email.label }}
+                </label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <p class="mt-1 text-sm text-red-600" role="alert">{{ form.email.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Tipo de Usuario -->
+            <div>
+                <label for="{{ form.tipo_usuario.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    {{ form.tipo_usuario.label }}
+                </label>
+                {{ form.tipo_usuario }}
+                {% if form.tipo_usuario.errors %}
+                    <p class="mt-1 text-sm text-red-600" role="alert">{{ form.tipo_usuario.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Teléfono -->
+            <div>
+                <label for="{{ form.telefono.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    {{ form.telefono.label }}
+                </label>
+                {{ form.telefono }}
+                {% if form.telefono.errors %}
+                    <p class="mt-1 text-sm text-red-600" role="alert">{{ form.telefono.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Dirección -->
+            <div>
+                <label for="{{ form.direccion.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    {{ form.direccion.label }}
+                </label>
+                {{ form.direccion }}
+                {% if form.direccion.errors %}
+                    <p class="mt-1 text-sm text-red-600" role="alert">{{ form.direccion.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Fecha de Nacimiento -->
+            <div>
+                <label for="{{ form.fecha_nacimiento.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    {{ form.fecha_nacimiento.label }}
+                </label>
+                {{ form.fecha_nacimiento }}
+                {% if form.fecha_nacimiento.errors %}
+                    <p class="mt-1 text-sm text-red-600" role="alert">{{ form.fecha_nacimiento.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Nombre del Colegio -->
+            <div>
+                <label for="{{ form.nombre_colegio.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    {{ form.nombre_colegio.label }}
+                </label>
+                {{ form.nombre_colegio }}
+                {% if form.nombre_colegio.errors %}
+                    <p class="mt-1 text-sm text-red-600" role="alert">{{ form.nombre_colegio.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Activo -->
+            <div>
+                <label for="{{ form.is_active.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    {{ form.is_active.label }}
+                </label>
+                {{ form.is_active }}
+                {% if form.is_active.errors %}
+                    <p class="mt-1 text-sm text-red-600" role="alert">{{ form.is_active.errors.0 }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Botones -->
+        <div class="mt-8 flex justify-end space-x-3">
+            <a href="{% url 'usuarios_directivo' %}" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                Cancelar
+            </a>
+            <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                Actualizar Usuario
+            </button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

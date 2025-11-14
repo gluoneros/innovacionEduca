@@ -2,83 +2,108 @@
 
 {% block directivo_content %}
 
-    <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+    <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg mb-8">
         <!-- Encabezado de la sección -->
         <div class="mb-6 border-b pb-4">
             <h2 class="text-2xl font-bold text-gray-900">Gestión de Usuarios</h2>
             <p class="mt-1 text-sm text-gray-600">Administra los usuarios de la institución.</p>
         </div>
-    </div>
 
     <!-- Filtros y búsqueda -->
-    <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-        <!-- Selector de Rol -->
-        <div>
-            <label for="rol-select" class="block text-sm font-medium text-gray-700 mb-2">
-                Filtrar por Rol
-
-                <select id="rol-select" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
-                    <option value="">Todos los roles</option>
-                    <option value="admin">Administrador</option>
-                    <option value="profesor">Profesor</option>
-                    <option value="estudiante">Estudiante</option>
-                    <option value="acudiente">Acudiente</option>
-
-                </select>
-            </div>
-
-            <!-- Selector de Estado -->
+        <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Selector de Rol -->
             <div>
-                <label for="estado-select" class="block text-sm font-medium text-gray-700 mb-2">
-                    Filtrar por Estado
+                <label for="rol-select" class="block text-sm font-medium text-gray-700 mb-2">
+                    Filtrar por Rol
 
-                <select id="estado-select" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
-                    <option value="">Todos los estados</option>
-                    <option value="activo">Activo</option>
-                    <option value="inactivo">Inactivo</option>
-                </select>
+                    <select id="rol-select" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+                        <option value="">Todos los roles</option>
+                        <option value="admin">Administrador</option>
+                        <option value="profesor">Profesor</option>
+                        <option value="estudiante">Estudiante</option>
+                        <option value="acudiente">Acudiente</option>
+
+                    </select>
+                </div>
+
+                <!-- Selector de Estado -->
+                <div>
+                    <label for="estado-select" class="block text-sm font-medium text-gray-700 mb-2">
+                        Filtrar por Estado
+
+                    <select id="estado-select" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+                        <option value="">Todos los estados</option>
+                        <option value="activo">Activo</option>
+                        <option value="inactivo">Inactivo</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4 flex justify-end space-x-3 pt-4">
+                <a href="{% url 'crear_estudiante' %}" class="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 inline-block text-center">
+                    Crear Usuario
+                </a>
             </div>
         </div>
+
     </div>
-    
-    
-    <!-- Botones de acción -->
-    <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="flex justify-end space-x-3 pt-4">
-            <button type="button" id="crear-usuario" class="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700">
-                Crear Usuario
-            </button>
-        </div>
-    </div>
-    
+
     
     <!-- Tabla de usuarios -->
-    <div class="mb-6">
+    <div class="mb-6 bg-white p-6 rounded-2xl shadow-lg">
         <table id="tabla-usuarios" class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
+            <thead class="bg-gray-50">                
                 <tr>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Nombre
                     </th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Email
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Rol
-    
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Estado
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Acciones
-                        </th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    <!-- Filas de usuarios -->
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-    
+                    </th>    
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Estado
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Acciones
+                    </th>
+                </tr>
+            </thead>
 
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for usuario in usuarios %}
+                <tr class="hover:bg-gray-50 transition">
+                    <td class="px-6 py-4 align-top">
+                        <div class="text-sm font-semibold text-gray-900">{{ usuario.first_name }} {{ usuario.last_name }}</div>
+                    </td>
+                    <td class="px-6 py-4 align-top">
+                        <div class="text-sm text-gray-500">{{ usuario.email }}</div>
+                    </td>
+                    <td class="px-6 py-4 align-top">
+                        <div class="text-sm text-gray-900 font-medium">{{ usuario.get_tipo_usuario_display }}</div>
+                    </td>
+                    <td class="px-6 py-4 align-top">
+                        {% if usuario.is_active %}
+                            <span class="px-2 py-1 text-xs bg-green-100 text-green-800 rounded">Activo</span>
+                        {% else %}
+                            <span class="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded">Inactivo</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 align-top">
+                        <a href="{% url 'editar_usuario' usuario.id %}" class="text-purple-600 hover:text-purple-800 text-sm font-medium">Editar</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">
+                        No se encontraron usuarios.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
 {% endblock directivo_content %}

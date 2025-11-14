@@ -1,11 +1,14 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 from django.contrib.auth.views import LoginView
-from .forms import RegistroGeneralForm
+from .forms import RegistroGeneralForm, EstudianteCreationForm, CustomUserChangeForm
 from django.contrib.auth import login
+from django.contrib import messages
 import random
 from notas.models import AnioEscolar, Grado
+import logging
+from .models import CustomUser
 
 def generar_id():
     return random.randint(100000, 999999)
@@ -119,7 +122,8 @@ def dashboard_directivo(request):
 
 @login_required
 def usuarios_directivo(request):
-    return render(request, 'users/directivo/usuarios_directivo.html')
+    usuarios = CustomUser.objects.all()
+    return render(request, 'users/directivo/usuarios_directivo.html', {'usuarios': usuarios})
 
 @login_required
 def cursos_directivo(request):
@@ -169,3 +173,40 @@ def boletin_acudiente(request):
 @login_required
 def tareas_acudiente(request):
     return render(request, 'users/acudiente/tareas_acudiente.html')
+
+
+@login_required
+def crear_estudiante(request):
+    if request.method == 'POST':
+        form = EstudianteCreationForm(request.POST)
+        if form.is_valid():
+            try:
+                user = form.save()
+                messages.success(request, f'Estudiante {user.first_name} {user.last_name} creado exitosamente. Username: {user.username}')
+                # Logging de auditoría
+                logger = logging.getLogger('auditoria')
+                logger.info(f"Usuario {request.user.username} creó estudiante {user.username} - IP: {request.META.get('REMOTE_ADDR')} - Timestamp: {request.META.get('HTTP_DATE', 'N/A')}")
+                return redirect('usuarios_directivo')
+            except Exception as e:
+                messages.error(request, f'Error al crear el estudiante: {str(e)}')
+        else:
+            messages.error(request, 'Por favor, corrige los errores en el formulario.')
+    else:
+        form = EstudianteCreationForm()
+    return render(request, 'users/directivo/crear_estudiante.html', {'form': form})
+
+
+@login_required
+def editar_usuario(request, user_id):
+    user = get_object_or_404(CustomUser, id=user_id)
+    if request.method == 'POST':
+        form = CustomUserChangeForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'Usuario {user.first_name} {user.last_name} actualizado exitosamente.')
+            return redirect('usuarios_directivo')
+        else:
+            messages.error(request, 'Por favor, corrige los errores en el formulario.')
+    else:
+        form = CustomUserChangeForm(instance=user)
+    return render(request, 'users/directivo/editar_usuario.html', {'form': form, 'user': user})
