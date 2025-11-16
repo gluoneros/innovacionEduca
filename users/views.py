@@ -176,7 +176,7 @@ def tareas_acudiente(request):
 
 
 @login_required
-def crear_estudiante(request):
+def crear_usuario(request):
     if request.method == 'POST':
         form = EstudianteCreationForm(request.POST)
         if form.is_valid():
@@ -193,7 +193,7 @@ def crear_estudiante(request):
             messages.error(request, 'Por favor, corrige los errores en el formulario.')
     else:
         form = EstudianteCreationForm()
-    return render(request, 'users/directivo/crear_estudiante.html', {'form': form})
+    return render(request, 'users/directivo/crear_usuario.html', {'form': form})
 
 
 @login_required

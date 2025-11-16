@@ -4,7 +4,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from .views import registro_view, registro_exitoso_view, CustomLoginView, dashboard
 from .views import dashboard_estudiante, cursos_estudiante, notas_estudiante, boletin_estudiante, tareas_estudiante, perfil_estudiante
 from .views import dashboard_profesor, cursos_profesor, calificaciones_profesor, estudiantes_profesor, tareas_profesor, perfil_profesor
-from .views import dashboard_directivo, usuarios_directivo, cursos_directivo, horarios_directivo, reportes_directivo, perfil_directivo, crear_estudiante, editar_usuario
+from .views import dashboard_directivo, usuarios_directivo, cursos_directivo, horarios_directivo, reportes_directivo, perfil_directivo, crear_usuario, editar_usuario
 from .views import dashboard_acudiente, perfil_acudiente, estudiantes_acudiente, notas_acudiente, boletin_acudiente, tareas_acudiente
 
 
@@ -37,7 +37,7 @@ urlpatterns = [
 # Directivo
     path('directivo/dashboard/', dashboard_directivo, name='dashboard_directivo'),
     path('directivo/usuarios/', usuarios_directivo, name='usuarios_directivo'),
-    path('directivo/usuarios/crear-estudiante/', crear_estudiante, name='crear_estudiante'),
+    path('directivo/usuarios/crear-usuario/', crear_usuario, name='crear_usuario'),
     path('directivo/usuarios/editar/<int:user_id>/', editar_usuario, name='editar_usuario'),
     path('directivo/cursos/', cursos_directivo, name='cursos_directivo'),
     path('directivo/horarios/', horarios_directivo, name='horarios_directivo'),
