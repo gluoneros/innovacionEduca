@@ -197,6 +197,152 @@ class EstudianteCreationForm(UserCreationForm):
         return user
 
 
+class CrearUsuarioForm(UserCreationForm):
+    """
+    Formulario para crear un usuario general (profesor, estudiante, directivo, acudiente).
+    """
+    first_name = forms.CharField(
+        max_length=50,
+        required=True,
+        label="Nombre",
+        validators=[RegexValidator(r'^[a-zA-Z\s]+$', 'Solo letras y espacios permitidos.')],
+        widget=forms.TextInput(attrs={'class': 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'})
+    )
+    last_name = forms.CharField(
+        max_length=50,
+        required=True,
+        label="Apellido",
+        validators=[RegexValidator(r'^[a-zA-Z\s]+$', 'Solo letras y espacios permitidos.')],
+        widget=forms.TextInput(attrs={'class': 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'})
+    )
+    email = forms.EmailField(
+        required=True,
+        widget=forms.EmailInput(attrs={'class': 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'})
+    )
+    telefono = forms.CharField(
+        max_length=20,
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'})
+    )
+    direccion = forms.CharField(
+        max_length=200,
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'})
+    )
+    fecha_nacimiento = forms.DateField(
+        required=True,
+        label="Fecha de Nacimiento",
+        widget=forms.DateInput(attrs={'type': 'date', 'class': 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'})
+    )
+    tipo_usuario = forms.ChoiceField(
+        choices=CustomUser.TIPO_USUARIO_CHOICES,
+        required=True,
+        label="Tipo de Usuario",
+        widget=forms.Select(attrs={'class': 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'})
+    )
+    # Campos condicionales
+    grado = forms.ModelChoiceField(
+        queryset=Grado.objects.all(),
+        required=False,
+        label="Grado Académico",
+        widget=forms.Select(attrs={'class': 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'})
+    )
+    materias = forms.ModelMultipleChoiceField(
+        queryset=Materia.objects.all(),
+        required=False,
+        label="Materias",
+        widget=forms.CheckboxSelectMultiple(attrs={'class': 'space-y-2'}),
+        help_text="Selecciona las materias."
+    )
+    estudiante_acudiente = forms.ModelChoiceField(
+        queryset=Estudiante.objects.all(),
+        required=False,
+        label="Estudiante",
+        widget=forms.Select(attrs={'class': 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'})
+    )
+    escuela = forms.CharField(
+        max_length=100,
+        required=False,
+        label="Escuela",
+        widget=forms.TextInput(attrs={'class': 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'})
+    )
+
+    class Meta:
+        model = CustomUser
+        fields = ('first_name', 'last_name', 'email', 'password1', 'password2', 'telefono', 'direccion', 'fecha_nacimiento', 'tipo_usuario', 'grado', 'materias', 'estudiante_acudiente', 'escuela')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['grado'].queryset = Grado.objects.all().order_by('nombre')
+        self.fields['materias'].queryset = Materia.objects.all().order_by('nombre')
+        self.fields['estudiante_acudiente'].queryset = Estudiante.objects.select_related('user').all()
+
+    def clean_password1(self):
+        password = self.cleaned_data.get('password1')
+        if len(password) < 8:
+            raise ValidationError('La contraseña debe tener al menos 8 caracteres.')
+        return password
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if CustomUser.objects.filter(email=email).exists():
+            raise ValidationError('Este email ya está registrado.')
+        return email
+
+    def clean(self):
+        cleaned_data = super().clean()
+        tipo = cleaned_data.get('tipo_usuario')
+        if tipo == 'estudiante':
+            if not cleaned_data.get('grado'):
+                raise ValidationError('El grado es requerido para estudiantes.')
+        elif tipo == 'acudiente':
+            if not cleaned_data.get('estudiante_acudiente'):
+                raise ValidationError('Debe seleccionar un estudiante para el acudiente.')
+        elif tipo == 'directivo':
+            if not cleaned_data.get('escuela'):
+                raise ValidationError('La escuela es requerida para directivos.')
+        return cleaned_data
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.fecha_nacimiento = self.cleaned_data.get('fecha_nacimiento')
+        user.telefono = self.cleaned_data.get('telefono')
+        user.direccion = self.cleaned_data.get('direccion')
+        tipo = self.cleaned_data.get('tipo_usuario')
+        # Generar username
+        base_username = f"{self.cleaned_data['first_name'].lower()}.{self.cleaned_data['last_name'].lower()}"
+        username = base_username
+        counter = 1
+        while CustomUser.objects.filter(username=username).exists():
+            username = f"{base_username}{counter}"
+            counter += 1
+        user.username = username
+
+        if commit:
+            user.save()
+            if tipo == 'estudiante':
+                estudiante = Estudiante.objects.create(
+                    user=user,
+                    grado=self.cleaned_data.get('grado')
+                )
+                estudiante.materias.set(self.cleaned_data.get('materias'))
+            elif tipo == 'profesor':
+                profesor = Profesor.objects.create(user=user)
+                # Asignar materias al profesor
+                for materia in self.cleaned_data.get('materias', []):
+                    materia.profesor = profesor
+                    materia.save()
+            elif tipo == 'acudiente':
+                acudiente = Acudiente.objects.create(user=user)
+                estudiante = self.cleaned_data.get('estudiante_acudiente')
+                if estudiante:
+                    estudiante.acudiente = acudiente
+                    estudiante.save()
+            elif tipo == 'directivo':
+                Directivo.objects.create(user=user, escuela=self.cleaned_data.get('escuela'))
+        return user
+
+
 class CustomUserChangeForm(UserChangeForm):
     """
     Formulario para editar un usuario existente.

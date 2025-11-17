@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 from django.contrib.auth.views import LoginView
-from .forms import RegistroGeneralForm, EstudianteCreationForm, CustomUserChangeForm
+from .forms import RegistroGeneralForm, EstudianteCreationForm, CrearUsuarioForm, CustomUserChangeForm
 from django.contrib.auth import login
 from django.contrib import messages
 import random
@@ -178,21 +178,23 @@ def tareas_acudiente(request):
 @login_required
 def crear_usuario(request):
     if request.method == 'POST':
-        form = EstudianteCreationForm(request.POST)
+        form = CrearUsuarioForm(request.POST)
         if form.is_valid():
             try:
                 user = form.save()
-                messages.success(request, f'Estudiante {user.first_name} {user.last_name} creado exitosamente. Username: {user.username}')
+                tipo = user.tipo_usuario
+                tipo_label = dict(CustomUser.TIPO_USUARIO_CHOICES)[tipo]
+                messages.success(request, f'{tipo_label} {user.first_name} {user.last_name} creado exitosamente. Username: {user.username}')
                 # Logging de auditoría
                 logger = logging.getLogger('auditoria')
-                logger.info(f"Usuario {request.user.username} creó estudiante {user.username} - IP: {request.META.get('REMOTE_ADDR')} - Timestamp: {request.META.get('HTTP_DATE', 'N/A')}")
+                logger.info(f"Usuario {request.user.username} creó {tipo} {user.username} - IP: {request.META.get('REMOTE_ADDR')} - Timestamp: {request.META.get('HTTP_DATE', 'N/A')}")
                 return redirect('usuarios_directivo')
             except Exception as e:
-                messages.error(request, f'Error al crear el estudiante: {str(e)}')
+                messages.error(request, f'Error al crear el usuario: {str(e)}')
         else:
             messages.error(request, 'Por favor, corrige los errores en el formulario.')
     else:
-        form = EstudianteCreationForm()
+        form = CrearUsuarioForm()
     return render(request, 'users/directivo/crear_usuario.html', {'form': form})
 
 
