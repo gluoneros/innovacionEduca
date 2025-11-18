@@ -277,6 +277,12 @@ class CrearUsuarioForm(UserCreationForm):
         self.fields['materias'].queryset = Materia.objects.all().order_by('nombre')
         self.fields['estudiante_acudiente'].queryset = Estudiante.objects.select_related('user').all()
 
+        for field_name, field in self.fields.items():
+            if 'class' not in field.widget.attrs:
+                field.widget.attrs['class'] = 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+            if field_name == 'tipo_usuario':
+                field.widget.attrs['class'] += ' appearance-none'
+
     def clean_password1(self):
         password = self.cleaned_data.get('password1')
         if len(password) < 8:
@@ -325,7 +331,9 @@ class CrearUsuarioForm(UserCreationForm):
                     user=user,
                     grado=self.cleaned_data.get('grado')
                 )
-                estudiante.materias.set(self.cleaned_data.get('materias'))
+                # Asignar todas las materias del grado al estudiante
+                materias_grado = Materia.objects.filter(grado=self.cleaned_data.get('grado'))
+                estudiante.materias.set(materias_grado)
             elif tipo == 'profesor':
                 profesor = Profesor.objects.create(user=user)
                 # Asignar materias al profesor

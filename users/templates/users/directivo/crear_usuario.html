@@ -38,7 +38,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Nombre -->
             <div>
-                <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2" aria-describedby="first_name_help">
+                <label for="{{ form.first_name.id_for_label }}" class="block font-bold text-gray-900 mb-2" aria-describedby="first_name_help">
                     {{ form.first_name.label }}
                 </label>
                 {{ form.first_name }}
@@ -50,7 +50,7 @@
 
             <!-- Apellido -->
             <div>
-                <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2" aria-describedby="last_name_help">
+                <label for="{{ form.last_name.id_for_label }}" class="block font-bold text-gray-900 mb-2" aria-describedby="last_name_help">
                     {{ form.last_name.label }}
                 </label>
                 {{ form.last_name }}
@@ -62,7 +62,7 @@
 
             <!-- Email -->
             <div>
-                <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2" aria-describedby="email_help">
+                <label for="{{ form.email.id_for_label }}" class="block font-bold text-gray-900 mb-2" aria-describedby="email_help">
                     {{ form.email.label }}
                 </label>
                 {{ form.email }}
@@ -74,7 +74,7 @@
 
             <!-- Fecha de Nacimiento -->
             <div>
-                <label for="{{ form.fecha_nacimiento.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                <label for="{{ form.fecha_nacimiento.id_for_label }}" class="block font-bold text-gray-900 mb-2">
                     {{ form.fecha_nacimiento.label }}
                 </label>
                 {{ form.fecha_nacimiento }}
@@ -85,7 +85,7 @@
 
             <!-- Telefono -->
             <div>
-                <label for="{{ form.telefono.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2" aria-describedby="telefono_help">
+                <label for="{{ form.telefono.id_for_label }}" class="block font-bold text-gray-900 mb-2" aria-describedby="telefono_help">
                     {{ form.telefono.label }}
                 </label>
                 {{ form.telefono }}
@@ -97,7 +97,7 @@
 
             <!-- Dirección del usuario -->
             <div>
-                <label for="{{ form.direccion.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2" aria-describedby="direccion_help">
+                <label for="{{ form.direccion.id_for_label }}" class="block font-bold text-gray-900 mb-2" aria-describedby="direccion_help">
                     {{ form.direccion.label }}
                 </label>
                 {{ form.direccion }}
@@ -109,31 +109,32 @@
 
             <!-- Contraseña -->
             <div>
-                <label for="{{ form.password1.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2" aria-describedby="password1_help">
+                <label for="{{ form.password1.id_for_label }}" class="block font-bold text-gray-900 mb-2" aria-describedby="password1_help">
                     {{ form.password1.label }}
                 </label>
                 {{ form.password1 }}
                 {% if form.password1.errors %}
                     <p class="mt-1 text-sm text-red-600" role="alert">{{ form.password1.errors.0 }}</p>
                 {% endif %}
-                <p id="password1_help" class="mt-1 text-xs text-gray-500">{{ form.password1.help_text }}</p>
+                <p id="password1_help" class="mt-1 text-xs text-gray-500">Debe tener mínimo 8 caracteres.</p>
             </div>
 
             <!-- Confirmar Contraseña -->
             <div>
-                <label for="{{ form.password2.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                <label for="{{ form.password2.id_for_label }}" class="block font-bold text-gray-900 mb-2" aria-describedby="password2_help">
                     {{ form.password2.label }}
                 </label>
                 {{ form.password2 }}
                 {% if form.password2.errors %}
                     <p class="mt-1 text-sm text-red-600" role="alert">{{ form.password2.errors.0 }}</p>
                 {% endif %}
+                <p id="password2_help" class="mt-1 text-xs text-gray-500">Confirma tu contraseña.</p>
             </div>
         </div>
 
         <!-- Tipo de Usuario -->
-        <div>
-            <label for="{{ form.tipo_usuario.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+        <div class="mt-6">
+            <label for="{{ form.tipo_usuario.id_for_label }}" class="block font-bold text-gray-900 mb-2">
                 {{ form.tipo_usuario.label }}
             </label>
             {{ form.tipo_usuario }}
@@ -144,9 +145,9 @@
 
         <!-- Campos dinámicos -->
         <!-- Estudiante -->
-        <div id="estudiante-fields" class="mt-6" style="display: none;">
+        <div id="estudiante-fields" class="mt-6 mb-6 my-16" style="display: none;">
             <div class="mb-4">
-                <label for="{{ form.grado.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                <label for="{{ form.grado.id_for_label }}" class="block font-bold text-gray-900 mb-2">
                     {{ form.grado.label }}
                 </label>
                 {{ form.grado }}
@@ -154,30 +155,25 @@
                     <p class="mt-1 text-sm text-red-600" role="alert">{{ form.grado.errors.0 }}</p>
                 {% endif %}
             </div>
-            <div id="materias-container">
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                    {{ form.materias.label }}
-                </label>
-                <div id="materias-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <!-- Las materias se cargarán aquí dinámicamente -->
-                </div>
-                {{ form.materias }}
-                {% if form.materias.errors %}
-                    <p class="mt-1 text-sm text-red-600" role="alert">{{ form.materias.errors.0 }}</p>
-                {% endif %}
-                <p class="mt-1 text-xs text-gray-500">{{ form.materias.help_text }}</p>
-            </div>
         </div>
 
         <!-- Profesor -->
         <div id="profesor-fields" class="mt-6" style="display: none;">
+            <div class="mb-4">
+                <label for="{{ form.grado.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    Grado
+                </label>
+                {{ form.grado }}
+                {% if form.grado.errors %}
+                    <p class="mt-1 text-sm text-red-600" role="alert">{{ form.grado.errors.0 }}</p>
+                {% endif %}
+            </div>
             <label class="block text-sm font-medium text-gray-700 mb-2">
                 Materias que imparte
             </label>
-            {{ form.materias }}
-            {% if form.materias.errors %}
-                <p class="mt-1 text-sm text-red-600" role="alert">{{ form.materias.errors.0 }}</p>
-            {% endif %}
+            <div id="materias-list-profesor">
+                <!-- loaded dynamically -->
+            </div>
             <p class="mt-1 text-xs text-gray-500">Selecciona las materias que el profesor impartirá.</p>
         </div>
 
@@ -223,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const acudienteFields = document.getElementById('acudiente-fields');
     const directivoFields = document.getElementById('directivo-fields');
     const gradoSelect = document.getElementById('{{ form.grado.id_for_label }}');
-    const materiasContainer = document.getElementById('materias-list');
+    const materiasContainerProfesor = document.getElementById('materias-list-profesor');
 
     function toggleFields() {
         const tipo = tipoSelect.value;
@@ -232,19 +228,19 @@ document.addEventListener('DOMContentLoaded', function() {
         acudienteFields.style.display = tipo === 'acudiente' ? 'block' : 'none';
         directivoFields.style.display = tipo === 'directivo' ? 'block' : 'none';
 
-        // Si es estudiante, inicializar carga de materias
-        if (tipo === 'estudiante') {
+        // Si es profesor, inicializar carga de materias
+        if (tipo === 'profesor') {
             if (gradoSelect.value) {
-                loadMaterias(gradoSelect.value);
+                loadMaterias(gradoSelect.value, materiasContainerProfesor);
             } else {
-                materiasContainer.innerHTML = '<p class="text-gray-500">Selecciona un grado para ver las materias disponibles.</p>';
+                materiasContainerProfesor.innerHTML = '<p class="text-gray-500">Selecciona un grado para ver las materias disponibles.</p>';
             }
         }
     }
 
-    function loadMaterias(gradoId) {
+    function loadMaterias(gradoId, container) {
         if (!gradoId) {
-            materiasContainer.innerHTML = '<p class="text-gray-500">Selecciona un grado para ver las materias disponibles.</p>';
+            container.innerHTML = '<p class="text-gray-500">Selecciona un grado para ver las materias disponibles.</p>';
             return;
         }
 
@@ -264,22 +260,22 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (html === '') {
                         html = '<p class="text-gray-500">No hay materias disponibles para este grado.</p>';
                     }
-                    materiasContainer.innerHTML = html;
+                    container.innerHTML = html;
                 } else {
-                    materiasContainer.innerHTML = '<p class="text-red-500">Error al cargar las materias.</p>';
+                    container.innerHTML = '<p class="text-red-500">Error al cargar las materias.</p>';
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                materiasContainer.innerHTML = '<p class="text-red-500">Error al cargar las materias.</p>';
+                container.innerHTML = '<p class="text-red-500">Error al cargar las materias.</p>';
             });
     }
 
     tipoSelect.addEventListener('change', toggleFields);
     if (gradoSelect) {
         gradoSelect.addEventListener('change', function() {
-            if (tipoSelect.value === 'estudiante') {
-                loadMaterias(this.value);
+            if (tipoSelect.value === 'profesor') {
+                loadMaterias(this.value, materiasContainerProfesor);
             }
         });
     }

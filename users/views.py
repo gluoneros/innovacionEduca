@@ -182,17 +182,18 @@ def crear_usuario(request):
         if form.is_valid():
             try:
                 user = form.save()
-                tipo = user.tipo_usuario
-                tipo_label = dict(CustomUser.TIPO_USUARIO_CHOICES)[tipo]
-                messages.success(request, f'{tipo_label} {user.first_name} {user.last_name} creado exitosamente. Username: {user.username}')
+                messages.success(request, 'Usuario creado correctamente')
                 # Logging de auditoría
                 logger = logging.getLogger('auditoria')
-                logger.info(f"Usuario {request.user.username} creó {tipo} {user.username} - IP: {request.META.get('REMOTE_ADDR')} - Timestamp: {request.META.get('HTTP_DATE', 'N/A')}")
+                logger.info(f"Usuario {request.user.username} creó {user.tipo_usuario} {user.username} - IP: {request.META.get('REMOTE_ADDR')} - Timestamp: {request.META.get('HTTP_DATE', 'N/A')}")
                 return redirect('usuarios_directivo')
             except Exception as e:
                 messages.error(request, f'Error al crear el usuario: {str(e)}')
         else:
-            messages.error(request, 'Por favor, corrige los errores en el formulario.')
+            error_messages = []
+            for field, errors in form.errors.items():
+                error_messages.append(f"{field}: {', '.join(errors)}")
+            messages.error(request, 'Errores en el formulario: ' + '; '.join(error_messages))
     else:
         form = CrearUsuarioForm()
     return render(request, 'users/directivo/crear_usuario.html', {'form': form})
