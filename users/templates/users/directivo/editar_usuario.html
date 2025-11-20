@@ -110,6 +110,58 @@
                     <p class="mt-1 text-sm text-red-600" role="alert">{{ form.is_active.errors.0 }}</p>
                 {% endif %}
             </div>
+
+            <!-- Campos condicionales para Profesor -->
+            {% if user.tipo_usuario == 'profesor' %}
+            {% if form.grado_profesor %}
+            <div>
+                <label for="{{ form.grado_profesor.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    {{ form.grado_profesor.label }}
+                </label>
+                {{ form.grado_profesor }}
+                {% if form.grado_profesor.errors %}
+                    <p class="mt-1 text-sm text-red-600" role="alert">{{ form.grado_profesor.errors.0 }}</p>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% if form.materias_profesor %}
+            <div class="md:col-span-2">
+                <label for="{{ form.materias_profesor.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    {{ form.materias_profesor.label }}
+                </label>
+                {{ form.materias_profesor }}
+                {% if form.materias_profesor.errors %}
+                    <p class="mt-1 text-sm text-red-600" role="alert">{{ form.materias_profesor.errors.0 }}</p>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% endif %}
+
+            <!-- Campos condicionales para Estudiante -->
+            {% if user.tipo_usuario == 'estudiante' %}
+            {% if form.grado_estudiante %}
+            <div>
+                <label for="{{ form.grado_estudiante.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    {{ form.grado_estudiante.label }}
+                </label>
+                {{ form.grado_estudiante }}
+                {% if form.grado_estudiante.errors %}
+                    <p class="mt-1 text-sm text-red-600" role="alert">{{ form.grado_estudiante.errors.0 }}</p>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% if form.acudiente_estudiante %}
+            <div>
+                <label for="{{ form.acudiente_estudiante.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    {{ form.acudiente_estudiante.label }}
+                </label>
+                {{ form.acudiente_estudiante }}
+                {% if form.acudiente_estudiante.errors %}
+                    <p class="mt-1 text-sm text-red-600" role="alert">{{ form.acudiente_estudiante.errors.0 }}</p>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% endif %}
         </div>
 
         <!-- Botones -->
@@ -123,5 +175,42 @@
         </div>
     </form>
 </div>
+
+{% if user.tipo_usuario == 'profesor' %}
+<script>
+const materiasPorGrado = {
+{% for grado in grados %}
+{{ grado.id }}: [{% for materia in grado.materias.all %}{{ materia.id }},{% endfor %}],
+{% endfor %}
+};
+
+document.getElementById('id_grado_profesor').addEventListener('change', function() {
+    const selectedGrado = this.value;
+    const checkboxes = document.querySelectorAll('#id_materias_profesor input[type="checkbox"]');
+    if (selectedGrado) {
+        const allowedMaterias = materiasPorGrado[selectedGrado] || [];
+        checkboxes.forEach(cb => {
+            const materiaId = parseInt(cb.value);
+            if (allowedMaterias.includes(materiaId)) {
+                cb.parentElement.style.display = 'block';
+            } else {
+                cb.parentElement.style.display = 'none';
+                cb.checked = false;  // Uncheck if not allowed
+            }
+        });
+    } else {
+        // Show all if no grade selected
+        checkboxes.forEach(cb => {
+            cb.parentElement.style.display = 'block';
+        });
+    }
+});
+
+// Trigger on load if initial value
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('id_grado_profesor').dispatchEvent(new Event('change'));
+});
+</script>
+{% endif %}
 
 {% endblock %}

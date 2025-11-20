@@ -212,4 +212,7 @@ def editar_usuario(request, user_id):
             messages.error(request, 'Por favor, corrige los errores en el formulario.')
     else:
         form = CustomUserChangeForm(instance=user)
-    return render(request, 'users/directivo/editar_usuario.html', {'form': form, 'user': user})
+    # Pasar grados con sus materias para el filtrado dinámico
+    from notas.models import Grado
+    grados = Grado.objects.prefetch_related('materias').all()
+    return render(request, 'users/directivo/editar_usuario.html', {'form': form, 'user': user, 'grados': grados})

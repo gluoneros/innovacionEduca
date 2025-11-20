@@ -372,6 +372,56 @@ class CustomUserChangeForm(UserChangeForm):
         self.fields['fecha_nacimiento'].label = "Fecha de Nacimiento"
         self.fields['nombre_colegio'].label = "Nombre del Colegio"
 
+        # Campos condicionales basados en tipo_usuario
+        if self.instance and self.instance.pk:
+            if self.instance.tipo_usuario == 'profesor':
+                # Para profesor: selector de grado y materias
+                profesor = getattr(self.instance, 'profesor_profile', None)
+                initial_materias = []
+                initial_grado = None
+                if profesor:
+                    materias_profesor = Materia.objects.filter(profesor=profesor).select_related('grado')
+                    initial_materias = list(materias_profesor.values_list('id', flat=True))
+                    # Set initial grade to the first grade of assigned subjects, if any
+                    if materias_profesor.exists():
+                        initial_grado = materias_profesor.first().grado
+                self.fields['grado_profesor'] = forms.ModelChoiceField(
+                    queryset=Grado.objects.all().order_by('nombre'),
+                    required=False,
+                    label="Grado para asignar materias",
+                    widget=forms.Select(attrs={'class': 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500', 'id': 'id_grado_profesor'}),
+                    initial=initial_grado
+                )
+                self.fields['materias_profesor'] = forms.ModelMultipleChoiceField(
+                    queryset=Materia.objects.all().order_by('grado__nombre', 'nombre'),
+                    required=False,
+                    label="Materias que imparte",
+                    widget=forms.CheckboxSelectMultiple(attrs={'class': 'space-y-2', 'id': 'id_materias_profesor'}),
+                    initial=initial_materias
+                )
+            elif self.instance.tipo_usuario == 'estudiante':
+                # Para estudiante: grado y acudiente
+                estudiante = getattr(self.instance, 'estudiante_profile', None)
+                initial_grado = None
+                initial_acudiente = None
+                if estudiante:
+                    initial_grado = estudiante.grado
+                    initial_acudiente = estudiante.acudiente
+                self.fields['grado_estudiante'] = forms.ModelChoiceField(
+                    queryset=Grado.objects.all().order_by('nombre'),
+                    required=False,
+                    label="Grado",
+                    widget=forms.Select(attrs={'class': 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'}),
+                    initial=initial_grado
+                )
+                self.fields['acudiente_estudiante'] = forms.ModelChoiceField(
+                    queryset=Acudiente.objects.all(),
+                    required=False,
+                    label="Acudiente",
+                    widget=forms.Select(attrs={'class': 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'}),
+                    initial=initial_acudiente
+                )
+
         for field_name, field in self.fields.items():
             if field_name == 'fecha_nacimiento':
                 field.widget = forms.DateInput(attrs={'type': 'date', 'class': 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'})
@@ -379,3 +429,25 @@ class CustomUserChangeForm(UserChangeForm):
                 field.widget.attrs.update({
                     'class': 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
                 })
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        if commit:
+            user.save()
+            # Guardar campos condicionales
+            if user.tipo_usuario == 'profesor' and hasattr(user, 'profesor_profile'):
+                profesor = user.profesor_profile
+                if 'materias_profesor' in self.cleaned_data:
+                    # Asignar profesor a las materias seleccionadas
+                    Materia.objects.filter(profesor=profesor).update(profesor=None)  # Limpiar asignaciones previas
+                    for materia in self.cleaned_data['materias_profesor']:
+                        materia.profesor = profesor
+                        materia.save()
+            elif user.tipo_usuario == 'estudiante' and hasattr(user, 'estudiante_profile'):
+                estudiante = user.estudiante_profile
+                if 'grado_estudiante' in self.cleaned_data:
+                    estudiante.grado = self.cleaned_data['grado_estudiante']
+                if 'acudiente_estudiante' in self.cleaned_data:
+                    estudiante.acudiente = self.cleaned_data['acudiente_estudiante']
+                estudiante.save()
+        return user
