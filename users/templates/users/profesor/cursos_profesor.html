@@ -44,7 +44,7 @@
                     Buscar Curso
                 </label>
                 <input type="text" id="busqueda" placeholder="Nombre del curso..." 
-                       class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
             </div>
         </div>
 
@@ -145,8 +145,8 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label for="nombre-curso" class="block text-sm font-medium text-gray-700">Nombre del Curso</label>
-                            <input type="text" id="nombre-curso" placeholder="Ej: Matemáticas 11°" 
-                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                            <input type="text" id="nombre-curso" placeholder="Ej: Matemáticas 11°"
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
                         </div>
                         <div>
                             <label for="materia-curso" class="block text-sm font-medium text-gray-700">Materia</label>
@@ -172,25 +172,25 @@
                         </div>
                         <div>
                             <label for="aula-curso" class="block text-sm font-medium text-gray-700">Aula</label>
-                            <input type="text" id="aula-curso" placeholder="Ej: Aula 201" 
-                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                            <input type="text" id="aula-curso" placeholder="Ej: Aula 201"
+                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
                         </div>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label for="horario-curso" class="block text-sm font-medium text-gray-700">Horario</label>
-                            <input type="text" id="horario-curso" placeholder="Ej: Lunes 8:00-10:00" 
-                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                            <input type="text" id="horario-curso" placeholder="Ej: Lunes 8:00-10:00"
+                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
                         </div>
                         <div>
                             <label for="capacidad-curso" class="block text-sm font-medium text-gray-700">Capacidad Máxima</label>
-                            <input type="number" id="capacidad-curso" min="1" max="50" placeholder="30" 
-                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                            <input type="number" id="capacidad-curso" min="1" max="50" placeholder="30"
+                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
                         </div>
                     </div>
                     <div>
                         <label for="descripcion-curso" class="block text-sm font-medium text-gray-700">Descripción</label>
-                        <textarea id="descripcion-curso" rows="3" placeholder="Descripción del curso..." 
+                        <textarea id="descripcion-curso" rows="3" placeholder="Descripción del curso..."
                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500"></textarea>
                     </div>
                     <div class="flex justify-end space-x-3 pt-4">
@@ -489,21 +489,6 @@
             renderizarLista();
         });
 
-        // Modal functions
-        document.getElementById('crear-curso').addEventListener('click', function() {
-            document.getElementById('modal-titulo').textContent = 'Crear Nuevo Curso';
-            document.getElementById('form-curso').reset();
-            document.getElementById('modal-curso').classList.remove('hidden');
-        });
-
-        document.getElementById('cerrar-modal').addEventListener('click', function() {
-            document.getElementById('modal-curso').classList.add('hidden');
-        });
-
-        document.getElementById('cancelar-curso').addEventListener('click', function() {
-            document.getElementById('modal-curso').classList.add('hidden');
-        });
-
         // Funciones de acción
         function editarCurso(id) {
             const curso = cursosData.find(c => c.id === id);
@@ -545,6 +530,21 @@
 
         document.getElementById('exportar-cursos').addEventListener('click', function() {
             alert('Exportando lista de cursos...\n\nEn producción, esto generaría un archivo Excel con la información de los cursos.');
+        });
+
+        // Modal functions
+        document.getElementById('crear-curso').addEventListener('click', function() {
+            document.getElementById('modal-titulo').textContent = 'Crear Nuevo Curso';
+            document.getElementById('form-curso').reset();
+            document.getElementById('modal-curso').classList.remove('hidden');
+        });
+
+        document.getElementById('cerrar-modal').addEventListener('click', function() {
+            document.getElementById('modal-curso').classList.add('hidden');
+        });
+
+        document.getElementById('cancelar-curso').addEventListener('click', function() {
+            document.getElementById('modal-curso').classList.add('hidden');
         });
 
         // Inicializar la vista
